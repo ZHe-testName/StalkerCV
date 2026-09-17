@@ -1,2 +1,2 @@
 # StalkerCV
-My new CV ib ThreeJS
+My new CV in ThreeJS
