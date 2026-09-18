@@ -55,10 +55,25 @@ const deviceX = -cabW / 2 + 0.22
 const deviceY = cabH + deviceH / 2
 const deviceZ = 0.18
 const deviceYaw = -24 * Math.PI / 180
+
+const hoverW = cabW + 0.03
+const hoverH = cabH + hutchH + 0.02
+const hoverD = bodyD + 0.03
+const hoverY = hoverH / 2
+
+const { glow, onPointerEnter, onPointerLeave } = useStashAnchor()
 </script>
 
 <template>
   <TresGroup :position="[originX, 0, originZ]" :rotation="[0, yaw, 0]">
+    <TresMesh
+      :position="[0, hoverY, 0]"
+      @pointerenter="onPointerEnter"
+      @pointerleave="onPointerLeave"
+    >
+      <TresBoxGeometry :args="[hoverW, hoverH, hoverD]" />
+      <TresMeshBasicMaterial :transparent="true" :opacity="0" :depth-write="false" />
+    </TresMesh>
     <TresMesh :position="[0, bodyY, 0]">
       <TresBoxGeometry :args="[cabW, cabH, bodyD]" />
       <TresMeshStandardMaterial color="#5a3f32" :roughness="1" :metalness="0" />
@@ -111,7 +126,13 @@ const deviceYaw = -24 * Math.PI / 180
     >
       <TresMesh>
         <TresBoxGeometry :args="[deviceW, deviceH, deviceD]" />
-        <TresMeshStandardMaterial color="#4a5238" :roughness="0.9" :metalness="0.08" />
+        <TresMeshStandardMaterial
+          color="#4a5238"
+          emissive="#4a5238"
+          :emissive-intensity="glow * 0.25"
+          :roughness="0.9"
+          :metalness="0.08"
+        />
       </TresMesh>
       <TresMesh :position="[0, deviceH / 2 + 0.012, 0]">
         <TresBoxGeometry :args="[deviceW * 0.55, 0.024, 0.03]" />
@@ -119,7 +140,13 @@ const deviceYaw = -24 * Math.PI / 180
       </TresMesh>
       <TresMesh :position="[0, 0.01, deviceD / 2 + 0.004]">
         <TresBoxGeometry :args="[deviceW * 0.42, deviceH * 0.38, 0.008]" />
-        <TresMeshStandardMaterial color="#c4a04a" :roughness="0.4" :metalness="0" />
+        <TresMeshStandardMaterial
+          color="#c4a04a"
+          emissive="#e0c060"
+          :emissive-intensity="glow"
+          :roughness="0.4"
+          :metalness="0"
+        />
       </TresMesh>
       <TresMesh :position="[deviceW / 2 - 0.03, deviceH / 2 + 0.05, -deviceD / 2 + 0.04]">
         <TresBoxGeometry :args="[0.012, 0.1, 0.012]" />

@@ -51,10 +51,25 @@ const pdaW = 0.13
 const pdaT = 0.045
 const pdaH = 0.16
 const pdaY = armTop + pdaH / 2
+
+const hoverW = overallW + 0.04
+const hoverH = seatY + seatT / 2 + backH + 0.02
+const hoverD = armD + 0.05
+const hoverY = hoverH / 2
+
+const { glow, onPointerEnter, onPointerLeave } = useStashAnchor()
 </script>
 
 <template>
   <TresGroup :position="[originX, 0, originZ]" :rotation="[0, yaw, 0]">
+    <TresMesh
+      :position="[0, hoverY, armZ]"
+      @pointerenter="onPointerEnter"
+      @pointerleave="onPointerLeave"
+    >
+      <TresBoxGeometry :args="[hoverW, hoverH, hoverD]" />
+      <TresMeshBasicMaterial :transparent="true" :opacity="0" :depth-write="false" />
+    </TresMesh>
     <TresMesh :position="[0, baseH / 2, 0.02]">
       <TresBoxGeometry :args="[seatW - 0.04, baseH, seatD - 0.12]" />
       <TresMeshStandardMaterial color="#2c2723" :roughness="1" :metalness="0" />
@@ -79,11 +94,23 @@ const pdaY = armTop + pdaH / 2
     <TresGroup :position="[armX, pdaY, armFrontZ + 0.1]">
       <TresMesh>
         <TresBoxGeometry :args="[pdaT, pdaH, pdaW]" />
-        <TresMeshStandardMaterial color="#5a5e56" :roughness="0.65" :metalness="0.08" />
+        <TresMeshStandardMaterial
+          color="#5a5e56"
+          emissive="#3a4a40"
+          :emissive-intensity="glow * 0.2"
+          :roughness="0.65"
+          :metalness="0.08"
+        />
       </TresMesh>
       <TresMesh :position="[0, 0.008, -pdaW / 2 - 0.003]">
         <TresBoxGeometry :args="[pdaT * 0.85, pdaH * 0.62, 0.006]" />
-        <TresMeshStandardMaterial color="#5ad08a" :roughness="0.35" :metalness="0" />
+        <TresMeshStandardMaterial
+          color="#5ad08a"
+          emissive="#7dffb0"
+          :emissive-intensity="glow"
+          :roughness="0.35"
+          :metalness="0"
+        />
       </TresMesh>
     </TresGroup>
   </TresGroup>

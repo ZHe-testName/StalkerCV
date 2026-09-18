@@ -66,10 +66,26 @@ const backH = 0.5
 const backT = 0.06
 const chairLeg = 0.045
 const chairLegH = seatY - seatT / 2
+
+const hoverW = tableW + 0.04
+const hoverH = tableH + caseH + 0.02
+const hoverD = tableD + seatD * 0.5
+const hoverY = hoverH / 2
+const hoverZ = 0.1
+
+const { glow, onPointerEnter, onPointerLeave } = useStashAnchor()
 </script>
 
 <template>
   <TresGroup :position="[originX, 0, originZ]">
+    <TresMesh
+      :position="[0, hoverY, hoverZ]"
+      @pointerenter="onPointerEnter"
+      @pointerleave="onPointerLeave"
+    >
+      <TresBoxGeometry :args="[hoverW, hoverH, hoverD]" />
+      <TresMeshBasicMaterial :transparent="true" :opacity="0" :depth-write="false" />
+    </TresMesh>
     <TresMesh :position="[0, topY, 0]">
       <TresBoxGeometry :args="[tableW, topT, tableD]" />
       <TresMeshStandardMaterial color="#6a5a48" :roughness="1" :metalness="0" />
@@ -98,7 +114,13 @@ const chairLegH = seatY - seatT / 2
       </TresMesh>
       <TresMesh :position="[0, 0, monitorD / 2 + screenT / 2]">
         <TresBoxGeometry :args="[screenW, screenH, screenT]" />
-        <TresMeshStandardMaterial color="#1a1c1e" :roughness="0.4" :metalness="0" />
+        <TresMeshStandardMaterial
+          color="#1a1c1e"
+          emissive="#7ecf9a"
+          :emissive-intensity="glow"
+          :roughness="0.4"
+          :metalness="0"
+        />
       </TresMesh>
     </TresGroup>
 
