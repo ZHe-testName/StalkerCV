@@ -114,6 +114,7 @@ const { position, lookAt, goTo } = useStashCamera(cameraPosition, homeLookAt)
   <StashSideboard
     :inner-back-z="innerBackZ"
     :inner-right-x="innerRightX"
+    @select="goTo('sideboard')"
   />
 
   <StashArmchair

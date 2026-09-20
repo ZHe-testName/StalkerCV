@@ -3,6 +3,8 @@
  * Совковый сервант справа от стола: низ с двумя дверками, верх — открытый короб с полками.
  * Нижний ящик глубже полок — на крышке лежит прибор скилов, криво, ближе к правому краю.
  */
+import { stashHold } from '~/composables/useStashCamera'
+
 const props = defineProps<{
   innerBackZ: number
   innerRightX: number
@@ -61,15 +63,47 @@ const hoverH = cabH + hutchH + 0.02
 const hoverD = bodyD + 0.03
 const hoverY = hoverH / 2
 
+const emit = defineEmits<{
+  select: []
+}>()
+
 const { glow, onPointerEnter, onPointerLeave } = useStashAnchor('sideboard')
+
+const restLocal = rotateXZ(deviceX, deviceZ)
+const restWorldPos: [number, number, number] = [
+  originX + restLocal.x,
+  deviceY,
+  originZ + restLocal.z,
+]
+const restWorldYaw = yaw + deviceYaw
+
+const devicePose = computed(() => {
+  const h = stashHold.value
+  const k = h.lift
+  return {
+    position: [
+      restWorldPos[0] + (h.x - restWorldPos[0]) * k,
+      restWorldPos[1] + (h.y - restWorldPos[1]) * k,
+      restWorldPos[2] + (h.z - restWorldPos[2]) * k,
+    ] as [number, number, number],
+    rotation: [
+      h.pitch * k,
+      restWorldYaw + (h.yaw - restWorldYaw) * k,
+      0,
+    ] as [number, number, number],
+    scale: 1 + (h.scale - 1) * k,
+  }
+})
 </script>
 
 <template>
-  <TresGroup :position="[originX, 0, originZ]" :rotation="[0, yaw, 0]">
+  <TresGroup>
+    <TresGroup :position="[originX, 0, originZ]" :rotation="[0, yaw, 0]">
     <TresMesh
       :position="[0, hoverY, 0]"
       @pointerenter="onPointerEnter"
       @pointerleave="onPointerLeave"
+      @click="emit('select')"
     >
       <TresBoxGeometry :args="[hoverW, hoverH, hoverD]" />
       <TresMeshBasicMaterial :transparent="true" :opacity="0" :depth-write="false" />
@@ -119,10 +153,12 @@ const { glow, onPointerEnter, onPointerLeave } = useStashAnchor('sideboard')
       <TresBoxGeometry :args="[cabW - board * 2, board, hutchD - board]" />
       <TresMeshStandardMaterial color="#6b4c3c" :roughness="1" :metalness="0" />
     </TresMesh>
+    </TresGroup>
 
     <TresGroup
-      :position="[deviceX, deviceY, deviceZ]"
-      :rotation="[0, deviceYaw, 0]"
+      :position="devicePose.position"
+      :rotation="devicePose.rotation"
+      :scale="[devicePose.scale, devicePose.scale, devicePose.scale]"
     >
       <TresMesh>
         <TresBoxGeometry :args="[deviceW, deviceH, deviceD]" />

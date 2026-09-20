@@ -1,6 +1,6 @@
 /**
- * Камера схрона: кадр 0 + подход шагами + посадка за стол.
- * К монитору: идём на 1.7 м, садимся в плоскость экрана, затем вплотную читать.
+ * Камера схрона: кадр 0, стол (шаги → посадка → вплотную),
+ * сервант (шаги с взглядом мимо → фокус → берём прибор в руки).
  */
 import { onUnmounted, ref } from 'vue'
 import { useLoop, useTres } from '@tresjs/core'
@@ -14,13 +14,21 @@ type Mode =
   | 'to-read'
   | 'at-anchor'
   | 'to-stand'
+  | 'to-hold'
+  | 'to-place'
+  | 'sideboard-wait'
   | 'to-home'
 
-const STEPS = 2
+const DESK_STEPS = 2
+const SIDEBOARD_STEPS = 3
 const WALK_TIME = 1.18
 const SIT_TIME = 1.05
 const READ_TIME = 0.48
 const STAND_TIME = 0.82
+const HOLD_TIME = 0.9
+const WAIT_TIME = 0.4
+const HOLD_SCALE = 1.9
+const DEVICE_HALF_D = 0.1
 const ARC_SIDE = 0.078
 const ARC_UP = 0.095
 const EYE = 1.7
@@ -34,9 +42,19 @@ const deskShot = {
 
 const sitShot = shotAlongScreen(SIT_DIST)
 const readShot = shotAlongScreen(READ_DIST)
+const sideboard = makeSideboardShots()
 
 export const stashAway = ref(false)
 export const stashFocused = ref<AnchorId | null>(null)
+export const stashHold = ref({
+  lift: 0,
+  x: sideboard.hold[0],
+  y: sideboard.hold[1],
+  z: sideboard.hold[2],
+  yaw: sideboard.holdYaw,
+  pitch: sideboard.holdPitch,
+  scale: HOLD_SCALE,
+})
 
 export const stashFocus = {
   goHome: () => {},
@@ -78,13 +96,66 @@ function shotAlongScreen(dist: number) {
   }
 }
 
-function gait(u: number) {
+function makeSideboardShots() {
+  const innerRightX = 6.2 / 2 - 0.24
+  const innerBackZ = -(3.4 / 2) + 0.24
+  const cabW = 1.48
+  const bodyD = 0.52 * 1.5
+  const doorT = 0.018
+  const yaw = -7 * Math.PI / 180
+  const c = Math.cos(yaw)
+  const s = Math.sin(yaw)
+  const rot = (x: number, z: number) => ({
+    x: x * c + z * s,
+    z: -x * s + z * c,
+  })
+  const pts = [
+    rot(cabW / 2, bodyD / 2 + doorT),
+    rot(-cabW / 2, bodyD / 2 + doorT),
+    rot(cabW / 2, -bodyD / 2),
+    rot(-cabW / 2, -bodyD / 2),
+  ]
+  const originX = innerRightX - 0.5 - Math.max(...pts.map(p => p.x))
+  const originZ = innerBackZ - Math.min(...pts.map(p => p.z))
+  const d = rot(-cabW / 2 + 0.22, 0.18)
+  const device: Vec3 = [originX + d.x, 0.92 + 0.065, originZ + d.z]
+  const lf = rot(-cabW / 2, bodyD / 2)
+  const leftFront: Vec3 = [originX + lf.x, 0, originZ + lf.z]
+  const stand: Vec3 = [leftFront[0] - 0.12, EYE, leftFront[2] + 0.58]
+  const glance: Vec3 = [leftFront[0] + 0.1, 0.92, leftFront[2] + 0.05]
+  const hold: Vec3 = [stand[0] + 0.015, 1.4, stand[2] - 0.4]
+  const toCam = [
+    stand[0] - hold[0],
+    stand[1] - hold[1],
+    stand[2] - hold[2],
+  ]
+  const toCamLen = Math.hypot(toCam[0], toCam[1], toCam[2]) || 1
+  const holdYaw = Math.atan2(toCam[0], toCam[2])
+  const holdPitch = -Math.atan2(toCam[1], Math.hypot(toCam[0], toCam[2]))
+  const screenOff = DEVICE_HALF_D * HOLD_SCALE
+  const holdLook: Vec3 = [
+    hold[0] + toCam[0] / toCamLen * screenOff,
+    hold[1] + toCam[1] / toCamLen * screenOff,
+    hold[2] + toCam[2] / toCamLen * screenOff,
+  ]
+  return {
+    stand: { position: stand, lookAt: device },
+    glance,
+    device,
+    hold,
+    holdLook,
+    holdYaw,
+    holdPitch,
+  }
+}
+
+function gait(u: number, steps: number) {
   if (u <= 0 || u >= 1) {
     return { y: 0, side: 0 }
   }
-  const steps = u * STEPS
-  const i = Math.min(STEPS - 1, Math.floor(steps))
-  const local = steps - i
+  const along = u * steps
+  const i = Math.min(steps - 1, Math.floor(along))
+  const local = along - i
   const sign = i % 2 === 0 ? -1 : 1
   const fade = u < 0.06 ? u / 0.06 : u > 0.94 ? (1 - u) / 0.06 : 1
   const { side, y } = stepArc(local, sign)
@@ -120,8 +191,27 @@ function isMoving(mode: Mode) {
     || mode === 'to-sit'
     || mode === 'to-read'
     || mode === 'to-stand'
+    || mode === 'to-hold'
+    || mode === 'to-place'
+    || mode === 'sideboard-wait'
     || mode === 'to-home'
   )
+}
+
+function durationFor(next: Mode, steps: number) {
+  if (next === 'to-anchor' || next === 'to-home') {
+    return WALK_TIME * steps / DESK_STEPS
+  }
+  if (next === 'to-read') {
+    return READ_TIME
+  }
+  if (next === 'to-stand') {
+    return STAND_TIME
+  }
+  if (next === 'to-hold' || next === 'to-place') {
+    return HOLD_TIME
+  }
+  return SIT_TIME
 }
 
 export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
@@ -136,7 +226,10 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
   let toLook: Vec3 = [...homeLookAt]
   let t = 0
   let moveTime = WALK_TIME
+  let dwell = 0
+  let liftFrom = 0
   let focused: AnchorId | null = null
+  let walkSteps = DESK_STEPS
   let perpX = 0
   let perpZ = 1
 
@@ -162,34 +255,60 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
     const len = Math.hypot(dx, dz) || 1
     perpX = -dz / len
     perpZ = dx / len
-    moveTime =
-      next === 'to-anchor' || next === 'to-home'
-        ? WALK_TIME
-        : next === 'to-read'
-          ? READ_TIME
-          : next === 'to-stand'
-            ? STAND_TIME
-            : SIT_TIME
+    walkSteps = focused === 'sideboard' && (next === 'to-anchor' || next === 'to-home')
+      ? SIDEBOARD_STEPS
+      : DESK_STEPS
+    moveTime = durationFor(next, walkSteps)
+    if (next === 'to-hold' || next === 'to-place') {
+      liftFrom = stashHold.value.lift
+    }
     lookaroundOn.value = false
     stashAway.value = true
     mode = next
   }
 
+  function walkLook(u: number): Vec3 {
+    if (focused !== 'sideboard' || mode !== 'to-anchor') {
+      return lerp3(fromLook, toLook, u)
+    }
+    const glanceUntil = 2 / SIDEBOARD_STEPS
+    if (u < glanceUntil) {
+      return lerp3(fromLook, sideboard.glance, ease(u / glanceUntil))
+    }
+    return lerp3(sideboard.glance, sideboard.device, ease((u - glanceUntil) / (1 - glanceUntil)))
+  }
+
+  function setLift(amount: number) {
+    stashHold.value = {
+      ...stashHold.value,
+      lift: amount,
+    }
+  }
+
   function goTo(id: AnchorId) {
-    if (isMoving(mode) || mode === 'at-anchor') {
+    if (isMoving(mode) || mode === 'at-anchor' || id === 'armchair') {
       return
     }
     stashFocused.value = id
-    startMove(deskShot.position, deskShot.lookAt, 'to-anchor')
     focused = id
+    if (id === 'sideboard') {
+      startMove(sideboard.stand.position, sideboard.stand.lookAt, 'to-anchor')
+      return
+    }
+    startMove(deskShot.position, deskShot.lookAt, 'to-anchor')
   }
 
   function goHome() {
-    if (mode === 'home' || mode === 'to-home' || mode === 'to-stand') {
+    if (mode === 'home' || mode === 'to-home' || mode === 'to-stand' || mode === 'to-place') {
       return
     }
-    if (mode === 'to-anchor') {
+    if (mode === 'to-anchor' || mode === 'sideboard-wait') {
+      setLift(0)
       startMove([...homePosition], [...homeLookAt], 'to-home')
+      return
+    }
+    if (focused === 'sideboard') {
+      startMove(sideboard.stand.position, sideboard.stand.lookAt, 'to-place')
       return
     }
     startMove(deskShot.position, deskShot.lookAt, 'to-stand')
@@ -197,6 +316,13 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
 
   const { onBeforeRender } = useLoop()
   const { off } = onBeforeRender(({ delta }) => {
+    if (mode === 'sideboard-wait') {
+      dwell -= delta
+      if (dwell <= 0) {
+        startMove(sideboard.stand.position, sideboard.holdLook, 'to-hold')
+      }
+      return
+    }
     if (!isMoving(mode)) {
       return
     }
@@ -208,21 +334,34 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
         fromPos[1],
         fromPos[2] + (toPos[2] - fromPos[2]) * u,
       ]
-      const bob = gait(u)
+      const bob = gait(u, walkSteps)
       pos[0] += perpX * bob.side
       pos[1] += bob.y
       pos[2] += perpZ * bob.side
-      apply(pos, lerp3(fromLook, toLook, u))
+      apply(pos, walkLook(u))
     }
     else {
-      const k = mode === 'to-sit' || mode === 'to-stand' ? smoother(u) : ease(u)
+      const k = mode === 'to-sit' || mode === 'to-stand' || mode === 'to-hold' || mode === 'to-place'
+        ? smoother(u)
+        : ease(u)
       apply(lerp3(fromPos, toPos, k), lerp3(fromLook, toLook, k))
+      if (mode === 'to-hold') {
+        setLift(liftFrom + (1 - liftFrom) * k)
+      }
+      if (mode === 'to-place') {
+        setLift(liftFrom * (1 - k))
+      }
     }
     if (u < 1) {
       return
     }
     apply([...toPos], [...toLook])
     if (mode === 'to-anchor') {
+      if (focused === 'sideboard') {
+        mode = 'sideboard-wait'
+        dwell = WAIT_TIME
+        return
+      }
       startMove(sitShot.position, sitShot.lookAt, 'to-sit')
       return
     }
@@ -230,11 +369,15 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
       startMove(readShot.position, readShot.lookAt, 'to-read')
       return
     }
-    if (mode === 'to-read') {
+    if (mode === 'to-read' || mode === 'to-hold') {
+      if (mode === 'to-hold') {
+        setLift(1)
+      }
       mode = 'at-anchor'
       return
     }
-    if (mode === 'to-stand') {
+    if (mode === 'to-stand' || mode === 'to-place') {
+      setLift(0)
       startMove([...homePosition], [...homeLookAt], 'to-home')
       return
     }
