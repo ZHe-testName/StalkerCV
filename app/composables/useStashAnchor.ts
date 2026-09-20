@@ -1,20 +1,22 @@
 /**
  * Ховер якоря: курсор pointer и пульс glow.
- * Слушатели — на объёме всей группы (стол / сервант / кресло), не на мелком предмете.
+ * Слушатели — на объёме всей группы. Пока якорь в фокусе (подошли / сели) —
+ * светится как при ховере, даже если курсор ушёл на кнопку «Назад».
  */
 import { onUnmounted, ref } from 'vue'
 import { useLoop } from '@tresjs/core'
+import { stashFocused, type AnchorId } from '~/composables/useStashCamera'
 
 let hoverCount = 0
 
-export function useStashAnchor() {
+export function useStashAnchor(id: AnchorId) {
   const hovered = ref(false)
   const glow = ref(0)
   let leaveTimer: ReturnType<typeof setTimeout> | null = null
 
   const { onBeforeRender } = useLoop()
   onBeforeRender(({ elapsed }) => {
-    if (!hovered.value) {
+    if (!hovered.value && stashFocused.value !== id) {
       glow.value = 0
       return
     }

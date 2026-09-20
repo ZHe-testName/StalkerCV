@@ -73,7 +73,11 @@ const hoverD = tableD + seatD * 0.5
 const hoverY = hoverH / 2
 const hoverZ = 0.1
 
-const { glow, onPointerEnter, onPointerLeave } = useStashAnchor()
+const emit = defineEmits<{
+  select: []
+}>()
+
+const { glow, onPointerEnter, onPointerLeave } = useStashAnchor('desk')
 </script>
 
 <template>
@@ -82,6 +86,7 @@ const { glow, onPointerEnter, onPointerLeave } = useStashAnchor()
       :position="[0, hoverY, hoverZ]"
       @pointerenter="onPointerEnter"
       @pointerleave="onPointerLeave"
+      @click="emit('select')"
     >
       <TresBoxGeometry :args="[hoverW, hoverH, hoverD]" />
       <TresMeshBasicMaterial :transparent="true" :opacity="0" :depth-write="false" />

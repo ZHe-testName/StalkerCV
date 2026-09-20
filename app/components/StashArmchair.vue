@@ -57,7 +57,7 @@ const hoverH = seatY + seatT / 2 + backH + 0.02
 const hoverD = armD + 0.05
 const hoverY = hoverH / 2
 
-const { glow, onPointerEnter, onPointerLeave } = useStashAnchor()
+const { glow, onPointerEnter, onPointerLeave } = useStashAnchor('armchair')
 </script>
 
 <template>

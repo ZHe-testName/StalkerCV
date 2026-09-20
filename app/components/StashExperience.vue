@@ -37,7 +37,7 @@ const wallFrontD = room.depth / 2 - openingMaxZ
 
 const cameraPosition: [number, number, number] = [
   0,
-  1.55,
+  1.7,
   room.depth / 2 + 0.95,
 ]
 
@@ -45,12 +45,15 @@ const innerBackZ = -(room.depth / 2) + room.wall
 const innerLeftX = -(room.width / 2) + room.wall
 const innerRightX = room.width / 2 - room.wall
 const innerFrontZ = room.depth / 2
+
+const homeLookAt: [number, number, number] = [0, 1.15, 0]
+const { position, lookAt, goTo } = useStashCamera(cameraPosition, homeLookAt)
 </script>
 
 <template>
   <TresPerspectiveCamera
-    :position="cameraPosition"
-    :look-at="[0, 1.15, 0]"
+    :position="position"
+    :look-at="lookAt"
     :fov="56"
   />
 
@@ -105,6 +108,7 @@ const innerFrontZ = room.depth / 2
   <StashDesk
     :inner-back-z="innerBackZ"
     :inner-left-x="innerLeftX"
+    @select="goTo('desk')"
   />
 
   <StashSideboard

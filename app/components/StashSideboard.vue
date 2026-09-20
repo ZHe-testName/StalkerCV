@@ -61,7 +61,7 @@ const hoverH = cabH + hutchH + 0.02
 const hoverD = bodyD + 0.03
 const hoverY = hoverH / 2
 
-const { glow, onPointerEnter, onPointerLeave } = useStashAnchor()
+const { glow, onPointerEnter, onPointerLeave } = useStashAnchor('sideboard')
 </script>
 
 <template>
