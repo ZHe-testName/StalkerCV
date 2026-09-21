@@ -3,6 +3,9 @@
  * Совковый сервант справа от стола: низ с двумя дверками, верх — открытый короб с полками.
  * Нижний ящик глубже полок — на крышке лежит прибор скилов, криво, ближе к правому краю.
  */
+import { Box3, Group, Mesh, MeshStandardMaterial, Vector3 } from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { useLoader } from '@tresjs/core'
 import { stashHold } from '~/composables/useStashCamera'
 
 const props = defineProps<{
@@ -77,9 +80,70 @@ const restWorldPos: [number, number, number] = [
 ]
 const restWorldYaw = yaw + deviceYaw
 
+const svdLen = 1.6
+const svdX = -cabW / 2 - 0.5
+const svdY = 0.08
+const svdZ = -bodyD / 2 + 0.39
+const svdLeanX = -8 * Math.PI / 180
+const svdLeanZ = -15 * Math.PI / 180
+const svdYaw = (-90 - 64 - 31 + 32 + 17 + 15) * Math.PI / 180
+const svdRotZ = 172 * Math.PI / 180
+
+function sitLongAxisUp(scene: Group, lengthM: number) {
+  const root = new Group()
+  const model = scene.clone(true)
+  const box0 = new Box3().setFromObject(model)
+  const size0 = box0.getSize(new Vector3())
+  if (size0.x >= size0.y && size0.x >= size0.z) {
+    model.rotation.z = Math.PI / 2
+  }
+  else if (size0.z >= size0.y && size0.z >= size0.x) {
+    model.rotation.x = -Math.PI / 2
+  }
+  model.rotation.z += svdRotZ
+  model.updateMatrixWorld(true)
+  const box = new Box3().setFromObject(model)
+  const size = box.getSize(new Vector3())
+  const center = box.getCenter(new Vector3())
+  model.position.set(-center.x, -box.min.y, -center.z)
+  root.add(model)
+  root.scale.setScalar(lengthM / (size.y || 1))
+  return { root, model }
+}
+
+function forEachStandardMat(object: Group, fn: (mat: MeshStandardMaterial) => void) {
+  object.traverse((child) => {
+    if (!(child instanceof Mesh)) {
+      return
+    }
+    const materials = Array.isArray(child.material) ? child.material : [child.material]
+    for (const mat of materials) {
+      if (mat instanceof MeshStandardMaterial) {
+        fn(mat)
+      }
+    }
+  })
+}
+
+const { state: svdGltf } = useLoader(GLTFLoader, '/models/dragunov-svd/scene.gltf')
+const svdModel = shallowRef<Group | null>(null)
+
+watch(svdGltf, (gltf) => {
+  const scene = gltf?.scene
+  if (!scene || svdModel.value) {
+    return
+  }
+  const { root, model } = sitLongAxisUp(scene, svdLen)
+  forEachStandardMat(model, (mat) => {
+    mat.metalness = Math.min(mat.metalness, 0.4)
+    mat.needsUpdate = true
+  })
+  svdModel.value = root
+}, { immediate: true })
+
 const devicePose = computed(() => {
   const h = stashHold.value
-  const k = h.lift
+  const k = h.id === 'sideboard' ? h.lift : 0
   return {
     position: [
       restWorldPos[0] + (h.x - restWorldPos[0]) * k,
@@ -153,6 +217,11 @@ const devicePose = computed(() => {
       <TresBoxGeometry :args="[cabW - board * 2, board, hutchD - board]" />
       <TresMeshStandardMaterial color="#6b4c3c" :roughness="1" :metalness="0" />
     </TresMesh>
+    <TresGroup :position="[svdX, svdY, svdZ]" :rotation="[svdLeanX, 0, svdLeanZ]">
+      <TresGroup :rotation="[0, svdYaw, 0]">
+        <primitive v-if="svdModel" :object="svdModel" />
+      </TresGroup>
+    </TresGroup>
     </TresGroup>
 
     <TresGroup

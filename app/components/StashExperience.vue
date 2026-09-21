@@ -120,6 +120,7 @@ const { position, lookAt, goTo } = useStashCamera(cameraPosition, homeLookAt)
   <StashArmchair
     :inner-right-x="innerRightX"
     :inner-front-z="innerFrontZ"
+    @select="goTo('armchair')"
   />
 
   <!-- Правая стена (+X) -->

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Old Soviet table
+* source:	https://sketchfab.com/3d-models/old-soviet-table-4a170ab5ee3140fdaead4b4236f8b208
+* author:	kayumov127 (https://sketchfab.com/kayumov127)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Old Soviet table" (https://sketchfab.com/3d-models/old-soviet-table-4a170ab5ee3140fdaead4b4236f8b208) by kayumov127 (https://sketchfab.com/kayumov127) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

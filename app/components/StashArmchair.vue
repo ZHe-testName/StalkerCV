@@ -3,6 +3,10 @@
  * Кресло у правой стены: быльца до пола, КПК на дальнем.
  * Спинка к стене, сиденье в комнату, чуть вправо по Y.
  */
+import { useLoop } from '@tresjs/core'
+import { Euler, Object3D, Quaternion } from 'three'
+import { stashHold } from '~/composables/useStashCamera'
+
 const props = defineProps<{
   innerRightX: number
   innerFrontZ: number
@@ -58,14 +62,62 @@ const hoverD = armD + 0.05
 const hoverY = hoverH / 2
 
 const { glow, onPointerEnter, onPointerLeave } = useStashAnchor('armchair')
+
+const emit = defineEmits<{
+  select: []
+}>()
+
+const restLocal = rotateXZ(armX, armFrontZ + 0.1)
+const restWorldPos: [number, number, number] = [
+  originX + restLocal.x,
+  pdaY,
+  originZ + restLocal.z,
+]
+const restWorldYaw = yaw
+const restQuat = new Quaternion().setFromEuler(new Euler(0, restWorldYaw, 0))
+const holdQuat = new Quaternion()
+const dummy = new Object3D()
+
+const pdaQuat = ref<[number, number, number, number]>([
+  restQuat.x,
+  restQuat.y,
+  restQuat.z,
+  restQuat.w,
+])
+const pdaPos = ref<[number, number, number]>([...restWorldPos])
+const pdaScale = ref(1)
+const { onBeforeRender } = useLoop()
+onBeforeRender(() => {
+  const h = stashHold.value
+  const k = h.id === 'armchair' ? h.lift : 0
+  pdaPos.value = [
+    restWorldPos[0] + (h.x - restWorldPos[0]) * k,
+    restWorldPos[1] + (h.y - restWorldPos[1]) * k,
+    restWorldPos[2] + (h.z - restWorldPos[2]) * k,
+  ]
+  pdaScale.value = 1 + (h.scale - 1) * k
+  if (k < 0.001) {
+    pdaQuat.value = [restQuat.x, restQuat.y, restQuat.z, restQuat.w]
+    return
+  }
+  dummy.position.set(pdaPos.value[0], pdaPos.value[1], pdaPos.value[2])
+  dummy.up.set(0, 1, 0)
+  dummy.lookAt(h.camX, h.camY, h.camZ)
+  dummy.rotateY(Math.PI)
+  holdQuat.copy(dummy.quaternion)
+  const q = restQuat.clone().slerp(holdQuat, k)
+  pdaQuat.value = [q.x, q.y, q.z, q.w]
+})
 </script>
 
 <template>
-  <TresGroup :position="[originX, 0, originZ]" :rotation="[0, yaw, 0]">
+  <TresGroup>
+    <TresGroup :position="[originX, 0, originZ]" :rotation="[0, yaw, 0]">
     <TresMesh
       :position="[0, hoverY, armZ]"
       @pointerenter="onPointerEnter"
       @pointerleave="onPointerLeave"
+      @click="emit('select')"
     >
       <TresBoxGeometry :args="[hoverW, hoverH, hoverD]" />
       <TresMeshBasicMaterial :transparent="true" :opacity="0" :depth-write="false" />
@@ -90,10 +142,15 @@ const { glow, onPointerEnter, onPointerLeave } = useStashAnchor('armchair')
       <TresBoxGeometry :args="[armW, armTop, armD]" />
       <TresMeshStandardMaterial color="#3d2f26" :roughness="1" :metalness="0" />
     </TresMesh>
+    </TresGroup>
 
-    <TresGroup :position="[armX, pdaY, armFrontZ + 0.1]">
-      <TresMesh>
-        <TresBoxGeometry :args="[pdaT, pdaH, pdaW]" />
+    <TresGroup
+      :position="pdaPos"
+      :quaternion="pdaQuat"
+      :scale="[pdaScale, pdaScale, pdaScale]"
+    >
+      <TresMesh @click="emit('select')">
+        <TresBoxGeometry :args="[pdaW, pdaH, pdaT]" />
         <TresMeshStandardMaterial
           color="#5a5e56"
           emissive="#3a4a40"
@@ -102,8 +159,8 @@ const { glow, onPointerEnter, onPointerLeave } = useStashAnchor('armchair')
           :metalness="0.08"
         />
       </TresMesh>
-      <TresMesh :position="[0, 0.008, -pdaW / 2 - 0.003]">
-        <TresBoxGeometry :args="[pdaT * 0.85, pdaH * 0.62, 0.006]" />
+      <TresMesh :position="[0, 0.008, -pdaT / 2 - 0.003]">
+        <TresBoxGeometry :args="[pdaW * 0.85, pdaH * 0.62, 0.006]" />
         <TresMeshStandardMaterial
           color="#5ad08a"
           emissive="#7dffb0"

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Rusty Kerosene Lamp
+* source:	https://sketchfab.com/3d-models/rusty-kerosene-lamp-637b04f33d4b4c1496c937e6dea58542
+* author:	GameDev Nick (https://sketchfab.com/GameDevNick)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Rusty Kerosene Lamp" (https://sketchfab.com/3d-models/rusty-kerosene-lamp-637b04f33d4b4c1496c937e6dea58542) by GameDev Nick (https://sketchfab.com/GameDevNick) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
