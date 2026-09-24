@@ -3,7 +3,7 @@
  * Стол у дальней стены слева: столешница, ЭЛТ, системник, лампа, клавиатура, стул.
  * Локально стол смотрит в +Z (к проёму), спиной к дальней стене.
  */
-import { Box3, Group, Mesh, MeshStandardMaterial, Vector3 } from 'three'
+import { Box3, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, Vector3 } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { useLoader, useLoop } from '@tresjs/core'
 import { stashFocused, retargetDeskCrt } from '~/composables/useStashCamera'
@@ -35,11 +35,24 @@ const papersZ = (pcZ + lampZ) / 2 + 0.04
 const papersSpan = 0.65
 const papersYaw = (22 - 28 - 15) * Math.PI / 180
 
+const pistolLen = 0.2
+const pistolX = papersX
+const pistolZ = papersZ + 0.16
+const pistolY = tableH + 0.005
+const pistolYaw = (-90 - 34 - 40 - 40) * Math.PI / 180
+const pistolRotX = -90 * Math.PI / 180
+
 const chairAngle = (-30 - 160) * Math.PI / 180
 const chairX = pcX + 0.22
 const chairZ = tableD / 2 + 0.04
 const chairH = 1.1
 const seatD = 0.48
+
+const packH = 0.58 * 1.1 * 1.1
+const packX = tableW / 2 + 0.3
+const packZ = 0.12
+const packYaw = (90 + 90) * Math.PI / 180
+const packLeanZ = 14 * Math.PI / 180
 
 const hoverW = tableW + 0.04
 const hoverH = tableH + pcH + 0.02
@@ -81,14 +94,20 @@ function sitGltfOnFloor(scene: Group, heightM: number) {
   return { root, model }
 }
 
-function sitGltfOnFloorBySpan(scene: Group, maxSpanM: number) {
+function sitGltfOnFloorBySpan(scene: Group, maxSpanM: number, extraRot?: [number, number, number]) {
   const root = new Group()
   const model = scene.clone(true)
-  const box = new Box3().setFromObject(model)
+  const pivot = new Group()
+  pivot.add(model)
+  if (extraRot) {
+    pivot.rotation.set(extraRot[0], extraRot[1], extraRot[2])
+    pivot.updateMatrixWorld(true)
+  }
+  const box = new Box3().setFromObject(pivot)
   const size = box.getSize(new Vector3())
   const center = box.getCenter(new Vector3())
-  model.position.set(-center.x, -box.min.y, -center.z)
-  root.add(model)
+  pivot.position.set(-center.x, -box.min.y, -center.z)
+  root.add(pivot)
   const span = Math.max(size.x, size.z, 1e-6)
   root.scale.setScalar(maxSpanM / span)
   return { root, model }
@@ -105,6 +124,34 @@ function forEachStandardMat(object: Group, fn: (mat: MeshStandardMaterial) => vo
         fn(mat)
       }
     }
+  })
+}
+
+function relightUnlit(object: Group) {
+  object.traverse((child) => {
+    if (!(child instanceof Mesh)) {
+      return
+    }
+    const list = Array.isArray(child.material) ? child.material : [child.material]
+    const next = list.map((mat) => {
+      if (mat instanceof MeshStandardMaterial) {
+        mat.metalness = 0
+        mat.metalnessMap = null
+        mat.roughness = 0.9
+        mat.needsUpdate = true
+        return mat
+      }
+      if (mat instanceof MeshBasicMaterial) {
+        return new MeshStandardMaterial({
+          map: mat.map,
+          color: mat.color,
+          roughness: 0.9,
+          metalness: 0,
+        })
+      }
+      return mat
+    })
+    child.material = Array.isArray(child.material) ? next : next[0]
   })
 }
 
@@ -212,6 +259,22 @@ watch(papersGltf, (gltf) => {
   papersModel.value = root
 }, { immediate: true })
 
+const { state: pistolGltf } = useLoader(GLTFLoader, '/models/ptm-02356-1967/scene.gltf')
+const pistolModel = shallowRef<Group | null>(null)
+
+watch(pistolGltf, (gltf) => {
+  const scene = gltf?.scene
+  if (!scene || pistolModel.value) {
+    return
+  }
+  const { root, model } = sitGltfOnFloorBySpan(scene, pistolLen, [pistolRotX, 0, 0])
+  forEachStandardMat(model, (mat) => {
+    mat.metalness = Math.min(mat.metalness, 0.4)
+    mat.needsUpdate = true
+  })
+  pistolModel.value = root
+}, { immediate: true })
+
 const { state: chairGltf } = useLoader(GLTFLoader, '/models/chair-texture-render/scene.gltf')
 const chairModel = shallowRef<Group | null>(null)
 
@@ -228,6 +291,19 @@ watch(chairGltf, (gltf) => {
     mat.needsUpdate = true
   })
   chairModel.value = root
+}, { immediate: true })
+
+const { state: packGltf } = useLoader(GLTFLoader, '/models/backpack/scene.gltf')
+const packModel = shallowRef<Group | null>(null)
+
+watch(packGltf, (gltf) => {
+  const scene = gltf?.scene
+  if (!scene || packModel.value) {
+    return
+  }
+  const { root, model } = sitGltfOnFloor(scene, packH)
+  relightUnlit(model)
+  packModel.value = root
 }, { immediate: true })
 </script>
 
@@ -251,6 +327,9 @@ watch(chairGltf, (gltf) => {
     <TresGroup :position="[papersX, tableH, papersZ]" :rotation="[0, papersYaw, 0]">
       <primitive v-if="papersModel" :object="papersModel" />
     </TresGroup>
+    <TresGroup :position="[pistolX, pistolY, pistolZ]" :rotation="[0, pistolYaw, 0]">
+      <primitive v-if="pistolModel" :object="pistolModel" />
+    </TresGroup>
 
     <TresGroup :position="[lampX, tableH, lampZ]">
       <primitive v-if="lampModel" :object="lampModel" />
@@ -265,6 +344,11 @@ watch(chairGltf, (gltf) => {
 
     <TresGroup :position="[chairX, 0, chairZ]" :rotation="[0, chairAngle, 0]">
       <primitive v-if="chairModel" :object="chairModel" />
+    </TresGroup>
+    <TresGroup :position="[packX, 0, packZ]" :rotation="[0, 0, packLeanZ]">
+      <TresGroup :rotation="[0, packYaw, 0]">
+        <primitive v-if="packModel" :object="packModel" />
+      </TresGroup>
     </TresGroup>
   </TresGroup>
 </template>

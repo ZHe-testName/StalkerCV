@@ -1,9 +1,9 @@
 <script setup lang="ts">
 /**
- * Совковый сервант справа от стола: низ с двумя дверками, верх — открытый короб с полками.
- * Нижний ящик глубже полок — на крышке лежит прибор скилов, криво, ближе к правому краю.
+ * Сервант справа от стола. Модель без полок — прибор скилов на крышке.
  */
-import { Box3, Group, Mesh, MeshStandardMaterial, Vector3 } from 'three'
+import { Box3, Group, Mesh, MeshStandardMaterial, Object3D, Quaternion, Vector3 } from 'three'
+import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { useLoader } from '@tresjs/core'
 import { stashHold } from '~/composables/useStashCamera'
@@ -17,8 +17,6 @@ const cabW = 1.48
 const hutchD = 0.52
 const bodyD = hutchD * 1.5
 const cabH = 0.92
-const hutchH = 1.32
-const board = 0.028
 const doorT = 0.018
 const wallGap = 0.5
 const yaw = -7 * Math.PI / 180
@@ -39,20 +37,6 @@ const footprint = [
 const originX = props.innerRightX - wallGap - Math.max(...footprint.map(p => p.x))
 const originZ = props.innerBackZ - Math.min(...footprint.map(p => p.z))
 
-const bodyY = cabH / 2
-const doorH = cabH - 0.1
-const doorW = cabW / 2 - 0.05
-const doorY = 0.06 + doorH / 2
-const doorZ = bodyD / 2 + doorT / 2
-const stileW = 0.03
-
-const hutchY = cabH + hutchH / 2
-const hutchZ = -bodyD / 2 + hutchD / 2
-const hutchInnerH = hutchH - board
-const shelf1Y = cabH + hutchInnerH / 3
-const shelf2Y = cabH + (hutchInnerH * 2) / 3
-const shelfZ = -bodyD / 2 + (hutchD + board) / 2
-
 const deviceW = 0.26
 const deviceH = 0.13
 const deviceD = 0.2
@@ -62,7 +46,7 @@ const deviceZ = 0.18
 const deviceYaw = -24 * Math.PI / 180
 
 const hoverW = cabW + 0.03
-const hoverH = cabH + hutchH + 0.02
+const hoverH = cabH + 0.16
 const hoverD = bodyD + 0.03
 const hoverY = hoverH / 2
 
@@ -80,14 +64,134 @@ const restWorldPos: [number, number, number] = [
 ]
 const restWorldYaw = yaw + deviceYaw
 
-const svdLen = 1.6
-const svdX = -cabW / 2 - 0.5
+const svdLen = 1.6 * 1.1
+const svdX = -cabW / 2 - 0.28 - 0.02
 const svdY = 0.08
 const svdZ = -bodyD / 2 + 0.39
 const svdLeanX = -8 * Math.PI / 180
 const svdLeanZ = -15 * Math.PI / 180
 const svdYaw = (-90 - 64 - 31 + 32 + 17 + 15) * Math.PI / 180
 const svdRotZ = 172 * Math.PI / 180
+
+const maskSpan = 0.28 * 1.1 * 1.1 * 2.5 * 0.7 * 1.2 * 0.9
+const maskX = cabW / 2 - 0.18 - 0.30
+const maskY = cabH - 0.1 + 0.10
+const maskZ = bodyD / 2 - 0.16
+const maskRotX = -90 * Math.PI / 180
+const maskRotZ = 90 * Math.PI / 180
+const maskYaw = -45 * Math.PI / 180
+const maskExtraX = 90 * Math.PI / 180
+const maskCamX = 50 * Math.PI / 180
+const maskCamZ = 90 * Math.PI / 180
+const maskCamPitch = -90 * Math.PI / 180
+const maskLieX = (86 - 10 - 10) * Math.PI / 180
+const maskLieYaw = (160 + 180 - 90 + 180 - 180 - 30 - 20) * Math.PI / 180
+const maskSnoutX = (-10 + 12 + 10 - 7 + 11) * Math.PI / 180
+const maskFlipZ = 180 * Math.PI / 180
+const maskFlipX = 180 * Math.PI / 180
+
+const radioSpan = 0.36 * 1.2
+const radioWide = 1.25
+const radioTall = 1.3
+const radioX = -0.12 - 0.10
+const radioY = cabH
+const radioZ = -0.05
+const radioYaw = -90 * Math.PI / 180
+
+function findNamed(root: Object3D, name: string) {
+  let found: Object3D | null = null
+  root.traverse((child) => {
+    if (!found && child.name === name) {
+      found = child
+    }
+  })
+  return found
+}
+
+function plantFilterBesideMask(root: Group) {
+  root.updateMatrixWorld(true)
+  const maskObj = findNamed(root, 'Mask_LP')
+  const filterObj = findNamed(root, 'Filter_LP')
+  if (!maskObj || !filterObj) {
+    return
+  }
+  const maskBox = new Box3().setFromObject(maskObj)
+  const filterBox = new Box3().setFromObject(filterObj)
+  const maskC = maskBox.getCenter(new Vector3())
+  const filterC = filterBox.getCenter(new Vector3())
+  const across = new Vector3(filterC.x - maskC.x, 0, filterC.z - maskC.z)
+  const horiz = across.length()
+  if (horiz < 0.02) {
+    return
+  }
+  const dy = filterBox.min.y - maskBox.min.y
+  const angle = Math.atan2(dy, horiz)
+  if (Math.abs(angle) < 0.01) {
+    return
+  }
+  const axis = new Vector3(0, 1, 0).cross(across).normalize()
+  const q = new Quaternion().setFromAxisAngle(axis, angle)
+  root.position.sub(maskC).applyQuaternion(q).add(maskC)
+  root.quaternion.premultiply(q)
+  root.updateMatrixWorld(true)
+}
+
+function sitOnNamedParts(root: Group, names: string[]) {
+  root.updateMatrixWorld(true)
+  const box = new Box3()
+  let any = false
+  for (const name of names) {
+    const obj = findNamed(root, name)
+    if (!obj) {
+      continue
+    }
+    if (!any) {
+      box.setFromObject(obj)
+      any = true
+    }
+    else {
+      box.union(new Box3().setFromObject(obj))
+    }
+  }
+  if (!any) {
+    box.setFromObject(root)
+  }
+  const center = box.getCenter(new Vector3())
+  root.position.x -= center.x
+  root.position.y -= box.min.y
+  root.position.z -= center.z
+}
+
+function sitGltfOnFloor(scene: Group, heightM: number) {
+  const root = new Group()
+  const model = scene.clone(true)
+  const box = new Box3().setFromObject(model)
+  const size = box.getSize(new Vector3())
+  const center = box.getCenter(new Vector3())
+  model.position.set(-center.x, -box.min.y, -center.z)
+  root.add(model)
+  root.scale.setScalar(heightM / (size.y || 1))
+  return { root, model }
+}
+
+function sitGltfOnFloorBySpan(scene: Group, maxSpanM: number, extraRot?: [number, number, number]) {
+  const root = new Group()
+  const model = cloneSkinned(scene) as Group
+  const pivot = new Group()
+  pivot.add(model)
+  if (extraRot) {
+    pivot.rotation.set(extraRot[0], extraRot[1], extraRot[2])
+    pivot.updateMatrixWorld(true)
+  }
+  const box = new Box3().setFromObject(pivot)
+  const size = box.getSize(new Vector3())
+  const center = box.getCenter(new Vector3())
+  pivot.position.set(-center.x, -box.min.y, -center.z)
+  root.add(pivot)
+  const span = Math.max(size.x, size.z, 1e-6)
+  root.scale.setScalar(maxSpanM / span)
+  return { root, model }
+}
 
 function sitLongAxisUp(scene: Group, lengthM: number) {
   const root = new Group()
@@ -134,11 +238,138 @@ watch(svdGltf, (gltf) => {
     return
   }
   const { root, model } = sitLongAxisUp(scene, svdLen)
+  const svdMats = new Set<MeshStandardMaterial>()
+  forEachStandardMat(model, (mat) => svdMats.add(mat))
+  for (const mat of svdMats) {
+    mat.metalness = Math.min(mat.metalness, 0.18)
+    mat.roughness = Math.max(mat.roughness, 0.86)
+    mat.color.multiplyScalar(0.72)
+    mat.needsUpdate = true
+  }
+  svdModel.value = root
+}, { immediate: true })
+
+const { state: cabGltf } = useLoader(GLTFLoader, '/models/cabinet/scene.gltf')
+const cabModel = shallowRef<Group | null>(null)
+
+watch(cabGltf, (gltf) => {
+  const scene = gltf?.scene
+  if (!scene || cabModel.value) {
+    return
+  }
+  const { root, model } = sitGltfOnFloor(scene, cabH)
   forEachStandardMat(model, (mat) => {
-    mat.metalness = Math.min(mat.metalness, 0.4)
+    mat.metalness = 0
+    mat.metalnessMap = null
+    mat.roughness = 0.94
+    mat.color.setRGB(0.36, 0.33, 0.29)
     mat.needsUpdate = true
   })
-  svdModel.value = root
+  cabModel.value = root
+}, { immediate: true })
+
+const { state: radioGltf } = useLoader(GLTFLoader, '/models/radio/scene.gltf')
+const radioModel = shallowRef<Group | null>(null)
+
+watch(radioGltf, (gltf) => {
+  const scene = gltf?.scene
+  if (!scene || radioModel.value) {
+    return
+  }
+  const { root, model } = sitGltfOnFloorBySpan(scene, radioSpan)
+  root.scale.x *= radioWide
+  root.scale.y *= radioTall
+  root.scale.z *= radioWide
+  forEachStandardMat(model, (mat) => {
+    mat.metalness = Math.min(mat.metalness, 0.35)
+    mat.roughness = Math.max(mat.roughness, 0.75)
+    mat.emissiveIntensity = Math.min(mat.emissiveIntensity || 1, 0.45)
+    mat.needsUpdate = true
+  })
+  radioModel.value = root
+}, { immediate: true })
+
+const { state: maskGltf } = useLoader(GLTFLoader, '/models/gp-5-gas-mask-kit/scene.gltf')
+const maskModel = shallowRef<Group | null>(null)
+
+watch(maskGltf, (gltf) => {
+  const scene = gltf?.scene
+  if (!scene || maskModel.value) {
+    return
+  }
+  const { root, model } = sitGltfOnFloorBySpan(scene, maskSpan, [maskRotX, 0, 0])
+  const maskMats = new Set<MeshStandardMaterial>()
+  forEachStandardMat(model, (mat) => maskMats.add(mat))
+  for (const mat of maskMats) {
+    mat.metalness = 0
+    mat.metalnessMap = null
+    mat.roughness = 0.94
+    mat.roughnessMap = null
+    mat.color.multiplyScalar(0.62)
+    mat.needsUpdate = true
+  }
+  model.traverse((child) => {
+    if (!(child instanceof Mesh)) {
+      return
+    }
+    const onEye = child.name === 'Eye_LP' || child.parent?.name === 'Eye_LP'
+    if (!onEye) {
+      return
+    }
+    const src = Array.isArray(child.material) ? child.material[0] : child.material
+    if (!(src instanceof MeshStandardMaterial)) {
+      return
+    }
+    const glass = src.clone()
+    glass.metalness = 0
+    glass.metalnessMap = null
+    glass.roughness = 1
+    glass.roughnessMap = null
+    glass.normalMap = null
+    glass.envMapIntensity = 0
+    glass.color.multiplyScalar(0.5)
+    glass.needsUpdate = true
+    child.material = glass
+  })
+  const spin = new Group()
+  spin.add(root)
+  spin.rotation.z = maskRotZ
+  const yaw = new Group()
+  yaw.add(spin)
+  yaw.rotation.y = maskYaw
+  const tilt = new Group()
+  tilt.add(yaw)
+  tilt.rotation.x = maskExtraX
+  const lean = new Group()
+  lean.add(tilt)
+  lean.rotation.x = maskCamX
+  const camSpin = new Group()
+  camSpin.add(lean)
+  camSpin.rotation.z = maskCamZ
+  const camPitch = new Group()
+  camPitch.add(camSpin)
+  camPitch.rotation.x = maskCamPitch
+  const lieX = new Group()
+  lieX.add(camPitch)
+  lieX.rotation.x = maskLieX
+  const lieYaw = new Group()
+  lieYaw.add(lieX)
+  lieYaw.rotation.y = maskLieYaw
+  const snout = new Group()
+  snout.add(lieYaw)
+  snout.rotation.x = maskSnoutX
+  const flipZ = new Group()
+  flipZ.add(snout)
+  flipZ.rotation.z = maskFlipZ
+  const flipX = new Group()
+  flipX.add(flipZ)
+  flipX.rotation.x = maskFlipX
+  flipX.updateMatrixWorld(true)
+  plantFilterBesideMask(flipX)
+  sitOnNamedParts(flipX, ['Mask_LP', 'Filter_LP'])
+  const holder = new Group()
+  holder.add(flipX)
+  maskModel.value = holder
 }, { immediate: true })
 
 const devicePose = computed(() => {
@@ -172,55 +403,17 @@ const devicePose = computed(() => {
       <TresBoxGeometry :args="[hoverW, hoverH, hoverD]" />
       <TresMeshBasicMaterial :transparent="true" :opacity="0" :depth-write="false" />
     </TresMesh>
-    <TresMesh :position="[0, bodyY, 0]">
-      <TresBoxGeometry :args="[cabW, cabH, bodyD]" />
-      <TresMeshStandardMaterial color="#5a3f32" :roughness="1" :metalness="0" />
-    </TresMesh>
-    <TresMesh :position="[0, 0.025, bodyD / 2 + 0.004]">
-      <TresBoxGeometry :args="[cabW - 0.04, 0.05, 0.008]" />
-      <TresMeshStandardMaterial color="#4a342a" :roughness="1" :metalness="0" />
-    </TresMesh>
-    <TresMesh :position="[-doorW / 2 - stileW / 2, doorY, doorZ]">
-      <TresBoxGeometry :args="[doorW, doorH, doorT]" />
-      <TresMeshStandardMaterial color="#6b4c3c" :roughness="0.95" :metalness="0" />
-    </TresMesh>
-    <TresMesh :position="[doorW / 2 + stileW / 2, doorY, doorZ]">
-      <TresBoxGeometry :args="[doorW, doorH, doorT]" />
-      <TresMeshStandardMaterial color="#6b4c3c" :roughness="0.95" :metalness="0" />
-    </TresMesh>
-    <TresMesh :position="[0, doorY, doorZ + 0.002]">
-      <TresBoxGeometry :args="[stileW, doorH, doorT]" />
-      <TresMeshStandardMaterial color="#4a342a" :roughness="1" :metalness="0" />
-    </TresMesh>
-
-    <TresMesh :position="[0, hutchY, -bodyD / 2 + board / 2]">
-      <TresBoxGeometry :args="[cabW, hutchH, board]" />
-      <TresMeshStandardMaterial color="#5a3f32" :roughness="1" :metalness="0" />
-    </TresMesh>
-    <TresMesh :position="[-cabW / 2 + board / 2, hutchY, hutchZ]">
-      <TresBoxGeometry :args="[board, hutchH, hutchD]" />
-      <TresMeshStandardMaterial color="#5a3f32" :roughness="1" :metalness="0" />
-    </TresMesh>
-    <TresMesh :position="[cabW / 2 - board / 2, hutchY, hutchZ]">
-      <TresBoxGeometry :args="[board, hutchH, hutchD]" />
-      <TresMeshStandardMaterial color="#5a3f32" :roughness="1" :metalness="0" />
-    </TresMesh>
-    <TresMesh :position="[0, cabH + hutchH - board / 2, hutchZ]">
-      <TresBoxGeometry :args="[cabW, board, hutchD]" />
-      <TresMeshStandardMaterial color="#5a3f32" :roughness="1" :metalness="0" />
-    </TresMesh>
-    <TresMesh :position="[0, shelf1Y, shelfZ]">
-      <TresBoxGeometry :args="[cabW - board * 2, board, hutchD - board]" />
-      <TresMeshStandardMaterial color="#6b4c3c" :roughness="1" :metalness="0" />
-    </TresMesh>
-    <TresMesh :position="[0, shelf2Y, shelfZ]">
-      <TresBoxGeometry :args="[cabW - board * 2, board, hutchD - board]" />
-      <TresMeshStandardMaterial color="#6b4c3c" :roughness="1" :metalness="0" />
-    </TresMesh>
+    <primitive v-if="cabModel" :object="cabModel" />
     <TresGroup :position="[svdX, svdY, svdZ]" :rotation="[svdLeanX, 0, svdLeanZ]">
       <TresGroup :rotation="[0, svdYaw, 0]">
         <primitive v-if="svdModel" :object="svdModel" />
       </TresGroup>
+    </TresGroup>
+    <TresGroup :position="[radioX, radioY, radioZ]" :rotation="[0, radioYaw, 0]">
+      <primitive v-if="radioModel" :object="radioModel" />
+    </TresGroup>
+    <TresGroup :position="[maskX, maskY, maskZ]">
+      <primitive v-if="maskModel" :object="maskModel" />
     </TresGroup>
     </TresGroup>
 

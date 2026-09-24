@@ -1,9 +1,24 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { TresCanvas } from '@tresjs/core'
 import { stashAway, stashFocused, stashFocus } from '~/composables/useStashCamera'
 
 const showBack = computed(() => stashAway.value || stashFocused.value !== null)
+
+function onKey(e: KeyboardEvent) {
+  if (e.key !== 'Escape' || e.repeat || !showBack.value) {
+    return
+  }
+  e.preventDefault()
+  stashFocus.goHome()
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', onKey)
+})
+onUnmounted(() => {
+  window.removeEventListener('keydown', onKey)
+})
 </script>
 
 <template>
