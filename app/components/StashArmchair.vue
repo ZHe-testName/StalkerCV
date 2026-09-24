@@ -1,11 +1,14 @@
 <script setup lang="ts">
 /**
- * Кресло у правой стены: быльца до пола, КПК на дальнем.
+ * Кресло у правой стены: Old Sofa, КПК на сиденье.
  * Спинка к стене, сиденье в комнату, чуть вправо по Y.
  */
 import { useLoop } from '@tresjs/core'
 import { Euler, Object3D, Quaternion } from 'three'
 import { stashHold } from '~/composables/useStashCamera'
+
+const sofaSrc = '/models/old-sofa/scene.gltf'
+const sofaH = 0.90
 
 const props = defineProps<{
   innerRightX: number
@@ -19,10 +22,7 @@ const seatY = 0.42
 const armW = 0.17
 const armOverhang = 0.07
 const armD = seatD + armOverhang
-const armTop = 0.58
 const backH = 0.72
-const backT = 0.13
-const baseH = seatY - seatT / 2
 const wallGap = 0.43
 const yaw = Math.PI / 2 - 18 * Math.PI / 180
 
@@ -48,13 +48,14 @@ const footprint = [
 const originX = props.innerRightX - wallGap - Math.max(...footprint.map(p => p.x))
 const originZ = props.innerFrontZ - 0.72
 
-const backY = seatY + seatT / 2 + backH / 2
-const backZ = seatD / 2 - backT / 2
-
-const pdaW = 0.13
-const pdaT = 0.045
-const pdaH = 0.16
-const pdaY = armTop + pdaH / 2
+const pdaSeatX = (armX + 0.18) / 2
+const pdaSeatZ = (armFrontZ + 0.1 - 0.08) / 2
+const pdaY = 0.38 - 0.15 + 0.13 - 0.02
+const pdaAlong = 0.15
+const pdaForward = 0.08
+const pdaFromCam = 0.10 + 0.05
+const pdaLeft = 0.05
+const pdaYawRight = -27 * Math.PI / 180
 
 const hoverW = overallW + 0.04
 const hoverH = seatY + seatT / 2 + backH + 0.02
@@ -67,13 +68,13 @@ const emit = defineEmits<{
   select: []
 }>()
 
-const restLocal = rotateXZ(armX, armFrontZ + 0.1)
+const restLocal = rotateXZ(pdaSeatX, pdaSeatZ)
 const restWorldPos: [number, number, number] = [
-  originX + restLocal.x,
+  originX + restLocal.x - pdaLeft,
   pdaY,
-  originZ + restLocal.z,
+  originZ + restLocal.z - pdaAlong + pdaForward - pdaFromCam,
 ]
-const restWorldYaw = yaw
+const restWorldYaw = yaw + pdaYawRight
 const restQuat = new Quaternion().setFromEuler(new Euler(0, restWorldYaw, 0))
 const holdQuat = new Quaternion()
 const dummy = new Object3D()
@@ -103,7 +104,8 @@ onBeforeRender(() => {
   dummy.position.set(pdaPos.value[0], pdaPos.value[1], pdaPos.value[2])
   dummy.up.set(0, 1, 0)
   dummy.lookAt(h.camX, h.camY, h.camZ)
-  dummy.rotateY(Math.PI)
+  dummy.rotateX(Math.PI / 2)
+  dummy.rotateY(Math.PI / 2)
   holdQuat.copy(dummy.quaternion)
   const q = restQuat.clone().slerp(holdQuat, k)
   pdaQuat.value = [q.x, q.y, q.z, q.w]
@@ -122,53 +124,16 @@ onBeforeRender(() => {
       <TresBoxGeometry :args="[hoverW, hoverH, hoverD]" />
       <TresMeshBasicMaterial :transparent="true" :opacity="0" :depth-write="false" />
     </TresMesh>
-    <TresMesh :position="[0, baseH / 2, 0.02]">
-      <TresBoxGeometry :args="[seatW - 0.04, baseH, seatD - 0.12]" />
-      <TresMeshStandardMaterial color="#2c2723" :roughness="1" :metalness="0" />
-    </TresMesh>
-    <TresMesh :position="[0, seatY, 0]">
-      <TresBoxGeometry :args="[seatW, seatT, seatD]" />
-      <TresMeshStandardMaterial color="#45362c" :roughness="1" :metalness="0" />
-    </TresMesh>
-    <TresMesh :position="[0, backY, backZ]">
-      <TresBoxGeometry :args="[seatW, backH, backT]" />
-      <TresMeshStandardMaterial color="#3d2f26" :roughness="1" :metalness="0" />
-    </TresMesh>
-    <TresMesh :position="[-armX, armTop / 2, armZ]">
-      <TresBoxGeometry :args="[armW, armTop, armD]" />
-      <TresMeshStandardMaterial color="#3d2f26" :roughness="1" :metalness="0" />
-    </TresMesh>
-    <TresMesh :position="[armX, armTop / 2, armZ]">
-      <TresBoxGeometry :args="[armW, armTop, armD]" />
-      <TresMeshStandardMaterial color="#3d2f26" :roughness="1" :metalness="0" />
-    </TresMesh>
+    <StashSofaCandidate :src="sofaSrc" :height="sofaH" />
     </TresGroup>
 
     <TresGroup
       :position="pdaPos"
       :quaternion="pdaQuat"
       :scale="[pdaScale, pdaScale, pdaScale]"
+      @click="emit('select')"
     >
-      <TresMesh @click="emit('select')">
-        <TresBoxGeometry :args="[pdaW, pdaH, pdaT]" />
-        <TresMeshStandardMaterial
-          color="#5a5e56"
-          emissive="#3a4a40"
-          :emissive-intensity="glow * 0.2"
-          :roughness="0.65"
-          :metalness="0.08"
-        />
-      </TresMesh>
-      <TresMesh :position="[0, 0.008, -pdaT / 2 - 0.003]">
-        <TresBoxGeometry :args="[pdaW * 0.85, pdaH * 0.62, 0.006]" />
-        <TresMeshStandardMaterial
-          color="#5ad08a"
-          emissive="#7dffb0"
-          :emissive-intensity="glow"
-          :roughness="0.35"
-          :metalness="0"
-        />
-      </TresMesh>
+      <StashPda :glow="glow" />
     </TresGroup>
   </TresGroup>
 </template>

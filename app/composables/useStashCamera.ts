@@ -203,7 +203,6 @@ function makeArmchairShots() {
   const armW = 0.17
   const armOverhang = 0.07
   const armD = seatD + armOverhang
-  const armTop = 0.58
   const wallGap = 0.43
   const yaw = Math.PI / 2 - 18 * Math.PI / 180
   const c = Math.cos(yaw)
@@ -238,24 +237,46 @@ function makeArmchairShots() {
     1.18,
     seatWorld[2] + facing[2] * 0.1,
   ]
-  const pdaLocal = rot(armX, armFrontZ + 0.1)
-  const pda: Vec3 = [originX + pdaLocal.x, armTop + 0.08, originZ + pdaLocal.z]
+  const pdaSeatX = (armX + 0.18) / 2
+  const pdaSeatZ = (armFrontZ + 0.1 - 0.08) / 2
+  const pdaLocal = rot(pdaSeatX, pdaSeatZ)
+  const pda: Vec3 = [originX + pdaLocal.x - 0.05, 0.38 - 0.15 + 0.13 - 0.02, originZ + pdaLocal.z - 0.15 + 0.08 - 0.10 - 0.05]
   const pdaScreen: Vec3 = [
-    pda[0] + facing[0] * PDA_HALF_D,
-    pda[1] + 0.008,
-    pda[2] + facing[2] * PDA_HALF_D,
+    pda[0],
+    pda[1] + 0.01,
+    pda[2],
   ]
   const look = [
     pdaScreen[0] - sit[0],
     pdaScreen[1] - sit[1],
     pdaScreen[2] - sit[2],
   ]
-  const lookLen = Math.hypot(look[0], look[1], look[2]) || 1
+  const sitLookLeft = 20 * Math.PI / 180
+  const sitLookUp = 12 * Math.PI / 180
+  const sitCos = Math.cos(sitLookLeft)
+  const sitSin = Math.sin(sitLookLeft)
+  const sitLookYawed = [
+    look[0] * sitCos + look[2] * sitSin,
+    look[1],
+    -look[0] * sitSin + look[2] * sitCos,
+  ]
+  const sitLookHoriz = Math.hypot(sitLookYawed[0], sitLookYawed[2]) || 1
+  const sitLookAt: Vec3 = [
+    sit[0] + sitLookYawed[0],
+    sit[1] + sitLookYawed[1] + sitLookHoriz * Math.tan(sitLookUp),
+    sit[2] + sitLookYawed[2],
+  ]
+  const sitLook = [
+    sitLookAt[0] - sit[0],
+    sitLookAt[1] - sit[1],
+    sitLookAt[2] - sit[2],
+  ]
+  const sitLookLen = Math.hypot(sitLook[0], sitLook[1], sitLook[2]) || 1
   const holdDist = 0.34
   const hold: Vec3 = [
-    sit[0] + look[0] / lookLen * holdDist,
-    sit[1] + look[1] / lookLen * holdDist,
-    sit[2] + look[2] / lookLen * holdDist,
+    sit[0] + sitLook[0] / sitLookLen * holdDist,
+    sit[1] + sitLook[1] / sitLookLen * holdDist,
+    sit[2] + sitLook[2] / sitLookLen * holdDist,
   ]
   const toCam = [
     sit[0] - hold[0],
@@ -266,7 +287,7 @@ function makeArmchairShots() {
   const face = facingEuler(hold, sit)
   const holdYaw = nearestAngle(yaw, face.yaw)
   const holdPitch = face.pitch
-  const holdRoll = face.roll
+  const holdRoll = 0
   const screenOff = PDA_HALF_D * PDA_SCALE
   const holdLook: Vec3 = [
     hold[0] + toCam[0] / toCamLen * screenOff,
@@ -279,6 +300,7 @@ function makeArmchairShots() {
       lookAt: pdaScreen,
     },
     sit,
+    sitLookAt,
     holdCam: sit,
     pda,
     pdaScreen,
@@ -500,7 +522,7 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
     }
     if (focused === 'armchair') {
       if (stashHold.value.lift > 0.02 || mode === 'to-hold' || mode === 'at-anchor') {
-        startMove(armchair.sit, armchair.pdaScreen, 'to-place')
+        startMove(armchair.sit, armchair.sitLookAt, 'to-place')
         return
       }
       startMove(armchair.stand.position, armchair.stand.lookAt, 'to-stand')
@@ -558,7 +580,7 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
         return
       }
       if (focused === 'armchair') {
-        startMove(armchair.sit, armchair.pdaScreen, 'to-sit')
+        startMove(armchair.sit, armchair.sitLookAt, 'to-sit')
         return
       }
       startMove(sitShot.position, sitShot.lookAt, 'to-sit')
@@ -566,7 +588,7 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
     }
     if (mode === 'to-sit') {
       if (focused === 'armchair') {
-        startMove(armchair.sit, armchair.pdaScreen, 'to-hold')
+        startMove(armchair.sit, armchair.sitLookAt, 'to-hold')
         return
       }
       startMove(readShot.position, readShot.lookAt, 'to-read')

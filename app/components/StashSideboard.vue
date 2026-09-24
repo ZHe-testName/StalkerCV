@@ -1,12 +1,17 @@
 <script setup lang="ts">
 /**
- * Сервант справа от стола. Модель без полок — прибор скилов на крышке.
+ * Сервант справа от стола. Soviet Old Table — прибор скилов на крышке.
  */
 import { Box3, Group, Mesh, MeshStandardMaterial, Object3D, Quaternion, Vector3 } from 'three'
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { useLoader } from '@tresjs/core'
 import { stashHold } from '~/composables/useStashCamera'
+
+const cabSrc = '/models/soviet-old-table/scene.gltf'
+const cabYawY = -90 * Math.PI / 180
+const cabCamZ = 0.05
+const svdLeft = 0.22
 
 const props = defineProps<{
   innerBackZ: number
@@ -35,7 +40,7 @@ const footprint = [
   rotateXZ(-cabW / 2, -bodyD / 2),
 ]
 const originX = props.innerRightX - wallGap - Math.max(...footprint.map(p => p.x))
-const originZ = props.innerBackZ - Math.min(...footprint.map(p => p.z))
+const originZ = props.innerBackZ - Math.min(...footprint.map(p => p.z)) + cabCamZ
 
 const deviceW = 0.26
 const deviceH = 0.13
@@ -65,7 +70,7 @@ const restWorldPos: [number, number, number] = [
 const restWorldYaw = yaw + deviceYaw
 
 const svdLen = 1.6 * 1.1
-const svdX = -cabW / 2 - 0.28 - 0.02
+const svdX = -cabW / 2 - 0.28 - 0.02 - svdLeft
 const svdY = 0.08
 const svdZ = -bodyD / 2 + 0.39
 const svdLeanX = -8 * Math.PI / 180
@@ -162,18 +167,6 @@ function sitOnNamedParts(root: Group, names: string[]) {
   root.position.z -= center.z
 }
 
-function sitGltfOnFloor(scene: Group, heightM: number) {
-  const root = new Group()
-  const model = scene.clone(true)
-  const box = new Box3().setFromObject(model)
-  const size = box.getSize(new Vector3())
-  const center = box.getCenter(new Vector3())
-  model.position.set(-center.x, -box.min.y, -center.z)
-  root.add(model)
-  root.scale.setScalar(heightM / (size.y || 1))
-  return { root, model }
-}
-
 function sitGltfOnFloorBySpan(scene: Group, maxSpanM: number, extraRot?: [number, number, number]) {
   const root = new Group()
   const model = cloneSkinned(scene) as Group
@@ -247,25 +240,6 @@ watch(svdGltf, (gltf) => {
     mat.needsUpdate = true
   }
   svdModel.value = root
-}, { immediate: true })
-
-const { state: cabGltf } = useLoader(GLTFLoader, '/models/cabinet/scene.gltf')
-const cabModel = shallowRef<Group | null>(null)
-
-watch(cabGltf, (gltf) => {
-  const scene = gltf?.scene
-  if (!scene || cabModel.value) {
-    return
-  }
-  const { root, model } = sitGltfOnFloor(scene, cabH)
-  forEachStandardMat(model, (mat) => {
-    mat.metalness = 0
-    mat.metalnessMap = null
-    mat.roughness = 0.94
-    mat.color.setRGB(0.36, 0.33, 0.29)
-    mat.needsUpdate = true
-  })
-  cabModel.value = root
 }, { immediate: true })
 
 const { state: radioGltf } = useLoader(GLTFLoader, '/models/radio/scene.gltf')
@@ -403,7 +377,7 @@ const devicePose = computed(() => {
       <TresBoxGeometry :args="[hoverW, hoverH, hoverD]" />
       <TresMeshBasicMaterial :transparent="true" :opacity="0" :depth-write="false" />
     </TresMesh>
-    <primitive v-if="cabModel" :object="cabModel" />
+    <StashCabinetBody :src="cabSrc" :height="cabH" :yaw-y="cabYawY" />
     <TresGroup :position="[svdX, svdY, svdZ]" :rotation="[svdLeanX, 0, svdLeanZ]">
       <TresGroup :rotation="[0, svdYaw, 0]">
         <primitive v-if="svdModel" :object="svdModel" />
