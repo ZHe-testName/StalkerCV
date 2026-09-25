@@ -52,7 +52,7 @@ TresJS HMR часто падает, если добавить/снять `:rotat
 
 ## Комната сейчас
 
-`StashExperience.vue`: width **6.2**, depth **3.4**, height **2.7**, wall **0.24**. Камера `[0, 1.7, depth/2+0.95]`, fov 56, look-at `[0, 1.15, 0]`. Свет: ambient 0.45, directional `[-6, 3.2, 0.4]` intensity 1.2 (из окна). Пол — Poly Haven «Worn Planks» (`public/textures/worn-planks/`, CC0 Dimitrios Savva), тайл **1.4 м**, 1024 AVIF, доски от камеры к дальней стене. Серый ящик снизу оставлен как плита.
+`StashExperience.vue`: width **6.2**, depth **3.4**, height **2.7**, wall **0.24**. Камера `[0, 1.7, depth/2+0.95]`, fov 56, look-at `[0, 1.15, 0]`. Свет: ambient 0.45, directional `[-6, 3.2, 0.4]` intensity 1.2 (из окна). Пол — Poly Haven «Worn Planks» (`public/textures/worn-planks/`, CC0 Dimitrios Savva), тайл **1.4 м**, 1024 AVIF, доски от камеры к дальней стене. Серый ящик снизу оставлен как плита. Все три стены — микс Broken Brick (1.8 м) + White Rough Plaster (1.0 м), маска **80% штукатурка / 20% кирпич**. Откос окна — только кирпич, без маски. Четвёртая стена открыта. Потолок пока серый.
 
 Проём окна в левой стене — четыре бокса вокруг дырки, не вырезание. `opening`: width 1.35, height 1.15, sill 1.05, z −0.15.
 
@@ -63,6 +63,9 @@ TresJS HMR часто падает, если добавить/снять `:rotat
 - `app/components/StashSideboard.vue` — сервант + прибор скилов
 - `app/components/StashArmchair.vue` — кресло + КПК
 - `app/components/StashFloor.vue` — доски пола (карта, не меш)
+- `app/components/StashWalls.vue` — левая / дальняя / правая
+- `app/components/StashWallMix.vue` — микс кирпич+штукатурка по маске
+- `app/components/StashBrickOnly.vue` — кирпич на откосе окна
 
 ### Окно
 
@@ -96,7 +99,9 @@ Yaw **−7°**. Модель Sketchfab «Soviet Old Table» (`public/models/sovi
 
 Пол — Poly Haven «Worn Planks» (`public/textures/worn-planks/`, CC0 Dimitrios Savva). В glTF с Poly Haven только превью-сфера — в сцену идут карты: diff / nor_gl / ARM, 1024 AVIF, тайл **1.4 м**, `RepeatWrapping`, доски от камеры к дальней стене (без `texture.rotation`). Плита-ящик снизу осталась. Дыр в меше нет — трещины нарисованы. Сломанные доски-пропы — если скажет.
 
-Дальше по шагам: приёмка пола (повтор / поворот / яркость). Потом стены и потолок. Дожать позу КПК / лампы, если скажет. Экран загрузки — потом. Оверлей / имя на стене / текст на КПК — когда скажет.
+Стены: все три — микс Poly Haven Broken Brick Wall (`public/textures/broken-brick/`, CC0 Amal Kumar, тайл **1.8 м**) + White Rough Plaster (`public/textures/white-plaster/`, CC0 Rob Tuytel, тайл **1.0 м**), 1024 AVIF, шейдер по маскам `wall-masks/{left,back,right}.80.png` (**80% штукатурка / 20% кирпич**). Левая из четырёх панелей, UV общие на всю стену. Откос окна — `StashBrickOnly`, без маски. Старый Damaged Plaster удалён. Яркость кладки — когда скажет. Потолок — потом.
+
+Дальше по шагам: приёмка левой + откоса. Потом яркость / потолок. Дожать позу КПК / лампы, если скажет. Экран загрузки — потом. Оверлей / имя на стене / текст на КПК — когда скажет.
 
 Потом / не сейчас: шлифовка камер после контента, мобильный редирект, пост, камень окна, ветер форточки, стафф на полках.
 
@@ -104,9 +109,9 @@ Yaw **−7°**. Модель Sketchfab «Soviet Old Table» (`public/models/sovi
 
 Тормоз не полигоны (стол ~800, лампа ~12k, комп ~30k) и не «невидимые стенки». Sketchfab кладёт **8K/4K**. Один metallic PNG компа был **47 МБ / 8192²** — декод PNG на главном потоке и заливка в GPU. Параллельный fetch уже есть, он не спасает декод.
 
-Правило: в `public/models` обычно **512 AVIF** (`*.512.avif`, `EXT_texture_avif`). Исключения: диван `old-sofa` и КПК `stalker-pda` — **2048 AVIF** (`*.2k.avif`); напольная лампа `wooden-floor-lamp` и пол `worn-planks` — **1024 AVIF** (`*.1k.avif`). Скрипт `scripts/compress-model-textures.mjs 512 avif --in <src> --out <dest>` (нужен `sharp`). Сырой дамп из Загрузок в репу не класть. Резать грани / Draco — потом, если меши станут тяжёлыми.
+Правило: в `public/models` обычно **512 AVIF** (`*.512.avif`, `EXT_texture_avif`). Исключения: диван `old-sofa` и КПК `stalker-pda` — **2048 AVIF** (`*.2k.avif`); напольная лампа `wooden-floor-lamp`, пол `worn-planks`, кирпич `broken-brick` и штукатурка `white-plaster` — **1024 AVIF** (`*.1k.avif`). Скрипт `scripts/compress-model-textures.mjs 512 avif --in <src> --out <dest>` (нужен `sharp`). Сырой дамп из Загрузок в репу не класть. Резать грани / Draco — потом, если меши станут тяжёлыми.
 
-Модели **12.31 МБ** (bin **8.69**, AVIF **3.45**, glTF ~165 КБ). Пол Worn Planks ещё **0.36 МБ** (diff 0.13 + ARM 0.20 + normal 0.03). Вместе **~12.67 МБ**. Тяжёлые модели: диван **2.41 МБ**, рюкзак **1.94**, комп и ПМ по **1.29**, стул **1.13**, радио **1.12**, СВД **1.09**, КПК **0.88**. Напольная лампа **0.37 МБ**. Керосинка **0.34**. GP-5 ~0.17. Сервант и стол лёгкие.
+Модели **12.31 МБ** (bin **8.69**, AVIF **3.45**, glTF ~165 КБ). Пол Worn Planks **0.36 МБ**. Кирпич + штукатурка микса — отдельные 1024 AVIF. Тяжёлые модели: диван **2.41 МБ**, рюкзак **1.94**, комп и ПМ по **1.29**, стул **1.13**, радио **1.12**, СВД **1.09**, КПК **0.88**. Напольная лампа **0.37 МБ**. Керосинка **0.34**. GP-5 ~0.17. Сервант и стол лёгкие.
 
 ## Сознательно не делаем
 

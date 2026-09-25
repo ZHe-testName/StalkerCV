@@ -15,10 +15,7 @@ const room = {
 
 const floorY = -room.wall / 2
 const ceilingY = room.height + room.wall / 2
-const wallY = room.height / 2
-const backZ = -(room.depth / 2) + room.wall / 2
 const leftX = -(room.width / 2) + room.wall / 2
-const rightX = room.width / 2 - room.wall / 2
 
 // Проём в левой стене. Рама — отдельный StashWindow.
 const opening = {
@@ -27,13 +24,6 @@ const opening = {
   sill: 1.05,
   z: -0.15,
 }
-
-const openingMinZ = opening.z - opening.width / 2
-const openingMaxZ = opening.z + opening.width / 2
-const openingTop = opening.sill + opening.height
-const wallTopH = room.height - openingTop
-const wallBackD = openingMinZ - (-room.depth / 2)
-const wallFrontD = room.depth / 2 - openingMaxZ
 
 const cameraPosition: [number, number, number] = [
   0,
@@ -81,29 +71,7 @@ const lampH = 1.55
     <TresMeshStandardMaterial color="#2f2f2f" :roughness="1" :metalness="0" />
   </TresMesh>
 
-  <!-- Задняя стена (−Z) -->
-  <TresMesh :position="[0, wallY, backZ]">
-    <TresBoxGeometry :args="[room.width, room.height, room.wall]" />
-    <TresMeshStandardMaterial color="#6a6a6a" :roughness="1" :metalness="0" />
-  </TresMesh>
-
-  <!-- Левая стена (−X): четыре ящика вокруг проёма, дырку не строим -->
-  <TresMesh :position="[leftX, opening.sill / 2, 0]">
-    <TresBoxGeometry :args="[room.wall, opening.sill, room.depth]" />
-    <TresMeshStandardMaterial color="#5c5c5c" :roughness="1" :metalness="0" />
-  </TresMesh>
-  <TresMesh :position="[leftX, openingTop + wallTopH / 2, 0]">
-    <TresBoxGeometry :args="[room.wall, wallTopH, room.depth]" />
-    <TresMeshStandardMaterial color="#5c5c5c" :roughness="1" :metalness="0" />
-  </TresMesh>
-  <TresMesh :position="[leftX, opening.sill + opening.height / 2, -room.depth / 2 + wallBackD / 2]">
-    <TresBoxGeometry :args="[room.wall, opening.height, wallBackD]" />
-    <TresMeshStandardMaterial color="#5c5c5c" :roughness="1" :metalness="0" />
-  </TresMesh>
-  <TresMesh :position="[leftX, opening.sill + opening.height / 2, openingMaxZ + wallFrontD / 2]">
-    <TresBoxGeometry :args="[room.wall, opening.height, wallFrontD]" />
-    <TresMeshStandardMaterial color="#5c5c5c" :roughness="1" :metalness="0" />
-  </TresMesh>
+  <StashWalls :room="room" :opening="opening" />
 
   <StashWindow
     :wall-x="leftX"
@@ -132,10 +100,4 @@ const lampH = 1.55
   <TresGroup :position="[lampX, 0, lampZ]">
     <StashFloorLamp :src="lampSrc" :height="lampH" />
   </TresGroup>
-
-  <!-- Правая стена (+X) -->
-  <TresMesh :position="[rightX, wallY, 0]">
-    <TresBoxGeometry :args="[room.wall, room.height, room.depth]" />
-    <TresMeshStandardMaterial color="#5c5c5c" :roughness="1" :metalness="0" />
-  </TresMesh>
 </template>
