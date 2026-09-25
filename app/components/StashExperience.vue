@@ -71,8 +71,9 @@ const lampH = 1.55
   <!-- Пол: тонкий бокс, верхняя грань на y = 0 -->
   <TresMesh :position="[0, floorY, 0]">
     <TresBoxGeometry :args="[room.width, room.wall, room.depth]" />
-    <TresMeshStandardMaterial color="#4a4a4a" :roughness="1" :metalness="0" />
+    <TresMeshStandardMaterial color="#3a2e24" :roughness="1" :metalness="0" />
   </TresMesh>
+  <StashFloor :width="room.width" :depth="room.depth" />
 
   <!-- Потолок -->
   <TresMesh :position="[0, ceilingY, 0]">
