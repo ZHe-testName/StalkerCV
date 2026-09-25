@@ -8,6 +8,7 @@ import { useLoop } from '@tresjs/core'
 import { stashFocused, type AnchorId } from '~/composables/useStashCamera'
 
 let hoverCount = 0
+export const stashHovered = ref<AnchorId | null>(null)
 
 export function useStashAnchor(id: AnchorId) {
   const hovered = ref(false)
@@ -32,6 +33,7 @@ export function useStashAnchor(id: AnchorId) {
       return
     }
     hovered.value = true
+    stashHovered.value = id
     hoverCount++
     document.body.style.cursor = 'pointer'
   }
@@ -46,6 +48,9 @@ export function useStashAnchor(id: AnchorId) {
         return
       }
       hovered.value = false
+      if (stashHovered.value === id) {
+        stashHovered.value = null
+      }
       hoverCount = Math.max(0, hoverCount - 1)
       if (hoverCount === 0) {
         document.body.style.cursor = ''
@@ -59,6 +64,9 @@ export function useStashAnchor(id: AnchorId) {
     }
     if (hovered.value) {
       hovered.value = false
+      if (stashHovered.value === id) {
+        stashHovered.value = null
+      }
       hoverCount = Math.max(0, hoverCount - 1)
       if (hoverCount === 0) {
         document.body.style.cursor = ''

@@ -48,6 +48,11 @@ const innerFrontZ = room.depth / 2
 
 const homeLookAt: [number, number, number] = [0, 1.15, 0]
 const { position, lookAt, goTo } = useStashCamera(cameraPosition, homeLookAt)
+
+const lampSrc = '/models/wooden-floor-lamp/scene.gltf'
+const lampX = innerRightX - 0.30 - 0.10
+const lampZ = 0.18 - 0.30 - 0.10
+const lampH = 1.55
 </script>
 
 <template>
@@ -122,6 +127,10 @@ const { position, lookAt, goTo } = useStashCamera(cameraPosition, homeLookAt)
     :inner-front-z="innerFrontZ"
     @select="goTo('armchair')"
   />
+
+  <TresGroup :position="[lampX, 0, lampZ]">
+    <StashFloorLamp :src="lampSrc" :height="lampH" />
+  </TresGroup>
 
   <!-- Правая стена (+X) -->
   <TresMesh :position="[rightX, wallY, 0]">
