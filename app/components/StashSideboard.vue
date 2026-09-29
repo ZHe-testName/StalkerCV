@@ -5,8 +5,8 @@
 import { Box3, Group, Mesh, MeshStandardMaterial, Object3D, Quaternion, Vector3 } from 'three'
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import { useLoader } from '@tresjs/core'
-import { stashHold } from '~/composables/useStashCamera'
+import { useLoader, useLoop } from '@tresjs/core'
+import { stashFocused, stashHold } from '~/composables/useStashCamera'
 
 const cabSrc = '/models/soviet-old-table/scene.gltf'
 const cabYawY = -90 * Math.PI / 180
@@ -59,7 +59,7 @@ const emit = defineEmits<{
   select: []
 }>()
 
-const { glow, onPointerEnter, onPointerLeave } = useStashAnchor('sideboard')
+const { hovered, glow, onPointerEnter, onPointerLeave } = useStashAnchor('sideboard')
 
 const restLocal = rotateXZ(deviceX, deviceZ)
 const restWorldPos: [number, number, number] = [
@@ -102,6 +102,86 @@ const radioX = -0.12 - 0.10
 const radioY = cabH
 const radioZ = -0.05
 const radioYaw = -90 * Math.PI / 180
+
+const papersSpan = 0.42
+const papersX = 0
+const papersY = 0.553
+const papersZ = 0.05 - 0.06
+const papersYaw = 17 * Math.PI / 180
+
+const nicheLeftX = -0.337
+const nicheFloorY = 0.206
+const milkSpan = 0.078
+const milkCans = [
+  { x: nicheLeftX + 0.05 + milkSpan / 2, z: 0.12, yaw: 0, lie: false },
+  { x: nicheLeftX + 0.05 + milkSpan / 2 + milkSpan + 0.04, z: 0.12 + 0.03, yaw: 25 * Math.PI / 180, lie: false },
+  { x: nicheLeftX + 0.05 + milkSpan / 2 + (milkSpan + 0.04) * 2 - milkSpan, z: 0.12 + 0.03 + 0.05 + 0.03, yaw: 10 * Math.PI / 180, lie: true },
+]
+
+const radioTopY = 1.081
+const radioFarLeft = { x: -0.424, z: -0.32 }
+const medkitSpan = 0.2 * 0.8
+const medkitLowSrc = '/models/medkit-low/scene.gltf'
+const medkitHighSrc = '/models/medkit-high/scene.gltf'
+const medkitBase = {
+  src: medkitLowSrc,
+  x: radioFarLeft.x + 0.02 + 0.178 / 2 - 0.03,
+  z: radioFarLeft.z + 0.02 + 0.2 / 2 + 0.04,
+  yaw: (4 + 7) * Math.PI / 180,
+}
+const medkitMid = {
+  src: medkitLowSrc,
+  x: medkitBase.x - 0.03,
+  z: medkitBase.z + 0.03,
+  yaw: medkitBase.yaw + 14 * Math.PI / 180,
+}
+const medkitStack = [
+  medkitBase,
+  medkitMid,
+  {
+    src: medkitHighSrc,
+    x: medkitMid.x + 0.08,
+    z: medkitMid.z + 0.02,
+    yaw: medkitMid.yaw - 20 * Math.PI / 180,
+  },
+]
+
+const artifactSpan = 0.1 * 1.2
+const artifactX = 0.12
+const artifactY = papersY + 0.03 + 0.02
+const artifactZ = 0.27
+const artifactBobAmp = 0.01
+const artifactBobPeriod = 4.5 / 2
+const artifactLightColor = '#2ee6ee'
+const artifactLightIdle = 0.3
+const artifactLightHot = 1.4
+const artifactGlowIdle = 1
+const artifactGlowHot = 2.4
+const artifactHoverLift = 0.10 - artifactBobAmp
+const artifactSpinSpeed = -2 * Math.PI / 2.3
+
+const artifactBob = ref(0)
+const artifactSpin = ref(0)
+const artifactLight = ref(artifactLightIdle)
+const artifactGlowMats: MeshStandardMaterial[] = []
+let artifactTime = 0
+let artifactLift = 0
+let artifactSpinVel = 0
+const { onBeforeRender } = useLoop()
+onBeforeRender(({ delta }) => {
+  const lit = hovered.value || stashFocused.value === 'sideboard'
+  artifactTime += delta
+  artifactLift += ((lit ? 1 : 0) - artifactLift) * (1 - Math.exp(-3.2 * delta))
+  artifactSpinVel += ((lit ? artifactSpinSpeed : 0) - artifactSpinVel) * (1 - Math.exp(-2.5 * delta))
+  artifactSpin.value += artifactSpinVel * delta
+  const bob = artifactBobAmp * Math.sin(artifactTime * 2 * Math.PI / artifactBobPeriod)
+  artifactBob.value = bob + (artifactHoverLift - bob) * artifactLift
+  artifactLight.value = artifactLightIdle + (artifactLightHot - artifactLightIdle) * artifactLift
+  const glowK = artifactGlowIdle + (artifactGlowHot - artifactGlowIdle) * artifactLift
+  for (const mat of artifactGlowMats) {
+    mat.emissiveIntensity = glowK
+  }
+})
 
 function findNamed(root: Object3D, name: string) {
   let found: Object3D | null = null
@@ -186,6 +266,29 @@ function sitGltfOnFloorBySpan(scene: Group, maxSpanM: number, extraRot?: [number
   return { root, model }
 }
 
+// Рипы из игры — skinned mesh: sitGltfOnFloorBySpan меряет bind-позу, досаживаем по bbox со скиннингом.
+function seatSkinned(root: Group) {
+  root.updateMatrixWorld(true)
+  const box = new Box3().setFromObject(root, true)
+  const c = box.getCenter(new Vector3())
+  root.position.x -= c.x
+  root.position.y -= box.min.y
+  root.position.z -= c.z
+  root.updateMatrixWorld(true)
+  return new Box3().setFromObject(root, true).getSize(new Vector3()).y
+}
+
+function sitSkinnedBySpan(scene: Group, maxSpanM: number) {
+  const root = new Group()
+  const model = cloneSkinned(scene) as Group
+  root.add(model)
+  root.updateMatrixWorld(true)
+  const size = new Box3().setFromObject(root, true).getSize(new Vector3())
+  root.scale.setScalar(maxSpanM / Math.max(size.x, size.z, 1e-6))
+  const height = seatSkinned(root)
+  return { root, model, height }
+}
+
 function sitLongAxisUp(scene: Group, lengthM: number) {
   const root = new Group()
   const model = scene.clone(true)
@@ -261,6 +364,101 @@ watch(radioGltf, (gltf) => {
     mat.needsUpdate = true
   })
   radioModel.value = root
+}, { immediate: true })
+
+const { state: papersGltf } = useLoader(GLTFLoader, '/models/papers-envelopes/scene.gltf')
+const papersModel = shallowRef<Group | null>(null)
+
+watch(papersGltf, (gltf) => {
+  const scene = gltf?.scene
+  if (!scene || papersModel.value) {
+    return
+  }
+  const { root, model } = sitGltfOnFloorBySpan(scene, papersSpan)
+  forEachStandardMat(model, (mat) => {
+    mat.metalness = 0
+    mat.metalnessMap = null
+    mat.roughness = 0.9
+    mat.needsUpdate = true
+  })
+  papersModel.value = root
+}, { immediate: true })
+
+const { state: milkGltf } = useLoader(GLTFLoader, '/models/condensed-milk/scene.gltf')
+const milkModels = shallowRef<Group[]>([])
+
+watch(milkGltf, (gltf) => {
+  const scene = gltf?.scene
+  if (!scene || milkModels.value.length) {
+    return
+  }
+  milkModels.value = milkCans.map((can) => {
+    const { root, model } = sitGltfOnFloorBySpan(scene, milkSpan, can.lie ? [0, 0, Math.PI / 2] : undefined)
+    forEachStandardMat(model, (mat) => {
+      mat.metalness = 0
+      mat.needsUpdate = true
+    })
+    seatSkinned(root)
+    return root
+  })
+}, { immediate: true })
+
+const { state: medkitLowGltf } = useLoader(GLTFLoader, medkitLowSrc)
+const { state: medkitHighGltf } = useLoader(GLTFLoader, medkitHighSrc)
+const medkitModels = shallowRef<Group[]>([])
+const medkitHeights = ref<number[]>([])
+const medkitY = computed(() => medkitStack.map((_, i) =>
+  radioTopY + medkitHeights.value.slice(0, i).reduce((sum, h) => sum + h, 0)))
+
+function seatMedkit(scene: Group) {
+  const { root, model, height: h } = sitSkinnedBySpan(scene, medkitSpan)
+  forEachStandardMat(model, (mat) => {
+    mat.metalness = 0
+    mat.roughness = 0.7
+    mat.needsUpdate = true
+  })
+  return { root, height: h }
+}
+
+watch([medkitLowGltf, medkitHighGltf], ([lowGltf, highGltf]) => {
+  const low = lowGltf?.scene
+  const high = highGltf?.scene
+  if (!low || !high || medkitModels.value.length) {
+    return
+  }
+  const scenes: Record<string, Group> = {
+    [medkitLowSrc]: low,
+    [medkitHighSrc]: high,
+  }
+  const roots: Group[] = []
+  const heights: number[] = []
+  for (const kit of medkitStack) {
+    const { root, height: h } = seatMedkit(scenes[kit.src])
+    roots.push(root)
+    heights.push(h)
+  }
+  medkitHeights.value = heights
+  medkitModels.value = roots
+}, { immediate: true })
+
+const { state: artifactGltf } = useLoader(GLTFLoader, '/models/cyan-artifact/scene.gltf')
+const artifactModel = shallowRef<Group | null>(null)
+
+watch(artifactGltf, (gltf) => {
+  const scene = gltf?.scene
+  if (!scene || artifactModel.value) {
+    return
+  }
+  const { root, model } = sitGltfOnFloorBySpan(scene, artifactSpan)
+  artifactGlowMats.length = 0
+  forEachStandardMat(model, (mat) => {
+    mat.metalness = 0
+    mat.needsUpdate = true
+    if (mat.emissive.getHex() !== 0) {
+      artifactGlowMats.push(mat)
+    }
+  })
+  artifactModel.value = root
 }, { immediate: true })
 
 const { state: maskGltf } = useLoader(GLTFLoader, '/models/gp-5-gas-mask-kit/scene.gltf')
@@ -388,6 +586,37 @@ const devicePose = computed(() => {
     </TresGroup>
     <TresGroup :position="[maskX, maskY, maskZ]">
       <primitive v-if="maskModel" :object="maskModel" />
+    </TresGroup>
+    <TresGroup :position="[papersX, papersY, papersZ]" :rotation="[0, papersYaw, 0]">
+      <primitive v-if="papersModel" :object="papersModel" />
+    </TresGroup>
+    <TresGroup
+      v-for="(kit, i) in medkitStack"
+      :key="`medkit-${i}`"
+      :position="[kit.x, medkitY[i], kit.z]"
+      :rotation="[0, kit.yaw, 0]"
+    >
+      <primitive v-if="medkitModels[i]" :object="medkitModels[i]" />
+    </TresGroup>
+    <TresGroup
+      v-for="(can, i) in milkCans"
+      :key="`milk-${i}`"
+      :position="[can.x, nicheFloorY, can.z]"
+      :rotation="[0, can.yaw, 0]"
+    >
+      <primitive v-if="milkModels[i]" :object="milkModels[i]" />
+    </TresGroup>
+    <TresGroup :position="[artifactX, artifactY + artifactBob, artifactZ]">
+      <TresGroup :rotation="[0, artifactSpin, 0]">
+        <primitive v-if="artifactModel" :object="artifactModel" />
+      </TresGroup>
+      <TresPointLight
+        :position="[0, artifactSpan / 2, 0]"
+        :color="artifactLightColor"
+        :intensity="artifactLight"
+        :distance="0.9"
+        :decay="2"
+      />
     </TresGroup>
     </TresGroup>
 

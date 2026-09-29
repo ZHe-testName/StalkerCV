@@ -1,0 +1,11 @@
+Model Information:
+* title:	Medkit Low
+* source:	https://sketchfab.com/3d-models/medkit-low-540c34322bcd47ac8a98dc16123bd6de
+* author:	Stalker_3Dmodeles (https://sketchfab.com/Stalker_3Dmodeles)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Medkit Low" (https://sketchfab.com/3d-models/medkit-low-540c34322bcd47ac8a98dc16123bd6de) by Stalker_3Dmodeles (https://sketchfab.com/Stalker_3Dmodeles) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
