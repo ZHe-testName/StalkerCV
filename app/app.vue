@@ -3,6 +3,10 @@ import { computed, onMounted, onUnmounted } from 'vue'
 import { TresCanvas } from '@tresjs/core'
 import { stashAway, stashFocused, stashFocus } from '~/composables/useStashCamera'
 
+useStashBootLoad()
+
+const sceneOpen = ref(false)
+provide('stashSceneOpen', sceneOpen)
 const showBack = computed(() => stashAway.value || stashFocused.value !== null)
 
 function onKey(e: KeyboardEvent) {
@@ -25,11 +29,14 @@ onUnmounted(() => {
   <NuxtRouteAnnouncer />
   <TresCanvas
     window-size
+    render-mode="manual"
     clear-color="#0b0b0c"
   >
+    <StashRenderGate />
     <StashExperience />
   </TresCanvas>
   <div class="stash-vignette" aria-hidden="true" />
+  <StashBoot v-if="!sceneOpen" @enter="sceneOpen = true" />
   <Teleport to="body">
     <button
       v-show="showBack"
