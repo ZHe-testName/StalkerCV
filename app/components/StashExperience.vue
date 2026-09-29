@@ -58,6 +58,11 @@ const carpetZ = 0.845 - 1.2 + 0.50
 const ammoSrc = '/models/ammobox/scene.gltf'
 const ammoH = 0.30
 const ammoZ = opening.z + 0.25 + 0.20
+
+const iconSrc = '/models/stalker-icon/scene.gltf'
+const iconH = 0.36
+const iconTop = opening.sill + opening.height - 0.15
+const iconZ = (opening.z - opening.width / 2 + innerBackZ) / 2
 </script>
 
 <template>
@@ -138,5 +143,13 @@ const ammoZ = opening.z + 0.25 + 0.20
     :height="ammoH"
     :wall-x="innerLeftX"
     :z="ammoZ"
+  />
+
+  <StashWallIcon
+    :src="iconSrc"
+    :height="iconH"
+    :wall-x="innerLeftX"
+    :z="iconZ"
+    :top="iconTop"
   />
 </template>

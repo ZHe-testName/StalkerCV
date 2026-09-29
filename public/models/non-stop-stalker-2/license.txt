@@ -1,0 +1,11 @@
+Model Information:
+* title:	Non Stop S.T.A.L.K.E.R. 2
+* source:	https://sketchfab.com/3d-models/non-stop-stalker-2-7e834f02d2ef4ec7a8f92a35b0a5650b
+* author:	Alex_Bond (https://sketchfab.com/alexandr.bondarevskyi)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Non Stop S.T.A.L.K.E.R. 2" (https://sketchfab.com/3d-models/non-stop-stalker-2-7e834f02d2ef4ec7a8f92a35b0a5650b) by Alex_Bond (https://sketchfab.com/alexandr.bondarevskyi) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

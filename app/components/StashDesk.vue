@@ -42,6 +42,17 @@ const pistolY = tableH + 0.005
 const pistolYaw = (-90 - 34 - 40 - 40) * Math.PI / 180
 const pistolRotX = -90 * Math.PI / 180
 
+const silencerLen = 0.14
+const silencerX = pistolX
+const silencerZ = pistolZ - 0.12 - 0.08
+const silencerY = tableH + 0.005
+const silencerYaw = pistolYaw - 26 * Math.PI / 180
+
+const canH = 0.14 * 1.5 * 1.1
+const canX = pcX + (silencerX - pcX) * 0.68
+const canZ = silencerZ - 0.04
+const canY = tableH
+
 const chairAngle = (-30 - 160) * Math.PI / 180
 const chairX = pcX + 0.22
 const chairZ = tableD / 2 + 0.04
@@ -275,6 +286,39 @@ watch(pistolGltf, (gltf) => {
   pistolModel.value = root
 }, { immediate: true })
 
+const { state: silencerGltf } = useLoader(GLTFLoader, '/models/makarov-pistol-silencer/scene.gltf')
+const silencerModel = shallowRef<Group | null>(null)
+
+watch(silencerGltf, (gltf) => {
+  const scene = gltf?.scene
+  if (!scene || silencerModel.value) {
+    return
+  }
+  const { root, model } = sitGltfOnFloorBySpan(scene, silencerLen)
+  forEachStandardMat(model, (mat) => {
+    mat.metalness = Math.min(mat.metalness, 0.4)
+    mat.needsUpdate = true
+  })
+  silencerModel.value = root
+}, { immediate: true })
+
+const { state: canGltf } = useLoader(GLTFLoader, '/models/non-stop-stalker-2/scene.gltf')
+const canModel = shallowRef<Group | null>(null)
+
+watch(canGltf, (gltf) => {
+  const scene = gltf?.scene
+  if (!scene || canModel.value) {
+    return
+  }
+  const { root, model } = sitGltfOnFloor(scene, canH)
+  forEachStandardMat(model, (mat) => {
+    mat.metalness = Math.min(mat.metalness, 0.18)
+    mat.roughness = Math.max(mat.roughness, 0.55)
+    mat.needsUpdate = true
+  })
+  canModel.value = root
+}, { immediate: true })
+
 const { state: chairGltf } = useLoader(GLTFLoader, '/models/chair-texture-render/scene.gltf')
 const chairModel = shallowRef<Group | null>(null)
 
@@ -329,6 +373,12 @@ watch(packGltf, (gltf) => {
     </TresGroup>
     <TresGroup :position="[pistolX, pistolY, pistolZ]" :rotation="[0, pistolYaw, 0]">
       <primitive v-if="pistolModel" :object="pistolModel" />
+    </TresGroup>
+    <TresGroup :position="[silencerX, silencerY, silencerZ]" :rotation="[0, silencerYaw, 0]">
+      <primitive v-if="silencerModel" :object="silencerModel" />
+    </TresGroup>
+    <TresGroup :position="[canX, canY, canZ]">
+      <primitive v-if="canModel" :object="canModel" />
     </TresGroup>
 
     <TresGroup :position="[lampX, tableH, lampZ]">

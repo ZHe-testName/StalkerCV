@@ -1,0 +1,11 @@
+Model Information:
+* title:	Икона
+* source:	https://sketchfab.com/3d-models/f84702d46cf544438c6b717538c28ed4
+* author:	Redisca (https://sketchfab.com/228strelokstalker228)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Икона" (https://sketchfab.com/3d-models/f84702d46cf544438c6b717538c28ed4) by Redisca (https://sketchfab.com/228strelokstalker228) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
