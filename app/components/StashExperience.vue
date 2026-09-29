@@ -54,6 +54,10 @@ const lampH = 1.55
 const carpetSrc = '/models/carpet/scene.gltf'
 const carpetLong = 1.55 * 1.3 * 1.2
 const carpetZ = 0.845 - 1.2 + 0.50
+
+const ammoSrc = '/models/ammobox/scene.gltf'
+const ammoH = 0.30
+const ammoZ = opening.z + 0.25 + 0.20
 </script>
 
 <template>
@@ -127,5 +131,12 @@ const carpetZ = 0.845 - 1.2 + 0.50
     :z="carpetZ"
     :room-height="room.height"
     :from-ceiling="0.40"
+  />
+
+  <StashAmmoBox
+    :src="ammoSrc"
+    :height="ammoH"
+    :wall-x="innerLeftX"
+    :z="ammoZ"
   />
 </template>

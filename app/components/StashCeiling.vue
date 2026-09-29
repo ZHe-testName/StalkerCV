@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * Потолок: Poly Haven Rough Wood (CC0 Rob Tuytel), тайл 0.5 м.
- * Волокно от камеры к дальней стене.
+ * Волокно поперёк взгляда (вдоль X), texture.rotation +90°.
  */
 import { useLoader } from '@tresjs/core'
 import { NoColorSpace, RepeatWrapping, SRGBColorSpace, Texture, TextureLoader } from 'three'
@@ -21,14 +21,16 @@ const { state: rough } = useLoader(TextureLoader, '/textures/rough-wood/rough_wo
 function prep(tex: Texture, srgb: boolean, repeatX: number, repeatY: number) {
   tex.wrapS = RepeatWrapping
   tex.wrapT = RepeatWrapping
+  tex.center.set(0.5, 0.5)
+  tex.rotation = Math.PI / 2
   tex.repeat.set(repeatX, repeatY)
   tex.colorSpace = srgb ? SRGBColorSpace : NoColorSpace
   tex.anisotropy = 8
   tex.needsUpdate = true
 }
 
-const repeatU = props.width / TILE
-const repeatV = props.depth / TILE
+const repeatU = props.depth / TILE
+const repeatV = props.width / TILE
 
 watch(diff, (tex) => {
   if (tex) {

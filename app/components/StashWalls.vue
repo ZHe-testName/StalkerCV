@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * Три стены. Микс кирпич/штукатурка по маске.
- * Откос окна — только кирпич.
+ * Левая/правая 80/20, дальняя 60/40. Откос окна — только кирпич.
  */
 const props = defineProps<{
   room: {
@@ -223,7 +223,7 @@ const backPanels = [
       :v0="panel.v0"
       :u1="panel.u1"
       :v1="panel.v1"
-      mask-url="/textures/wall-masks/back.80.png"
+      mask-url="/textures/wall-masks/back.60.png"
     />
   </TresGroup>
 
