@@ -35,6 +35,13 @@ const innerBackZ = -(room.depth / 2) + room.wall
 const innerLeftX = -(room.width / 2) + room.wall
 const innerRightX = room.width / 2 - room.wall
 const innerFrontZ = room.depth / 2
+const backZ = -(room.depth / 2) + room.wall / 2
+const backOpening = {
+  width: opening.width,
+  height: opening.height,
+  sill: opening.sill + 0.10,
+  x: innerRightX - 1.0 - opening.width / 2,
+}
 
 const homeLookAt: [number, number, number] = [0, 1.15, 0]
 const { position, lookAt, goTo } = useStashCamera(cameraPosition, homeLookAt)
@@ -43,6 +50,10 @@ const lampSrc = '/models/wooden-floor-lamp/scene.gltf'
 const lampX = innerRightX - 0.30 - 0.10
 const lampZ = 0.18 - 0.30 - 0.10
 const lampH = 1.55
+
+const carpetSrc = '/models/carpet/scene.gltf'
+const carpetLong = 1.55 * 1.3 * 1.2
+const carpetZ = 0.845 - 1.2 + 0.50
 </script>
 
 <template>
@@ -65,19 +76,27 @@ const lampH = 1.55
   </TresMesh>
   <StashFloor :width="room.width" :depth="room.depth" />
 
-  <!-- Потолок -->
+  <!-- Потолок: плита + карта -->
   <TresMesh :position="[0, ceilingY, 0]">
     <TresBoxGeometry :args="[room.width, room.wall, room.depth]" />
     <TresMeshStandardMaterial color="#2f2f2f" :roughness="1" :metalness="0" />
   </TresMesh>
+  <StashCeiling :width="room.width" :depth="room.depth" :height="room.height" />
 
-  <StashWalls :room="room" :opening="opening" />
+  <StashWalls :room="room" :opening="opening" :back-opening="backOpening" />
 
   <StashWindow
     :wall-x="leftX"
     :wall-thickness="room.wall"
     :opening="opening"
   />
+  <TresGroup :position="[backOpening.x, 0, backZ]" :rotation="[0, -Math.PI / 2, 0]">
+    <StashWindow
+      :wall-x="0"
+      :wall-thickness="room.wall"
+      :opening="{ width: backOpening.width, height: backOpening.height, sill: backOpening.sill, z: 0 }"
+    />
+  </TresGroup>
 
   <StashDesk
     :inner-back-z="innerBackZ"
@@ -100,4 +119,13 @@ const lampH = 1.55
   <TresGroup :position="[lampX, 0, lampZ]">
     <StashFloorLamp :src="lampSrc" :height="lampH" />
   </TresGroup>
+
+  <StashWallCarpet
+    :src="carpetSrc"
+    :long="carpetLong"
+    :wall-x="innerRightX"
+    :z="carpetZ"
+    :room-height="room.height"
+    :from-ceiling="0.40"
+  />
 </template>
