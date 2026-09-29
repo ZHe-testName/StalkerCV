@@ -58,7 +58,9 @@ TresJS HMR часто падает, если добавить/снять `:rotat
 
 Файлы сцены:
 
-- `app/components/StashWindow.vue` — рама, импост, форточка
+- `app/components/StashWindow.vue` — graybox-рама, сейчас не вешается
+- `app/components/StashBrokenWindow.vue` — модели рам: 06 слева, 05 на дальней
+- `app/components/StashWindowsill.vue` — подоконники: a-1 слева, a-2 на дальней
 - `app/components/StashDesk.vue` — стол-кластер
 - `app/components/StashSideboard.vue` — сервант + прибор скилов
 - `app/components/StashArmchair.vue` — кресло + КПК
@@ -75,7 +77,7 @@ TresJS HMR часто падает, если добавить/снять `:rotat
 
 ### Окно
 
-Рама тоньше стены в 2.5 раза, утоплена (`innerReveal` 0.05), виден откос. Стекло opacity 0.32. Снаружи одна серая плоскость. Форточка — `TresGroup` вокруг петли, `ventAngle = -0.22`, приоткрыта внутрь. Камень/трещины вокруг дырки — **потом**. Ветер форточки — потом. Под левым окном на полу — Sketchfab «AmmoBox» (`public/models/ammobox/`, CC-BY-4.0 Mikey x pc), высота **0.30 м**, 1024 AVIF, длинная сторона вдоль стены, спинка к стене (yaw **+180°**), к камере **+45 см** (Z **0.30**), зазор от стены **8 см**. На левой стене между окном и дальней стеной — Sketchfab «Икона» (`public/models/stalker-icon/`, CC-BY-4.0 Redisca), `StashWallIcon.vue`, высота **0.36 м** (ширина ~0.29), верх на **15 см ниже** верха окна (Y **2.05**), по Z в центре простенка (**−1.14**), вплотную к стене, 1024 AVIF, metalness 0. В glTF лежит плашмя: X **+90°** (−90° — вверх ногами), yaw **+90°** лицом в комнату (−90° — задник с петлёй).
+Левое — Sketchfab «Broken Window 06» (`public/models/broken-window-06/`, CC-BY-4.0 Game Ready Art), `StashBrokenWindow.vue`, высота проёма **1.15 м** (подоконник 1.05 → верх 2.20), ширина **растянута до проёма 1.35 м** (неравномерный масштаб по Z; дыру не сужали). Центр в проёме (`leftX`, Z **−0.15**). Под ним подоконник — Sketchfab «b2_x_st_windowsill_a-1» (`public/models/windowsill-a1/`, CC-BY-4.0 sunayama studio), длина **1.35 м** по проёму, крен **+90° вокруг Z** (влево), верх вплотную к нижней кромке рамы (**~1.09**), от внутренней грани стены в комнату, 2048 AVIF без даунскейла. Дальнее — Sketchfab «Broken Window 05» (`public/models/broken-window-05/`, CC-BY-4.0 Game Ready Art / jesperbj), тот же `StashBrokenWindow` (`facing="back"`, yaw **−90°**, `fitSash`: ширина по створке `Window_001`, не по нижней рейке — иначе ~3 см щель у левого откоса), проём **1.35×1.15**, подоконник **1.15 м**, центр X **1.185** (`backOpening.x`, `backZ`). Под ним подоконник — Sketchfab «b2_x_st_windowsill_a-2» (`public/models/windowsill-a2/`, CC-BY-4.0 sunayama studio), длина **1.35 м**, верх вплотную к низу рамы (`backOpening.sill + 0.04` ≈ **1.19**), yaw **−90°** как рама, 2048 AVIF без даунскейла. Ширина по X как у левого (масштаб ширины на проём). Проём в стене и кирпичный откос оставлены. Стекло `alphaMode: BLEND`, depthWrite off. Текстуры в исходнике уже 1024 — **1024 AVIF**. Graybox-рамы сняты. Снаружи серая плоскость. Камень/трещины вокруг дырки и ветер форточки — потом. Под левым окном на полу — Sketchfab «AmmoBox» (`public/models/ammobox/`, CC-BY-4.0 Mikey x pc), высота **0.30 м**, 1024 AVIF, длинная сторона вдоль стены, спинка к стене (yaw **+180°**), к камере **+45 см** (Z **0.30**), зазор от стены **8 см**. На левой стене между окном и дальней стеной — Sketchfab «Икона» (`public/models/stalker-icon/`, CC-BY-4.0 Redisca), `StashWallIcon.vue`, высота **0.36 м** (ширина ~0.29), верх на **15 см ниже** верха окна (Y **2.05**), по Z в центре простенка (**−1.14**), вплотную к стене, 1024 AVIF, metalness 0. В glTF лежит плашмя: X **+90°** (−90° — вверх ногами), yaw **+90°** лицом в комнату (−90° — задник с петлёй).
 
 ### Стол (слева у дальней стены)
 
@@ -105,11 +107,11 @@ Yaw **−7°**. Модель Sketchfab «Soviet Old Table» (`public/models/sovi
 
 Пол — Poly Haven «Worn Planks» (`public/textures/worn-planks/`, CC0 Dimitrios Savva). В glTF с Poly Haven только превью-сфера — в сцену идут карты: diff / nor_gl / ARM, 1024 AVIF, тайл **1.4 м**, `RepeatWrapping`, доски от камеры к дальней стене (без `texture.rotation`). Плита-ящик снизу осталась. Дыр в меше нет — трещины нарисованы. Сломанные доски-пропы — если скажет.
 
-Стены: все три — микс Poly Haven Broken Brick Wall (`public/textures/broken-brick/`, CC0 Amal Kumar, тайл **1.8 м**) + White Rough Plaster (`public/textures/white-plaster/`, CC0 Rob Tuytel, тайл **1.0 м**), 1024 AVIF. Маски `wall-masks/{left,right}.80.png` (**80/20**), дальняя `wall-masks/back.60.png` (**60% штукатурка / 40% кирпич**). Левая из четырёх панелей, UV общие на всю стену. Откос окна — `StashBrickOnly`, без маски. Старый Damaged Plaster удалён. Яркость кладки и тайл штукатурки (сейчас 1.0 м, на дальней чуть рябит) — когда скажет.
+Стены: все три — микс Poly Haven Broken Brick Wall (`public/textures/broken-brick/`, CC0 Amal Kumar, тайл **1.8 м**) + White Rough Plaster (`public/textures/white-plaster/`, CC0 Rob Tuytel, тайл **1.0 м**), 1024 AVIF. Маски `wall-masks/{left,right}.80.png` (**80/20**), дальняя `wall-masks/back.60.png` (**60% штукатурка / 40% кирпич**). Левая из четырёх панелей, UV общие на всю стену. Откос окна — `StashBrickOnly`, без маски; боковые грани дальнего смотрят в проём (как у левого), иначе виден бежевый ящик. Старый Damaged Plaster удалён. Яркость кладки и тайл штукатурки (сейчас 1.0 м, на дальней чуть рябит) — когда скажет.
 
 Потолок — Poly Haven «Rough Wood» (`public/textures/rough-wood/`, CC0 Rob Tuytel). В glTF только превью-сфера — в сцену карты: diff / nor_gl / rough, 1024 AVIF, тайл **0.5 м**, `RepeatWrapping`, волокно поперёк взгляда (вдоль X, `texture.rotation` +90°). Плита-ящик сверху осталась. Worn Plaster Wall снят.
 
-Потолок Rough Wood повешен. Ковёр за диваном. Второе окно в дальней стене — та же рама, над сервантом.
+Потолок Rough Wood повешен. Ковёр за диваном. Второе окно в дальней стене — Broken Window 05, над сервантом.
 
 Дальше по шагам: приёмка спина без дёрганья и прогрева перед «Вперёд». Звук с клика — потом. Тайл штукатурки (1.0 м рябит), если скажет. Яркость кладки, если скажет. Дожать позу КПК / лампы, если скажет. Оверлей / имя на стене / текст на КПК — когда скажет.
 
@@ -119,9 +121,9 @@ Yaw **−7°**. Модель Sketchfab «Soviet Old Table» (`public/models/sovi
 
 Тормоз не полигоны (стол ~800, лампа ~12k, комп ~30k) и не «невидимые стенки». Sketchfab кладёт **8K/4K**. Один metallic PNG компа был **47 МБ / 8192²** — декод PNG на главном потоке и заливка в GPU. Параллельный fetch уже есть, он не спасает декод.
 
-Правило: в `public/models` обычно **512 AVIF** (`*.512.avif`, `EXT_texture_avif`). Исключения: диван `old-sofa` и КПК `stalker-pda` — **2048 AVIF** (`*.2k.avif`); напольная лампа `wooden-floor-lamp`, ковёр `carpet`, пол `worn-planks`, кирпич `broken-brick`, штукатурка `white-plaster`, потолок `rough-wood`, ящик `ammobox`, глушитель `makarov-pistol-silencer`, банка `non-stop-stalker-2`, икона `stalker-icon`, артефакт `cyan-artifact` и аптечки `medkit-low` / `medkit-high` — **1024 AVIF** (`*.1k.avif`; у аптечек исходник 256, без апскейла). Скрипт `scripts/compress-model-textures.mjs 512 avif --in <src> --out <dest>` (нужен `sharp`). Сырой дамп из Загрузок в репу не класть. Резать грани / Draco — потом, если меши станут тяжёлыми.
+Правило: в `public/models` обычно **512 AVIF** (`*.512.avif`, `EXT_texture_avif`). Исключения: диван `old-sofa`, КПК `stalker-pda` и подоконники `windowsill-a1` / `windowsill-a2` — **2048 AVIF** (`*.2k.avif`; подоконники без даунскейла); напольная лампа `wooden-floor-lamp`, ковёр `carpet`, пол `worn-planks`, кирпич `broken-brick`, штукатурка `white-plaster`, потолок `rough-wood`, ящик `ammobox`, глушитель `makarov-pistol-silencer`, банка `non-stop-stalker-2`, икона `stalker-icon`, артефакт `cyan-artifact`, аптечки `medkit-low` / `medkit-high` и окна `broken-window-06` / `broken-window-05` — **1024 AVIF** (`*.1k.avif`; у аптечек исходник 256, без апскейла). Скрипт `scripts/compress-model-textures.mjs 512 avif --in <src> --out <dest>` (нужен `sharp`). Сырой дамп из Загрузок в репу не класть. Резать грани / Draco — потом, если меши станут тяжёлыми.
 
-Модели **13.26 МБ** (bin **9.11**, AVIF **3.98**, glTF ~190 КБ). Пол Worn Planks **0.36 МБ**. Потолок Rough Wood — 1024 AVIF. Кирпич + штукатурка микса — отдельные 1024 AVIF. Тяжёлые модели: диван **2.41 МБ**, рюкзак **1.94**, комп и ПМ по **1.29**, стул **1.13**, радио **1.12**, СВД **1.09**, КПК **0.88**. Напольная лампа **0.37 МБ**. Глушитель **0.37 МБ**. Ящик патронов **0.36 МБ**. Керосинка **0.34**. Банка Non Stop **0.21 МБ**. GP-5 ~0.17. Сервант и стол лёгкие.
+Модели **13.26 МБ** (bin **9.11**, AVIF **3.98**, glTF ~190 КБ). Пол Worn Planks **0.36 МБ**. Потолок Rough Wood — 1024 AVIF. Кирпич + штукатурка микса — отдельные 1024 AVIF. Тяжёлые модели: диван **2.41 МБ**, рюкзак **1.94**, подоконник a-1 **1.37** (bin **0.89**, AVIF **0.49**), подоконник a-2 **1.29** (bin **0.79**, AVIF **0.52**), комп и ПМ по **1.29**, стул **1.13**, радио **1.12**, СВД **1.09**, КПК **0.88**. Напольная лампа **0.37 МБ**. Глушитель **0.37 МБ**. Ящик патронов **0.36 МБ**. Керосинка **0.34**. Банка Non Stop **0.21 МБ**. GP-5 ~0.17. Сервант и стол лёгкие.
 
 ## Сознательно не делаем
 

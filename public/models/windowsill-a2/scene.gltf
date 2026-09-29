@@ -1,0 +1,199 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 18346,
+      "max": [
+        20.702667236328125,
+        848.24462890625,
+        51.57463455200195
+      ],
+      "min": [
+        -28.76650619506836,
+        -870.1539306640625,
+        -58.17226791381836
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 220152,
+      "componentType": 5126,
+      "count": 18346,
+      "max": [
+        0.9999991655349731,
+        0.9998052716255188,
+        0.9999985098838806
+      ],
+      "min": [
+        -0.9999998807907104,
+        -0.9999856948852539,
+        -0.9999968409538269
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 18346,
+      "max": [
+        0.9984790086746216,
+        0.9985939860343933
+      ],
+      "min": [
+        0.0015200000489130616,
+        0.0014929999597370625
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 55242,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "sunayama studio (https://sketchfab.com/tsnym)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/b2-x-st-windowsill-a-2-b474c060ea084235a23817d97ef2b909",
+      "title": "b2_x_st_windowsill_a-2"
+    },
+    "generator": "Sketchfab-12.67.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 220968,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 146768,
+      "byteOffset": 220968,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 440304,
+      "byteOffset": 367736,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 808040,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/texture_baseColor.2k.avif",
+      "mimeType": "image/avif"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "texture",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        -4.440892098500626e-16,
+        -1.722546417830516e-16,
+        1,
+        0,
+        -1,
+        -1.1102230246251556e-16,
+        -4.440892098500626e-16,
+        0,
+        1.1102230246251565e-16,
+        -1,
+        -1.722546417830516e-16,
+        0,
+        -14.985939979553223,
+        -6.597759246826175,
+        14.98593997955322,
+        1
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "name": "B2_X_PI_windowsill_2_ax.obj.cleaner.materialmerger.gles"
+    },
+    {
+      "mesh": 0,
+      "name": "Object_2"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 0
+        }
+      }
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_texture_avif"
+  ]
+}

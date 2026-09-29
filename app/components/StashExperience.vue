@@ -17,7 +17,7 @@ const floorY = -room.wall / 2
 const ceilingY = room.height + room.wall / 2
 const leftX = -(room.width / 2) + room.wall / 2
 
-// Проём в левой стене. Рама — отдельный StashWindow.
+// Проёмы: рамы — StashBrokenWindow (06 слева, 05 на дальней).
 const opening = {
   width: 1.35,
   height: 1.15,
@@ -63,6 +63,9 @@ const iconSrc = '/models/stalker-icon/scene.gltf'
 const iconH = 0.36
 const iconTop = opening.sill + opening.height - 0.15
 const iconZ = (opening.z - opening.width / 2 + innerBackZ) / 2
+
+const sillSrc = '/models/windowsill-a1/scene.gltf'
+const backSillSrc = '/models/windowsill-a2/scene.gltf'
 </script>
 
 <template>
@@ -94,18 +97,44 @@ const iconZ = (opening.z - opening.width / 2 + innerBackZ) / 2
 
   <StashWalls :room="room" :opening="opening" :back-opening="backOpening" />
 
-  <StashWindow
+  <TresMesh
+    :position="[leftX - room.wall / 2 - 1.1, 1.45, opening.z]"
+    :rotation="[0, Math.PI / 2, 0]"
+  >
+    <TresPlaneGeometry :args="[10, 7]" />
+    <TresMeshBasicMaterial color="#4a5560" />
+  </TresMesh>
+  <StashBrokenWindow
+    src="/models/broken-window-06/scene.gltf"
     :wall-x="leftX"
-    :wall-thickness="room.wall"
     :opening="opening"
   />
-  <TresGroup :position="[backOpening.x, 0, backZ]" :rotation="[0, -Math.PI / 2, 0]">
-    <StashWindow
-      :wall-x="0"
-      :wall-thickness="room.wall"
-      :opening="{ width: backOpening.width, height: backOpening.height, sill: backOpening.sill, z: 0 }"
-    />
-  </TresGroup>
+  <StashWindowsill
+    :src="sillSrc"
+    :wall-x="innerLeftX"
+    :sill-y="opening.sill + 0.04"
+    :z="opening.z"
+    :length="opening.width"
+  />
+  <TresMesh :position="[backOpening.x, 1.45, backZ - room.wall / 2 - 1.1]">
+    <TresPlaneGeometry :args="[10, 7]" />
+    <TresMeshBasicMaterial color="#4a5560" />
+  </TresMesh>
+  <StashBrokenWindow
+    src="/models/broken-window-05/scene.gltf"
+    facing="back"
+    fit-sash
+    :wall-z="backZ"
+    :opening="backOpening"
+  />
+  <StashWindowsill
+    :src="backSillSrc"
+    facing="back"
+    :wall-z="innerBackZ"
+    :x="backOpening.x"
+    :sill-y="backOpening.sill + 0.04"
+    :length="backOpening.width"
+  />
 
   <StashDesk
     :inner-back-z="innerBackZ"

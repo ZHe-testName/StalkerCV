@@ -233,10 +233,10 @@ const backPanels = [
   <TresGroup :position="[backOpening.x, backOpeningTop - 0.001, backZ]" :rotation="[Math.PI / 2, 0, 0]">
     <StashBrickOnly :width="backOpening.width" :height="room.wall" />
   </TresGroup>
-  <TresGroup :position="[backOpeningMinX + 0.001, backOpeningMidY, backZ]" :rotation="[0, -Math.PI / 2, 0]">
+  <TresGroup :position="[backOpeningMinX + 0.001, backOpeningMidY, backZ]" :rotation="[0, Math.PI / 2, 0]">
     <StashBrickOnly :width="room.wall" :height="backOpening.height" />
   </TresGroup>
-  <TresGroup :position="[backOpeningMaxX - 0.001, backOpeningMidY, backZ]" :rotation="[0, Math.PI / 2, 0]">
+  <TresGroup :position="[backOpeningMaxX - 0.001, backOpeningMidY, backZ]" :rotation="[0, -Math.PI / 2, 0]">
     <StashBrickOnly :width="room.wall" :height="backOpening.height" />
   </TresGroup>
   <TresGroup :position="[innerRightX, wallY, 0]" :rotation="[0, rightYaw, 0]">
