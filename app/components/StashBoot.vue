@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
- * Экран загрузки: значок крутит CSS rotate(Z), стоп на animationiteration.
- * Штрихи opacity по числу файлов. «Вперёд» после остановки.
+ * Экран загрузки: пульс scale 0.9↔1.05; посадка из гиганта
+ * (opacity медленно → быстрый доезд, 2 оборота Z, 1.6 с); потом «Вперёд».
  */
 const emit = defineEmits<{
   enter: []
@@ -9,14 +9,40 @@ const emit = defineEmits<{
 
 const { filesReady, lit, tickCount } = useStashBootLoad()
 const ticks = Array.from({ length: tickCount }, (_, i) => i * 18)
-const spinning = ref(true)
+const phase = ref<'pulse' | 'armed' | 'reveal' | 'done'>('pulse')
 const showGo = ref(false)
 
-function onIconIteration() {
-  if (!filesReady.value || !spinning.value) {
+function startReveal() {
+  if (phase.value !== 'pulse') {
     return
   }
-  spinning.value = false
+  // Сначала кадр в позе вспышки, со следующего тика — посадка (без рывка HMR/композита).
+  phase.value = 'armed'
+  nextTick(() => {
+    requestAnimationFrame(() => {
+      if (phase.value === 'armed') {
+        phase.value = 'reveal'
+      }
+    })
+  })
+}
+
+function onIconIteration() {
+  if (!filesReady.value || phase.value !== 'pulse') {
+    return
+  }
+  startReveal()
+}
+
+function onRevealEnd(ev: AnimationEvent) {
+  if (phase.value !== 'reveal') {
+    return
+  }
+  // Scoped CSS хеширует имя @keyframes — только префикс.
+  if (!ev.animationName.includes('stash-boot-reveal')) {
+    return
+  }
+  phase.value = 'done'
   showGo.value = true
 }
 
@@ -25,9 +51,8 @@ watch(filesReady, (ready) => {
     return
   }
   window.setTimeout(() => {
-    if (spinning.value) {
-      spinning.value = false
-      showGo.value = true
+    if (phase.value === 'pulse') {
+      startReveal()
     }
   }, 1100)
 })
@@ -46,12 +71,18 @@ watch(filesReady, (ready) => {
       />
       <img
         class="stash-boot__icon"
-        :class="{ 'stash-boot__icon--spin': spinning }"
+        :class="{
+          'stash-boot__icon--pulse': phase === 'pulse',
+          'stash-boot__icon--armed': phase === 'armed',
+          'stash-boot__icon--reveal': phase === 'reveal',
+          'stash-boot__icon--done': phase === 'done',
+        }"
         src="/ui/radiation.avif"
         alt=""
         width="80"
         height="80"
         @animationiteration="onIconIteration"
+        @animationend="onRevealEnd"
       >
     </div>
     <button
@@ -77,6 +108,7 @@ watch(filesReady, (ready) => {
   justify-content: center;
   gap: 1.6rem;
   background: #0b0b0c;
+  overflow: hidden;
 }
 
 .stash-boot__frame {
@@ -102,16 +134,63 @@ watch(filesReady, (ready) => {
   margin: -40px 0 0 -40px;
   object-fit: contain;
   transform-origin: 50% 50%;
-  will-change: transform;
+  will-change: transform, opacity;
 }
 
-.stash-boot__icon--spin {
-  animation: stash-boot-spin 1s linear infinite;
+.stash-boot__icon--pulse {
+  animation: stash-boot-pulse 1.2s ease-in-out infinite;
 }
 
-@keyframes stash-boot-spin {
-  to {
-    transform: rotate(360deg);
+.stash-boot__icon--armed {
+  opacity: 0;
+  transform: scale(18) rotate(0deg);
+}
+
+.stash-boot__icon--reveal {
+  animation: stash-boot-reveal 1.6s linear forwards;
+}
+
+.stash-boot__icon--done {
+  opacity: 1;
+  transform: scale(1) rotate(720deg);
+}
+
+@keyframes stash-boot-pulse {
+  0%,
+  100% {
+    transform: scale(0.9);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Opacity: долго почти ноль, быстрый доезд к концу. Transform ровнее. */
+@keyframes stash-boot-reveal {
+  0% {
+    opacity: 0;
+    transform: scale(18) rotate(0deg);
+  }
+
+  40% {
+    opacity: 0.06;
+    transform: scale(8.5) rotate(288deg);
+  }
+
+  70% {
+    opacity: 0.22;
+    transform: scale(3.4) rotate(504deg);
+  }
+
+  88% {
+    opacity: 0.72;
+    transform: scale(1.35) rotate(640deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(720deg);
   }
 }
 
@@ -144,7 +223,7 @@ watch(filesReady, (ready) => {
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.4s ease-out;
 }
 
 .stash-boot__go.is-on {
