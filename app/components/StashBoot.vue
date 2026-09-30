@@ -39,7 +39,7 @@ function onRevealEnd(ev: AnimationEvent) {
     return
   }
   // Scoped CSS хеширует имя @keyframes — только префикс.
-  if (!ev.animationName.includes('stash-boot-reveal')) {
+  if (!ev.animationName.includes('bootReveal')) {
     return
   }
   phase.value = 'done'
@@ -59,24 +59,19 @@ watch(filesReady, (ready) => {
 </script>
 
 <template>
-  <div class="stash-boot">
-    <div class="stash-boot__frame" aria-hidden="true" />
-    <div class="stash-boot__dial" aria-hidden="true">
+  <div class="boot">
+    <div class="frame" aria-hidden="true" />
+    <div class="dial" aria-hidden="true">
       <span
         v-for="(deg, i) in ticks"
         :key="deg"
-        class="stash-boot__tick"
-        :class="{ 'is-on': i < lit }"
+        class="tick"
+        :class="{ on: i < lit }"
         :style="{ transform: `rotate(${deg}deg)` }"
       />
       <img
-        class="stash-boot__icon"
-        :class="{
-          'stash-boot__icon--pulse': phase === 'pulse',
-          'stash-boot__icon--armed': phase === 'armed',
-          'stash-boot__icon--reveal': phase === 'reveal',
-          'stash-boot__icon--done': phase === 'done',
-        }"
+        class="icon"
+        :class="phase"
         src="/ui/radiation.avif"
         alt=""
         width="80"
@@ -86,8 +81,8 @@ watch(filesReady, (ready) => {
       >
     </div>
     <button
-      class="stash-boot__go"
-      :class="{ 'is-on': showGo }"
+      class="go"
+      :class="{ on: showGo }"
       type="button"
       :tabindex="showGo ? 0 : -1"
       @click="showGo && emit('enter')"
@@ -97,8 +92,8 @@ watch(filesReady, (ready) => {
   </div>
 </template>
 
-<style scoped>
-.stash-boot {
+<style scoped lang="scss">
+.boot {
   position: fixed;
   inset: 0;
   z-index: 200;
@@ -109,53 +104,95 @@ watch(filesReady, (ready) => {
   gap: 1.6rem;
   background: #0b0b0c;
   overflow: hidden;
+
+  .frame {
+    position: absolute;
+    inset: 20px;
+    border: 1px solid #b99b30;
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  .dial {
+    position: relative;
+    width: 104px;
+    height: 104px;
+  }
+
+  .icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    margin: -40px 0 0 -40px;
+    object-fit: contain;
+    transform-origin: 50% 50%;
+    will-change: transform, opacity;
+
+    &.pulse {
+      animation: bootPulse 1.2s ease-in-out infinite;
+    }
+
+    &.armed {
+      opacity: 0;
+      transform: scale(18) rotate(0deg);
+    }
+
+    &.reveal {
+      animation: bootReveal 1.6s linear forwards;
+    }
+
+    &.done {
+      opacity: 1;
+      transform: scale(1) rotate(720deg);
+    }
+  }
+
+  .tick {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 2px;
+    height: 6px;
+    margin-left: -1px;
+    background: #d8c9a8;
+    transform-origin: 50% 52px;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+
+    &.on {
+      opacity: 1;
+    }
+  }
+
+  .go {
+    margin: 0;
+    padding: 0.95rem 2.4rem;
+    border: 1px solid #ece4d4;
+    background: rgb(10 10 11 / 0.82);
+    color: #f3eee4;
+    font: 650 18px/1.2 system-ui, sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease-out;
+
+    &.on {
+      opacity: 1;
+      pointer-events: auto;
+
+      &:hover {
+        background: rgb(18 18 16 / 0.88);
+        color: #fff;
+      }
+    }
+  }
 }
 
-.stash-boot__frame {
-  position: absolute;
-  inset: 20px;
-  border: 1px solid #b99b30;
-  border-radius: 4px;
-  pointer-events: none;
-}
-
-.stash-boot__dial {
-  position: relative;
-  width: 104px;
-  height: 104px;
-}
-
-.stash-boot__icon {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 80px;
-  height: 80px;
-  margin: -40px 0 0 -40px;
-  object-fit: contain;
-  transform-origin: 50% 50%;
-  will-change: transform, opacity;
-}
-
-.stash-boot__icon--pulse {
-  animation: stash-boot-pulse 1.2s ease-in-out infinite;
-}
-
-.stash-boot__icon--armed {
-  opacity: 0;
-  transform: scale(18) rotate(0deg);
-}
-
-.stash-boot__icon--reveal {
-  animation: stash-boot-reveal 1.6s linear forwards;
-}
-
-.stash-boot__icon--done {
-  opacity: 1;
-  transform: scale(1) rotate(720deg);
-}
-
-@keyframes stash-boot-pulse {
+@keyframes bootPulse {
   0%,
   100% {
     transform: scale(0.9);
@@ -167,7 +204,7 @@ watch(filesReady, (ready) => {
 }
 
 /* Opacity: долго почти ноль, быстрый доезд к концу. Transform ровнее. */
-@keyframes stash-boot-reveal {
+@keyframes bootReveal {
   0% {
     opacity: 0;
     transform: scale(18) rotate(0deg);
@@ -192,47 +229,5 @@ watch(filesReady, (ready) => {
     opacity: 1;
     transform: scale(1) rotate(720deg);
   }
-}
-
-.stash-boot__tick {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 2px;
-  height: 6px;
-  margin-left: -1px;
-  background: #d8c9a8;
-  transform-origin: 50% 52px;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-}
-
-.stash-boot__tick.is-on {
-  opacity: 1;
-}
-
-.stash-boot__go {
-  margin: 0;
-  padding: 0.95rem 2.4rem;
-  border: 1px solid #ece4d4;
-  background: rgb(10 10 11 / 0.82);
-  color: #f3eee4;
-  font: 650 18px/1.2 system-ui, sans-serif;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease-out;
-}
-
-.stash-boot__go.is-on {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.stash-boot__go.is-on:hover {
-  background: rgb(18 18 16 / 0.88);
-  color: #fff;
 }
 </style>

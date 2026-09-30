@@ -30,7 +30,8 @@
 - **Нет** pnpm (только npm), **нет** локального HTTPS
 - Запуск: `npm run dev` → `http://localhost:3000/`
 - Ветка: `dev`
-- Favicon вкладки: `public/ui/favicon.avif` (из stalker_favicon.png, 64 AVIF), в `nuxt.config` `app.head.link`
+- UI-стили: **SCSS** (`sass` in devDependencies), `lang="scss"` в scoped-блоках; классы короткие без BEM/дефисов (`.boot .icon.pulse`)
+- Favicon вкладки: `public/ui/favicon.avif` (из stalker_favicon.png, 64 AVIF, светлый фон вырезан в альфу), в `nuxt.config` `app.head.link`
 
 `app/app.vue` — `TresCanvas window-size`, `render-mode="manual"`, clear `#0b0b0c`, внутри `StashRenderGate` + `StashExperience`. Поверх — `StashBoot` (загрузка, z 200). Canvas не рисует, пока качаются файлы; после filesReady — ~16 кадров прогрева под оверлеем; после «Вперёд» — кадр каждый rAF.
 
@@ -75,7 +76,7 @@ TresJS HMR часто падает, если добавить/снять `:rotat
 - `app/components/StashAmmoBox.vue` — ящик патронов у левой стены под окном
 - `app/components/StashWallIcon.vue` — икона на левой стене между окном и дальней стеной
 - `app/components/StashCosmonautPoster.vue` — плакат космонавта (Plk1) на дальней стене между окном и правой стеной
-- `app/components/StashBoot.vue` — экран загрузки: значок 80×80 пульсирует CSS scale **0.9↔1.05**; после готовности — кадр «вспышки» (opacity **0**, scale **~18**), со следующего тика посадка **1.6 с**: scale→1 / **2 оборота** Z, opacity долго низкая и быстрый доезд к концу; затем плавно «Вперёд» (**0.4 с**). 20 штрихов opacity по файлам. Рамка 1px `#b99b30`, 20px от края, радиус 4px
+- `app/components/StashBoot.vue` — экран загрузки (SCSS scoped): `.boot` → `.frame` / `.dial` / `.icon` (`.pulse`→`.armed`→`.reveal`→`.done`) / `.tick.on` / `.go.on`. Пульс **0.9↔1.05**; посадка **1.6 с** (scale ~18, 2 оборота Z, opacity с доездом); «Вперёд» **0.4 с**. 20 штрихов. Рамка 1px `#b99b30`, 20px от края, радиус 4px. Классы короткие, без BEM/дефисов; вложенность через SCSS.
 - `app/components/StashRenderGate.vue` — ручной рендер: тишина во время качания, прогрев после filesReady, always после «Вперёд»
 
 ### Окно

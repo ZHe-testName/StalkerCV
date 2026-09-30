@@ -17,6 +17,7 @@
     "vue-router": "^5.3.1"
   },
   "devDependencies": {
-    "@types/three": "^0.186.0"
+    "@types/three": "^0.186.0",
+    "sass": "^1.105.1"
   }
 }

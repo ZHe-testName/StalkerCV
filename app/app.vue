@@ -35,12 +35,12 @@ onUnmounted(() => {
     <StashRenderGate />
     <StashExperience />
   </TresCanvas>
-  <div class="stash-vignette" aria-hidden="true" />
+  <div class="vignette" aria-hidden="true" />
   <StashBoot v-if="!sceneOpen" @enter="sceneOpen = true" />
   <Teleport to="body">
     <button
       v-show="showBack"
-      class="stash-home"
+      class="back"
       type="button"
       @click="stashFocus.goHome()"
     >
@@ -49,8 +49,8 @@ onUnmounted(() => {
   </Teleport>
 </template>
 
-<style scoped>
-.stash-vignette {
+<style scoped lang="scss">
+.vignette {
   position: fixed;
   inset: 0;
   z-index: 10;
@@ -67,7 +67,7 @@ onUnmounted(() => {
   );
 }
 
-.stash-home {
+.back {
   position: fixed;
   bottom: 9vh;
   left: 50%;
@@ -82,10 +82,10 @@ onUnmounted(() => {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
-}
 
-.stash-home:hover {
-  background: rgb(18 18 16 / 0.88);
-  color: #fff;
+  &:hover {
+    background: rgb(18 18 16 / 0.88);
+    color: #fff;
+  }
 }
 </style>
