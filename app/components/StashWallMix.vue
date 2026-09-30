@@ -187,5 +187,5 @@ const geo = new PlaneGeometry(props.width, props.height)
 </script>
 
 <template>
-  <TresMesh v-if="mixMat" :geometry="geo" :material="mixMat" />
+  <TresMesh v-if="mixMat" :geometry="geo" :material="mixMat" :receive-shadow="true" />
 </template>

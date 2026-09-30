@@ -56,6 +56,7 @@ watch(gltf, (loaded) => {
   wrap.updateMatrixWorld(true)
   const seated = new Box3().setFromObject(wrap)
   wrap.position.y -= seated.min.y + sofaSink
+  enableCastShadow(wrap)
   sofaModel.value = wrap
 }, { immediate: true })
 </script>

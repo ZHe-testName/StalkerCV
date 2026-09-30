@@ -69,6 +69,7 @@ watch(gltf, (loaded) => {
     if (!(child instanceof Mesh)) {
       return
     }
+    child.receiveShadow = true
     const materials = Array.isArray(child.material) ? child.material : [child.material]
     for (const mat of materials) {
       if (!(mat instanceof MeshStandardMaterial)) {

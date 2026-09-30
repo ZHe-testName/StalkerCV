@@ -54,6 +54,7 @@ watch(gltf, (loaded) => {
   wrap.updateMatrixWorld(true)
   const seated = new Box3().setFromObject(wrap)
   wrap.position.y -= seated.min.y
+  enableCastShadow(wrap)
   cabModel.value = wrap
 }, { immediate: true })
 </script>

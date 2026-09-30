@@ -29,6 +29,7 @@ onUnmounted(() => {
   <NuxtRouteAnnouncer />
   <TresCanvas
     window-size
+    shadows
     render-mode="manual"
     clear-color="#0b0b0c"
   >

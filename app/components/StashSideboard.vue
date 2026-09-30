@@ -342,6 +342,7 @@ watch(svdGltf, (gltf) => {
     mat.color.multiplyScalar(0.72)
     mat.needsUpdate = true
   }
+  enableCastShadow(root)
   svdModel.value = root
 }, { immediate: true })
 
@@ -363,6 +364,7 @@ watch(radioGltf, (gltf) => {
     mat.emissiveIntensity = Math.min(mat.emissiveIntensity || 1, 0.45)
     mat.needsUpdate = true
   })
+  enableCastShadow(root)
   radioModel.value = root
 }, { immediate: true })
 
@@ -541,6 +543,7 @@ watch(maskGltf, (gltf) => {
   sitOnNamedParts(flipX, ['Mask_LP', 'Filter_LP'])
   const holder = new Group()
   holder.add(flipX)
+  enableCastShadow(holder)
   maskModel.value = holder
 }, { immediate: true })
 

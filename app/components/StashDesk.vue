@@ -205,6 +205,7 @@ watch(tableGltf, (gltf) => {
   root.scale.z *= 1.215
   // влево = +Y; +180, спиной к дальней стене, лицом к камере
   root.rotation.y = (92 + 180) * Math.PI / 180
+  enableCastShadow(root)
   tableModel.value = root
 }, { immediate: true })
 
@@ -222,6 +223,7 @@ watch(lampGltf, (gltf) => {
     mat.metalness = Math.min(mat.metalness, 0.35)
     mat.needsUpdate = true
   })
+  enableCastShadow(root)
   lampModel.value = root
 }, { immediate: true })
 
@@ -240,6 +242,7 @@ watch(pcGltf, (gltf) => {
     mat.needsUpdate = true
     pcMats.push(mat)
   })
+  enableCastShadow(root)
   pcModel.value = root
   root.updateMatrixWorld(true)
   const crtBox = new Box3()
@@ -353,6 +356,7 @@ watch(chairGltf, (gltf) => {
     mat.roughness = 0.85
     mat.needsUpdate = true
   })
+  enableCastShadow(root)
   chairModel.value = root
 }, { immediate: true })
 
@@ -366,6 +370,7 @@ watch(packGltf, (gltf) => {
   }
   const { root, model } = sitGltfOnFloor(scene, packH)
   relightUnlit(model)
+  enableCastShadow(root)
   packModel.value = root
 }, { immediate: true })
 </script>

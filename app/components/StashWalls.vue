@@ -139,40 +139,40 @@ const backPanels = [
 </script>
 
 <template>
-  <TresMesh :position="[leftX, opening.sill / 2, 0]">
+  <TresMesh :position="[leftX, opening.sill / 2, 0]" :cast-shadow="true" :receive-shadow="true">
     <TresBoxGeometry :args="[room.wall, opening.sill, room.depth]" />
     <TresMeshStandardMaterial color="#b7aa98" :roughness="1" :metalness="0" />
   </TresMesh>
-  <TresMesh :position="[leftX, openingTop + wallTopH / 2, 0]">
+  <TresMesh :position="[leftX, openingTop + wallTopH / 2, 0]" :cast-shadow="true" :receive-shadow="true">
     <TresBoxGeometry :args="[room.wall, wallTopH, room.depth]" />
     <TresMeshStandardMaterial color="#b7aa98" :roughness="1" :metalness="0" />
   </TresMesh>
-  <TresMesh :position="[leftX, openingMidY, -room.depth / 2 + wallBackD / 2]">
+  <TresMesh :position="[leftX, openingMidY, -room.depth / 2 + wallBackD / 2]" :cast-shadow="true" :receive-shadow="true">
     <TresBoxGeometry :args="[room.wall, opening.height, wallBackD]" />
     <TresMeshStandardMaterial color="#b7aa98" :roughness="1" :metalness="0" />
   </TresMesh>
-  <TresMesh :position="[leftX, openingMidY, openingMaxZ + wallFrontD / 2]">
+  <TresMesh :position="[leftX, openingMidY, openingMaxZ + wallFrontD / 2]" :cast-shadow="true" :receive-shadow="true">
     <TresBoxGeometry :args="[room.wall, opening.height, wallFrontD]" />
     <TresMeshStandardMaterial color="#b7aa98" :roughness="1" :metalness="0" />
   </TresMesh>
 
-  <TresMesh :position="[0, backOpening.sill / 2, backZ]">
+  <TresMesh :position="[0, backOpening.sill / 2, backZ]" :cast-shadow="true" :receive-shadow="true">
     <TresBoxGeometry :args="[room.width, backOpening.sill, room.wall]" />
     <TresMeshStandardMaterial color="#b7aa98" :roughness="1" :metalness="0" />
   </TresMesh>
-  <TresMesh :position="[0, backOpeningTop + backWallTopH / 2, backZ]">
+  <TresMesh :position="[0, backOpeningTop + backWallTopH / 2, backZ]" :cast-shadow="true" :receive-shadow="true">
     <TresBoxGeometry :args="[room.width, backWallTopH, room.wall]" />
     <TresMeshStandardMaterial color="#b7aa98" :roughness="1" :metalness="0" />
   </TresMesh>
-  <TresMesh :position="[-room.width / 2 + backLeftW / 2, backOpeningMidY, backZ]">
+  <TresMesh :position="[-room.width / 2 + backLeftW / 2, backOpeningMidY, backZ]" :cast-shadow="true" :receive-shadow="true">
     <TresBoxGeometry :args="[backLeftW, backOpening.height, room.wall]" />
     <TresMeshStandardMaterial color="#b7aa98" :roughness="1" :metalness="0" />
   </TresMesh>
-  <TresMesh :position="[room.width / 2 - backRightW / 2, backOpeningMidY, backZ]">
+  <TresMesh :position="[room.width / 2 - backRightW / 2, backOpeningMidY, backZ]" :cast-shadow="true" :receive-shadow="true">
     <TresBoxGeometry :args="[backRightW, backOpening.height, room.wall]" />
     <TresMeshStandardMaterial color="#b7aa98" :roughness="1" :metalness="0" />
   </TresMesh>
-  <TresMesh :position="[rightX, wallY, 0]">
+  <TresMesh :position="[rightX, wallY, 0]" :receive-shadow="true">
     <TresBoxGeometry :args="[room.wall, room.height, room.depth]" />
     <TresMeshStandardMaterial color="#b7aa98" :roughness="1" :metalness="0" />
   </TresMesh>
@@ -197,16 +197,16 @@ const backPanels = [
   </TresGroup>
 
   <TresGroup :position="[leftX, opening.sill + 0.001, opening.z]" :rotation="[-Math.PI / 2, 0, 0]">
-    <StashBrickOnly :width="room.wall" :height="opening.width" />
+    <StashBrickOnly :width="room.wall" :height="opening.width" cast-shadow />
   </TresGroup>
   <TresGroup :position="[leftX, openingTop - 0.001, opening.z]" :rotation="[Math.PI / 2, 0, 0]">
-    <StashBrickOnly :width="room.wall" :height="opening.width" />
+    <StashBrickOnly :width="room.wall" :height="opening.width" cast-shadow />
   </TresGroup>
   <TresGroup :position="[leftX, openingMidY, openingMinZ + 0.001]">
-    <StashBrickOnly :width="room.wall" :height="opening.height" />
+    <StashBrickOnly :width="room.wall" :height="opening.height" cast-shadow />
   </TresGroup>
   <TresGroup :position="[leftX, openingMidY, openingMaxZ - 0.001]" :rotation="[0, Math.PI, 0]">
-    <StashBrickOnly :width="room.wall" :height="opening.height" />
+    <StashBrickOnly :width="room.wall" :height="opening.height" cast-shadow />
   </TresGroup>
 
   <TresGroup
@@ -228,16 +228,16 @@ const backPanels = [
   </TresGroup>
 
   <TresGroup :position="[backOpening.x, backOpening.sill + 0.001, backZ]" :rotation="[-Math.PI / 2, 0, 0]">
-    <StashBrickOnly :width="backOpening.width" :height="room.wall" />
+    <StashBrickOnly :width="backOpening.width" :height="room.wall" cast-shadow />
   </TresGroup>
   <TresGroup :position="[backOpening.x, backOpeningTop - 0.001, backZ]" :rotation="[Math.PI / 2, 0, 0]">
-    <StashBrickOnly :width="backOpening.width" :height="room.wall" />
+    <StashBrickOnly :width="backOpening.width" :height="room.wall" cast-shadow />
   </TresGroup>
   <TresGroup :position="[backOpeningMinX + 0.001, backOpeningMidY, backZ]" :rotation="[0, Math.PI / 2, 0]">
-    <StashBrickOnly :width="room.wall" :height="backOpening.height" />
+    <StashBrickOnly :width="room.wall" :height="backOpening.height" cast-shadow />
   </TresGroup>
   <TresGroup :position="[backOpeningMaxX - 0.001, backOpeningMidY, backZ]" :rotation="[0, -Math.PI / 2, 0]">
-    <StashBrickOnly :width="room.wall" :height="backOpening.height" />
+    <StashBrickOnly :width="room.wall" :height="backOpening.height" cast-shadow />
   </TresGroup>
   <TresGroup :position="[innerRightX, wallY, 0]" :rotation="[0, rightYaw, 0]">
     <StashWallMix

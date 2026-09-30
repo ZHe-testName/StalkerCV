@@ -5,10 +5,14 @@
 import { useLoader } from '@tresjs/core'
 import { NoColorSpace, PlaneGeometry, RepeatWrapping, SRGBColorSpace, Texture, TextureLoader } from 'three'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   width: number
   height: number
-}>()
+  /** Откос дальней стены — кастит вместе со стеной. */
+  castShadow?: boolean
+}>(), {
+  castShadow: false,
+})
 
 const TILE = 1.8
 
@@ -58,7 +62,7 @@ const geo = new PlaneGeometry(props.width, props.height)
 </script>
 
 <template>
-  <TresMesh v-if="ready" :geometry="geo">
+  <TresMesh v-if="ready" :geometry="geo" :cast-shadow="castShadow" :receive-shadow="true">
     <TresMeshStandardMaterial
       :map="diff"
       :normal-map="nor"

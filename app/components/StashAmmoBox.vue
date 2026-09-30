@@ -62,6 +62,7 @@ watch(gltf, (loaded) => {
   const wrap = new Group()
   wrap.add(root)
   wrap.position.set(props.wallX + size.x / 2 + 0.04 + 0.04, 0, props.z)
+  enableCastShadow(wrap)
   boxModel.value = wrap
 }, { immediate: true })
 </script>

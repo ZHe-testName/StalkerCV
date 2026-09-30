@@ -101,6 +101,7 @@ watch(gltf, (loaded) => {
       mat.needsUpdate = true
     }
   })
+  enableCastShadow(root)
   if (props.facing === 'back') {
     root.rotation.y = -Math.PI / 2
     root.position.set(props.opening.x ?? 0, openingMidY, props.wallZ ?? 0)

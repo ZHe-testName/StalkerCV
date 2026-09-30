@@ -6,6 +6,8 @@
  * Открытая сторона (четвёртая стена) — +Z, там стоим мы.
  * Размеры в метрах. Позиция меша — центр бокса, не угол.
  */
+import { DirectionalLight } from 'three'
+
 const room = {
   width: 6.2,
   depth: 3.4,
@@ -77,10 +79,58 @@ const floorCarpetLong = 2.2 * 1.2
 const floorCarpetX = 0.45
 const floorCarpetZ = 0.98 - 0.40
 
-// Солнце за дальним левым углом (−X/−Z): луч через оба окна. Чистый рассвет + чуть зелени.
-const sunPos: [number, number, number] = [-6.2, 3.1, -5.4]
+// Directional у окон: 0.1 м снаружи, луч −35° вниз. Карта теней 512.
+// Карту/frustum в конструкторе: Tres pierced `shadow-map-size-*` ломается о shadow.map === null.
 const sunColor = '#efe6c2'
 const sunIntensity = 1.4
+const ambientIntensity = 0.24
+const sunPitchDeg = 35
+const sunOutside = 0.1
+const sunShadowMap = 512
+const sunShadowFrustum = 4
+
+function makeWindowSun(
+  pos: [number, number, number],
+  aimX: number,
+  aimZ: number,
+  pitchDeg = sunPitchDeg,
+) {
+  const dx = aimX - pos[0]
+  const dz = aimZ - pos[2]
+  const horiz = Math.hypot(dx, dz)
+  const aimY = pos[1] - horiz * Math.tan((pitchDeg * Math.PI) / 180)
+  const light = new DirectionalLight(sunColor, sunIntensity)
+  light.position.set(...pos)
+  light.target.position.set(aimX, aimY, aimZ)
+  light.castShadow = true
+  light.shadow.mapSize.set(sunShadowMap, sunShadowMap)
+  light.shadow.bias = -0.0002
+  light.shadow.normalBias = 0.02
+  light.shadow.camera.near = 0.3
+  light.shadow.camera.far = 14
+  light.shadow.camera.left = -sunShadowFrustum
+  light.shadow.camera.right = sunShadowFrustum
+  light.shadow.camera.top = sunShadowFrustum
+  light.shadow.camera.bottom = -sunShadowFrustum
+  light.shadow.camera.updateProjectionMatrix()
+  return light
+}
+
+const sunLeft = makeWindowSun(
+  [-(room.width / 2) - sunOutside, opening.sill + opening.height / 2, opening.z],
+  1.8,
+  opening.z + 0.2,
+)
+const sunBack = makeWindowSun(
+  [
+    backOpening.x,
+    backOpening.sill + backOpening.height / 2 - 0.20,
+    -(room.depth / 2) - sunOutside,
+  ],
+  backOpening.x,
+  1.2,
+  30,
+)
 </script>
 
 <template>
@@ -90,22 +140,21 @@ const sunIntensity = 1.4
     :fov="56"
   />
 
-  <TresAmbientLight :color="sunColor" :intensity="0.2" />
-  <TresDirectionalLight
-    :position="sunPos"
-    :color="sunColor"
-    :intensity="sunIntensity"
-  />
+  <TresAmbientLight :color="sunColor" :intensity="ambientIntensity" />
+  <primitive :object="sunLeft" />
+  <primitive :object="sunLeft.target" />
+  <primitive :object="sunBack" />
+  <primitive :object="sunBack.target" />
 
   <!-- Пол: тонкий бокс, верхняя грань на y = 0 -->
-  <TresMesh :position="[0, floorY, 0]">
+  <TresMesh :position="[0, floorY, 0]" :receive-shadow="true">
     <TresBoxGeometry :args="[room.width, room.wall, room.depth]" />
     <TresMeshStandardMaterial color="#3a2e24" :roughness="1" :metalness="0" />
   </TresMesh>
   <StashFloor :width="room.width" :depth="room.depth" />
 
-  <!-- Потолок: плита + карта -->
-  <TresMesh :position="[0, ceilingY, 0]">
+  <!-- Потолок: плита + карта. Cast — не прозрачен для directional. -->
+  <TresMesh :position="[0, ceilingY, 0]" :cast-shadow="true">
     <TresBoxGeometry :args="[room.width, room.wall, room.depth]" />
     <TresMeshStandardMaterial color="#2f2f2f" :roughness="1" :metalness="0" />
   </TresMesh>
