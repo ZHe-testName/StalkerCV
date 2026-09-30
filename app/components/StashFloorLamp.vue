@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * Wooden Floor Lamp (Atalaya22) у правой стены. Sit на пол по высоте.
- * Point light в абажуре: тускло в покое, ярче на ховере/фокусе дивана.
+ * Point light в абажуре: в покое коротыш, на ховере/фокусе дивана — ровный HOT.
  */
 import { useLoader, useLoop } from '@tresjs/core'
 import { Box3, Group, Mesh, MeshStandardMaterial, Vector3 } from 'three'
@@ -63,14 +63,92 @@ const LAMP_HOT = 2.2
 const SHADE_IDLE = 0.16
 const SHADE_HOT = 0.42
 const lampIntensity = ref(LAMP_IDLE)
+let lampBase = LAMP_IDLE
+/** Коротыш в покое: wait → on → (gap → on) → wait. */
+type SparkPhase = 'wait' | 'on' | 'gap'
+let sparkPhase: SparkPhase = 'wait'
+let sparkTimer = 1.0 + Math.random() * 2.0
+let sparkBurstLeft = 0
+let sparkOn = false
+let sparkLevel = LAMP_IDLE
+let wasLit = false
+
+function armSparkWait() {
+  sparkPhase = 'wait'
+  sparkOn = false
+  sparkBurstLeft = 0
+  sparkTimer = 0.9 + Math.random() * 3.6
+}
+
+function armSparkOn() {
+  sparkPhase = 'on'
+  sparkOn = true
+  sparkLevel = LAMP_IDLE * (0.85 + Math.random() * 0.3)
+  sparkTimer = 0.14 + Math.random() * 0.42
+}
+
+function armSparkGap() {
+  sparkPhase = 'gap'
+  sparkOn = false
+  sparkTimer = 0.05 + Math.random() * 0.16
+}
+
+function startSparkBurst() {
+  sparkBurstLeft = Math.random() < 0.45 ? 2 : 1
+  armSparkOn()
+}
+
+function shadeFromIntensity(i: number) {
+  if (i <= LAMP_IDLE) {
+    return (i / LAMP_IDLE) * SHADE_IDLE
+  }
+  const u = (i - LAMP_IDLE) / (LAMP_HOT - LAMP_IDLE)
+  return SHADE_IDLE + Math.min(1, u) * (SHADE_HOT - SHADE_IDLE)
+}
+
 const { onBeforeRender } = useLoop()
 onBeforeRender(({ delta }) => {
   const lit = stashHovered.value === 'armchair' || stashFocused.value === 'armchair'
-  const target = lit ? LAMP_HOT : LAMP_IDLE
   const k = 1 - Math.exp(-7.2 * delta)
-  lampIntensity.value += (target - lampIntensity.value) * k
-  const u = (lampIntensity.value - LAMP_IDLE) / (LAMP_HOT - LAMP_IDLE)
-  const shade = SHADE_IDLE + Math.min(1, Math.max(0, u)) * (SHADE_HOT - SHADE_IDLE)
+
+  if (lit) {
+    if (!wasLit) {
+      lampBase = lampIntensity.value
+      armSparkWait()
+      wasLit = true
+    }
+    lampBase += (LAMP_HOT - lampBase) * k
+    lampIntensity.value = lampBase
+  }
+  else {
+    if (wasLit) {
+      armSparkWait()
+      wasLit = false
+    }
+
+    sparkTimer -= delta
+    if (sparkTimer <= 0) {
+      if (sparkPhase === 'wait') {
+        startSparkBurst()
+      }
+      else if (sparkPhase === 'on') {
+        sparkBurstLeft -= 1
+        if (sparkBurstLeft > 0) {
+          armSparkGap()
+        }
+        else {
+          armSparkWait()
+        }
+      }
+      else {
+        armSparkOn()
+      }
+    }
+
+    lampIntensity.value = sparkOn ? sparkLevel : 0.018
+  }
+
+  const shade = shadeFromIntensity(lampIntensity.value)
   for (const mat of shadeMats) {
     mat.emissiveIntensity = shade
   }

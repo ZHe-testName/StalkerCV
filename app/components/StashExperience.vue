@@ -64,8 +64,18 @@ const iconH = 0.36
 const iconTop = opening.sill + opening.height - 0.15
 const iconZ = (opening.z - opening.width / 2 + innerBackZ) / 2
 
+const posterSrc = '/models/cosmonaut-poster/scene.gltf'
+const posterH = 0.48
+const posterTop = backOpening.sill + backOpening.height - 0.20
+const posterPierL = backOpening.x + backOpening.width / 2
+const posterX = (posterPierL + innerRightX) / 2 - 0.08
+
 const sillSrc = '/models/windowsill-a1/scene.gltf'
 const backSillSrc = '/models/windowsill-a2/scene.gltf'
+const floorCarpetSrc = '/models/old-persian-carpet/scene.gltf'
+const floorCarpetLong = 2.2 * 1.2
+const floorCarpetX = 0.45
+const floorCarpetZ = 0.98 - 0.40
 </script>
 
 <template>
@@ -148,6 +158,13 @@ const backSillSrc = '/models/windowsill-a2/scene.gltf'
     @select="goTo('sideboard')"
   />
 
+  <StashFloorCarpet
+    :src="floorCarpetSrc"
+    :long="floorCarpetLong"
+    :x="floorCarpetX"
+    :z="floorCarpetZ"
+  />
+
   <StashArmchair
     :inner-right-x="innerRightX"
     :inner-front-z="innerFrontZ"
@@ -180,5 +197,13 @@ const backSillSrc = '/models/windowsill-a2/scene.gltf'
     :wall-x="innerLeftX"
     :z="iconZ"
     :top="iconTop"
+  />
+
+  <StashCosmonautPoster
+    :src="posterSrc"
+    :height="posterH"
+    :wall-z="innerBackZ"
+    :x="posterX"
+    :top="posterTop"
   />
 </template>

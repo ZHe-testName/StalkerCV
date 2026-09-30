@@ -80,13 +80,32 @@ const { hovered, glow, onPointerEnter, onPointerLeave } = useStashAnchor('desk')
 const LAMP_IDLE = 0.48
 const LAMP_HOT = 2.2
 const lampIntensity = ref(LAMP_IDLE)
+let lampBase = LAMP_IDLE
+let lampFlicker = 1
+let lampFlickerTarget = 1
+let lampFlickerWait = 0
 const pcMats: MeshStandardMaterial[] = []
 const { onBeforeRender } = useLoop()
 onBeforeRender(({ delta }) => {
   const lit = hovered.value || stashFocused.value === 'desk'
   const target = lit ? LAMP_HOT : LAMP_IDLE
   const k = 1 - Math.exp(-7.2 * delta)
-  lampIntensity.value += (target - lampIntensity.value) * k
+  lampBase += (target - lampBase) * k
+
+  // Живое пламя: мелкий шум вокруг базы, без стробоскопа.
+  lampFlickerWait -= delta
+  if (lampFlickerWait <= 0) {
+    const amp = lit ? 0.22 : 0.16
+    let next = 1 + (Math.random() * 2 - 1) * amp
+    if (Math.random() < 0.12) {
+      next = 1 + (Math.random() * 2 - 1) * amp * 1.6
+    }
+    lampFlickerTarget = next
+    lampFlickerWait = 0.06 + Math.random() * 0.14
+  }
+  lampFlicker += (lampFlickerTarget - lampFlicker) * (1 - Math.exp(-11 * delta))
+  lampIntensity.value = lampBase * lampFlicker
+
   const emitGlow = 0.22 + glow.value * 0.95
   for (const mat of pcMats) {
     mat.emissiveIntensity = emitGlow
