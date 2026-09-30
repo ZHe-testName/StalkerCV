@@ -76,6 +76,11 @@ const floorCarpetSrc = '/models/old-persian-carpet/scene.gltf'
 const floorCarpetLong = 2.2 * 1.2
 const floorCarpetX = 0.45
 const floorCarpetZ = 0.98 - 0.40
+
+// Солнце за дальним левым углом (−X/−Z): луч через оба окна. Чистый рассвет + чуть зелени.
+const sunPos: [number, number, number] = [-6.2, 3.1, -5.4]
+const sunColor = '#efe6c2'
+const sunIntensity = 1.4
 </script>
 
 <template>
@@ -85,10 +90,11 @@ const floorCarpetZ = 0.98 - 0.40
     :fov="56"
   />
 
-  <TresAmbientLight :intensity="0.45" />
+  <TresAmbientLight :color="sunColor" :intensity="0.2" />
   <TresDirectionalLight
-    :position="[-6, 3.2, 0.4]"
-    :intensity="1.2"
+    :position="sunPos"
+    :color="sunColor"
+    :intensity="sunIntensity"
   />
 
   <!-- Пол: тонкий бокс, верхняя грань на y = 0 -->
