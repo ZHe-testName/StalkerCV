@@ -223,7 +223,6 @@ watch(lampGltf, (gltf) => {
     mat.metalness = Math.min(mat.metalness, 0.35)
     mat.needsUpdate = true
   })
-  enableCastShadow(root)
   lampModel.value = root
 }, { immediate: true })
 
@@ -242,7 +241,6 @@ watch(pcGltf, (gltf) => {
     mat.needsUpdate = true
     pcMats.push(mat)
   })
-  enableCastShadow(root)
   pcModel.value = root
   root.updateMatrixWorld(true)
   const crtBox = new Box3()
@@ -370,7 +368,6 @@ watch(packGltf, (gltf) => {
   }
   const { root, model } = sitGltfOnFloor(scene, packH)
   relightUnlit(model)
-  enableCastShadow(root)
   packModel.value = root
 }, { immediate: true })
 </script>

@@ -56,6 +56,7 @@ const ready = computed(() => !!(diff.value && nor.value && rough.value))
     v-if="ready"
     :position="[0, height - 0.001, 0]"
     :rotation="[Math.PI / 2, 0, 0]"
+    :cast-shadow="true"
   >
     <TresPlaneGeometry :args="[width, depth]" />
     <TresMeshStandardMaterial

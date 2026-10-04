@@ -55,7 +55,6 @@ watch(gltf, (loaded) => {
       shadeMats.push(mat)
     }
   })
-  enableCastShadow(root)
   lampModel.value = root
 }, { immediate: true })
 

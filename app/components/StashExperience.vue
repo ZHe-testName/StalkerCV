@@ -6,7 +6,8 @@
  * Открытая сторона (четвёртая стена) — +Z, там стоим мы.
  * Размеры в метрах. Позиция меша — центр бокса, не угол.
  */
-import { DirectionalLight } from 'three'
+import { BoxGeometry, DirectionalLight, Mesh, MeshStandardMaterial } from 'three'
+import { useLoop } from '@tresjs/core'
 
 const room = {
   width: 6.2,
@@ -83,7 +84,7 @@ const floorCarpetZ = 0.98 - 0.40
 // Карту/frustum в конструкторе: Tres pierced `shadow-map-size-*` ломается о shadow.map === null.
 const sunColor = '#efe6c2'
 const sunIntensity = 1.4
-const ambientIntensity = 0.24
+const ambientIntensity = 0.3
 const sunPitchDeg = 35
 const sunOutside = 0.1
 const sunShadowMap = 512
@@ -106,6 +107,9 @@ function makeWindowSun(
   light.shadow.mapSize.set(sunShadowMap, sunShadowMap)
   light.shadow.bias = -0.0002
   light.shadow.normalBias = 0.02
+  // Свет и кастеры статичны — не гоняем depth-pass каждый кадр.
+  light.shadow.autoUpdate = false
+  light.shadow.needsUpdate = true
   light.shadow.camera.near = 0.3
   light.shadow.camera.far = 14
   light.shadow.camera.left = -sunShadowFrustum
@@ -121,16 +125,42 @@ const sunLeft = makeWindowSun(
   1.8,
   opening.z + 0.2,
 )
-const sunBack = makeWindowSun(
-  [
-    backOpening.x,
-    backOpening.sill + backOpening.height / 2 - 0.20,
-    -(room.depth / 2) - sunOutside,
-  ],
-  backOpening.x,
-  1.2,
-  30,
+
+/** После подгрузки моделей — несколько кадров bake теней, потом карты заморожены. */
+const { filesReady } = useStashBootLoad()
+const sceneOpen = inject<Ref<boolean>>('stashSceneOpen', ref(false))
+let shadowBakeLeft = 0
+function requestShadowBake(frames = 16) {
+  shadowBakeLeft = Math.max(shadowBakeLeft, frames)
+}
+watch(filesReady, (ready) => {
+  if (ready) {
+    requestShadowBake(16)
+  }
+}, { immediate: true })
+watch(sceneOpen, (open) => {
+  if (open) {
+    requestShadowBake(8)
+  }
+})
+
+const { onBeforeRender } = useLoop()
+onBeforeRender(() => {
+  if (shadowBakeLeft <= 0) {
+    return
+  }
+  sunLeft.shadow.needsUpdate = true
+  shadowBakeLeft -= 1
+})
+
+// Потолок-окклюдер: cast в конструкторе (Tres :cast-shadow на плите иногда не цеплялся к bake).
+const ceilingSlab = new Mesh(
+  new BoxGeometry(room.width, room.wall, room.depth),
+  new MeshStandardMaterial({ color: '#2f2f2f', roughness: 1, metalness: 0 }),
 )
+ceilingSlab.position.set(0, ceilingY, 0)
+ceilingSlab.castShadow = true
+ceilingSlab.receiveShadow = false
 </script>
 
 <template>
@@ -143,8 +173,6 @@ const sunBack = makeWindowSun(
   <TresAmbientLight :color="sunColor" :intensity="ambientIntensity" />
   <primitive :object="sunLeft" />
   <primitive :object="sunLeft.target" />
-  <primitive :object="sunBack" />
-  <primitive :object="sunBack.target" />
 
   <!-- Пол: тонкий бокс, верхняя грань на y = 0 -->
   <TresMesh :position="[0, floorY, 0]" :receive-shadow="true">
@@ -153,11 +181,8 @@ const sunBack = makeWindowSun(
   </TresMesh>
   <StashFloor :width="room.width" :depth="room.depth" />
 
-  <!-- Потолок: плита + карта. Cast — не прозрачен для directional. -->
-  <TresMesh :position="[0, ceilingY, 0]" :cast-shadow="true">
-    <TresBoxGeometry :args="[room.width, room.wall, room.depth]" />
-    <TresMeshStandardMaterial color="#2f2f2f" :roughness="1" :metalness="0" />
-  </TresMesh>
+  <!-- Потолок: окклюдер + карта (оба кастят — свет сверху не льёт мимо проёмов). -->
+  <primitive :object="ceilingSlab" />
   <StashCeiling :width="room.width" :depth="room.depth" :height="room.height" />
 
   <StashWalls :room="room" :opening="opening" :back-opening="backOpening" />
