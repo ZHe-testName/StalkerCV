@@ -73,6 +73,15 @@ const posterTop = backOpening.sill + backOpening.height - 0.20
 const posterPierL = backOpening.x + backOpening.width / 2
 const posterX = (posterPierL + innerRightX) / 2 - 0.08
 
+// Имя/роль: простенок дальняя стена между левым углом и окном (canvas + stashCopy).
+const titlePierR = backOpening.x - backOpening.width / 2
+const titleW = 1.55 * 2 * 1.2
+const titleH = 0.52 * 2 * 1.2
+const titleX = (innerLeftX + titlePierR) / 2 - 0.40
+const titleY = 1.78 + 0.30
+// Влево по Z (на стене) = +Z.
+const titleRoll = (12 * Math.PI) / 180
+
 const sillSrc = '/models/windowsill-a1/scene.gltf'
 const backSillSrc = '/models/windowsill-a2/scene.gltf'
 const floorCarpetSrc = '/models/old-persian-carpet/scene.gltf'
@@ -285,5 +294,14 @@ ceilingSlab.receiveShadow = false
     :wall-z="innerBackZ"
     :x="posterX"
     :top="posterTop"
+  />
+
+  <StashWallTitle
+    :wall-z="innerBackZ"
+    :x="titleX"
+    :y="titleY"
+    :width="titleW"
+    :height="titleH"
+    :roll="titleRoll"
   />
 </template>
