@@ -32,6 +32,10 @@ onUnmounted(() => {
     shadows
     render-mode="manual"
     clear-color="#0b0b0c"
+    power-preference="high-performance"
+    :dpr="[1, 1.5]"
+    :antialias="false"
+    :alpha="false"
   >
     <StashRenderGate />
     <StashExperience />
