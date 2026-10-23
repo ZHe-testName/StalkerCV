@@ -177,6 +177,8 @@ ceilingSlab.receiveShadow = false
     :position="position"
     :look-at="lookAt"
     :fov="56"
+    :near="0.1"
+    :far="80"
   />
 
   <TresAmbientLight :color="sunColor" :intensity="ambientIntensity" />
@@ -196,13 +198,15 @@ ceilingSlab.receiveShadow = false
 
   <StashWalls :room="room" :opening="opening" :back-opening="backOpening" />
 
-  <TresMesh
-    :position="[leftX - room.wall / 2 - 1.1, 1.45, opening.z]"
-    :rotation="[0, Math.PI / 2, 0]"
+  <StashOutside
+    facing="left"
+    :wall-at="-(room.width / 2)"
+    :opening-at="opening.z"
   >
-    <TresPlaneGeometry :args="[10, 7]" />
-    <TresMeshBasicMaterial color="#4a5560" />
-  </TresMesh>
+    <!-- Пропы: StashOutsideProp. Локально −Z наружу, +X вправо из окна, y = 0 земля.
+         Видимый конус кадра 0: 5 м → X 2.2..5.3 | 10 м → X 6.9..11.9 | 20 м → X 14.4..23.1.
+         Прямо перед окном (X≈0) с кадра 0 не видно — камера смотрит сбоку. -->
+  </StashOutside>
   <StashBrokenWindow
     src="/models/broken-window-06/scene.gltf"
     :wall-x="leftX"
@@ -215,10 +219,23 @@ ceilingSlab.receiveShadow = false
     :z="opening.z"
     :length="opening.width"
   />
-  <TresMesh :position="[backOpening.x, 1.45, backZ - room.wall / 2 - 1.1]">
-    <TresPlaneGeometry :args="[10, 7]" />
-    <TresMeshBasicMaterial color="#4a5560" />
-  </TresMesh>
+  <StashOutside
+    facing="back"
+    :wall-at="-(room.depth / 2)"
+    :opening-at="backOpening.x"
+    :drop="1.1"
+  >
+    <!-- Пропы: StashOutsideProp. Те же локальные оси.
+         Видимый конус кадра 0: 5 м → X 0.0..2.8 | 10 м → X 0.6..5.0 | 20 м → X 1.8..9.2. -->
+    <StashOutsideProp
+      src="/models/stalker-house/scene.gltf"
+      :height="8"
+      :x="1.8"
+      :z="-20"
+      :yaw="-190"
+      :tint="0.85"
+    />
+  </StashOutside>
   <StashBrokenWindow
     src="/models/broken-window-05/scene.gltf"
     facing="back"

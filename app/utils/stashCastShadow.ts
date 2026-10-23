@@ -14,6 +14,14 @@ export function enableCastShadow(root: Object3D) {
   })
 }
 
+/** С улицы. Кастер снаружи перекроет directional у левого окна и комната потемнеет. */
+export function disableShadows(root: Object3D) {
+  root.traverse((child) => {
+    child.castShadow = false
+    child.receiveShadow = false
+  })
+}
+
 function isSkipCast(mat: Material | null | undefined) {
   if (!mat) {
     return true
@@ -23,3 +31,4 @@ function isSkipCast(mat: Material | null | undefined) {
   }
   return mat.name === 'Glass'
 }
+
