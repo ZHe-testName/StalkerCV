@@ -31,7 +31,7 @@ onUnmounted(() => {
     window-size
     shadows
     render-mode="manual"
-    clear-color="#0b0b0c"
+    clear-color="#4a5560"
     power-preference="high-performance"
     :dpr="[1, 1.5]"
     :antialias="false"

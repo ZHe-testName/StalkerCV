@@ -73,11 +73,66 @@ const origin: [number, number, number] = props.facing === 'left'
   ? [props.wallAt, -props.drop, props.openingAt]
   : [props.openingAt, -props.drop, props.wallAt]
 
-const groundGeo = new PlaneGeometry(groundWidth, groundDepth)
+/** Земля: горизонтально, от стены наружу. */
+const groundPos: [number, number, number] = [
+  0,
+  0,
+  GROUND_OVERLAP - groundDepth / 2,
+]
+
+/**
+ * Только дальнее окно, только справа от дома. У стены (z > −8) высота строго 0 —
+ * иначе грунт лезет в комнату: плоскость заходит на 1 м под кладку.
+ */
+const BACK_WAVES = [
+  { x: 6.8, z: -14, amp: 1.35, r: 5 },
+  { x: 9.2, z: -18, amp: -0.9, r: 4.5 },
+  { x: 11, z: -32, amp: 2.4, r: 9 },
+] as const
+
+function makeGround() {
+  if (props.facing !== 'back') {
+    return new PlaneGeometry(groundWidth, groundDepth)
+  }
+  const geo = new PlaneGeometry(groundWidth, groundDepth, 48, 36)
+  const pos = geo.attributes.position
+  for (let i = 0; i < pos.count; i++) {
+    const lx = pos.getX(i)
+    const lz = groundPos[2] - pos.getY(i)
+    let gate = 1
+    if (lz > -8 || lx < 5) {
+      continue
+    }
+    if (lz > -11) {
+      const t = (-8 - lz) / 3
+      gate = t * t * (3 - 2 * t)
+    }
+    if (lx < 7) {
+      const t = (lx - 5) / 2
+      gate *= t * t * (3 - 2 * t)
+    }
+    let h = 0
+    for (const w of BACK_WAVES) {
+      const dx = lx - w.x
+      const dz = lz - w.z
+      h += w.amp * Math.exp(-(dx * dx + dz * dz) / (2 * w.r * w.r))
+    }
+    pos.setZ(i, h * gate)
+  }
+  pos.needsUpdate = true
+  geo.computeVertexNormals()
+  return geo
+}
+
+const groundGeo = makeGround()
 const backdropGeo = new PlaneGeometry(props.backdropWidth, props.backdropHeight)
 
 const groundMat = new MeshBasicMaterial({ color: props.groundColor, side: DoubleSide })
-const backdropMat = new MeshBasicMaterial({ color: props.skyColor, side: BackSide })
+const backdropMat = new MeshBasicMaterial({
+  color: props.skyColor,
+  side: BackSide,
+  toneMapped: false,
+})
 
 if (props.groundSrc) {
   const { state } = useLoader(TextureLoader, props.groundSrc)
@@ -111,12 +166,6 @@ if (props.backdropSrc) {
   }, { immediate: true })
 }
 
-/** Земля: горизонтально, от стены наружу. */
-const groundPos: [number, number, number] = [
-  0,
-  0,
-  GROUND_OVERLAP - groundDepth / 2,
-]
 const backdropPos: [number, number, number] = [
   0,
   props.backdropHeight / 2 - GROUND_BELOW,

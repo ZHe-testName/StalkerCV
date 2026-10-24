@@ -202,6 +202,8 @@ ceilingSlab.receiveShadow = false
     facing="left"
     :wall-at="-(room.width / 2)"
     :opening-at="opening.z"
+    ground-src="/textures/forrest-ground/forrest_ground_01_diff.512.avif"
+    :ground-tile="5"
   >
     <!-- Пропы: StashOutsideProp. Локально −Z наружу, +X вправо из окна, y = 0 земля.
          Видимый конус кадра 0: 5 м → X 2.2..5.3 | 10 м → X 6.9..11.9 | 20 м → X 14.4..23.1.
@@ -224,6 +226,8 @@ ceilingSlab.receiveShadow = false
     :wall-at="-(room.depth / 2)"
     :opening-at="backOpening.x"
     :drop="1.1"
+    ground-src="/textures/forrest-ground/forrest_ground_01_diff.512.avif"
+    :ground-tile="5"
   >
     <!-- Пропы: StashOutsideProp. Те же локальные оси.
          Видимый конус кадра 0: 5 м → X 0.0..2.8 | 10 м → X 0.6..5.0 | 20 м → X 1.8..9.2. -->
@@ -234,6 +238,23 @@ ceilingSlab.receiveShadow = false
       :z="-20"
       :yaw="-190"
       :tint="0.85"
+    />
+    <StashOutsideProp
+      src="/models/rose-bush/scene.gltf"
+      :height="2.1"
+      :x="4"
+      :z="-11.3"
+      :yaw="35"
+      :tint="0.92"
+      :sink="0.08"
+      :alpha-test="0.4"
+    />
+    <StashOutsideGrass
+      key="grass-shift-2"
+      src="/models/autumn-lowpoly-grass/scene.gltf"
+      :count="28"
+      :x-min="0.5"
+      :x-max="9.5"
     />
   </StashOutside>
   <StashBrokenWindow

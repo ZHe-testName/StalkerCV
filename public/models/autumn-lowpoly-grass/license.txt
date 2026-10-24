@@ -1,0 +1,11 @@
+Model Information:
+* title:	Autumn lowpoly grass
+* source:	https://sketchfab.com/3d-models/autumn-lowpoly-grass-5477accb9d294cd18962dd461d08b9e0
+* author:	foreverxing (https://sketchfab.com/foreverxing)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Autumn lowpoly grass" (https://sketchfab.com/3d-models/autumn-lowpoly-grass-5477accb9d294cd18962dd461d08b9e0) by foreverxing (https://sketchfab.com/foreverxing) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

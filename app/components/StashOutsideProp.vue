@@ -18,6 +18,7 @@ import {
 } from 'three'
 import type { Material } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { disableShadows } from '~/utils/stashCastShadow'
 
 const props = withDefaults(defineProps<{
   src: string
@@ -33,12 +34,15 @@ const props = withDefaults(defineProps<{
   tint?: number
   /** Утопить в землю, метры (неровность рельефа). */
   sink?: number
+  /** Cutout для листвы: иначе BLEND рисует серые карты на небе. */
+  alphaTest?: number
 }>(), {
   x: 0,
   z: -10,
   yaw: 0,
   tint: 1,
   sink: 0,
+  alphaTest: 0,
 })
 
 const model = shallowRef<Group | null>(null)
@@ -68,8 +72,11 @@ function toUnlit(root: Group, tint: number) {
       basic.color.multiplyScalar(tint)
       basic.transparent = mat?.transparent ?? false
       basic.opacity = mat?.opacity ?? 1
-      basic.alphaTest = mat?.alphaTest ?? 0
-      basic.depthWrite = mat?.depthWrite ?? true
+      basic.alphaTest = props.alphaTest || mat?.alphaTest || 0
+      basic.depthWrite = basic.alphaTest > 0 ? true : (mat?.depthWrite ?? true)
+      if (basic.alphaTest > 0) {
+        basic.transparent = true
+      }
       if (mat && 'side' in mat) {
         basic.side = (mat as { side: MeshBasicMaterial['side'] }).side
       }

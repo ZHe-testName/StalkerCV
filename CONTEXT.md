@@ -33,7 +33,7 @@
 - UI-стили: **SCSS** (`sass` in devDependencies), `lang="scss"` в scoped-блоках; классы короткие без BEM/дефисов (`.boot .icon.pulse`)
 - Favicon вкладки: `public/ui/favicon.avif` (из stalker_favicon.png, 64 AVIF, светлый фон вырезан в альфу), в `nuxt.config` `app.head.link`
 
-`app/app.vue` — `TresCanvas window-size`, `shadows`, `render-mode="manual"`, clear `#0b0b0c`, внутри `StashRenderGate` + `StashExperience`. Поверх — `StashBoot` (загрузка, z 200). Canvas не рисует, пока качаются файлы; после filesReady — ~16 кадров прогрева под оверлеем; после «Вперёд» — кадр каждый rAF.
+`app/app.vue` — `TresCanvas window-size`, `shadows`, `render-mode="manual"`, clear `#4a5560` (как заливка задника улицы, иначе тёмное `#0b0b0c` рисует край карты на небе), внутри `StashRenderGate` + `StashExperience`. Поверх — `StashBoot` (загрузка, z 200). Canvas не рисует, пока качаются файлы; после filesReady — ~16 кадров прогрева под оверлеем; после «Вперёд» — кадр каждый rAF.
 
 ## Координаты и повороты
 
@@ -79,6 +79,7 @@ TresJS HMR часто падает, если добавить/снять `:rotat
 - `app/components/StashWallTitle.vue` — имя/роль на дальней стене, нацарапано (canvas → alphaMap + bumpMap, Bad Script)
 - `app/components/StashOutside.vue` — площадка за окном: земля + задник, unlit, без теней
 - `app/components/StashOutsideProp.vue` — проп на эту площадку (glTF → MeshBasic, sit на землю, tint)
+- `app/components/StashOutsideGrass.vue` — кучка lowpoly-травы: одна загрузка, InstancedMesh
 - `app/utils/stashCastShadow.ts` — `enableCastShadow` / `disableShadows`
 - `app/data/stashCopy.ts` — весь читаемый текст сцены (сейчас `role` / `name`)
 - `public/fonts/BadScript-Regular.ttf` — Google Fonts «Bad Script» (OFL), латиница + кириллица
@@ -109,8 +110,8 @@ Yaw **−7°**. Модель Sketchfab «Soviet Old Table» (`public/models/sovi
 
 Компоненты:
 
-- `StashOutside` — земля (плоскость, y = 0, заходит на 1 м под стену) + задник на **48 м**, 76×46 м, цвет `#4a5560` как у старых плашек. Опционально `groundSrc` / `backdropSrc`. **`drop`** опускает землю, горизонт и все пропы слота вместе (дальнее окно сейчас **1.1 м** — середина между 0 и 2.2). Камера **far 80**.
-- `StashOutsideProp` — glTF в слот: sit на землю по bbox, равномерный масштаб от `height`, материалы → MeshBasic (albedo × `tint`, `<1` уводит вдаль к цвету задника), `castShadow`/`receiveShadow` false.
+- `StashOutside` — земля (плоскость, y = 0, заходит на 1 м под стену) + задник на **48 м**, 76×46 м. Без фото заливка **`#4a5560`**, `toneMapped: false`; clear канваса тот же цвет, чтобы карта не читалась прямоугольником. Грунт — Poly Haven «Forrest Ground 01» (`public/textures/forrest-ground/`, CC0), **только albedo**, **512 AVIF**, тайл **5 м**, оба окна. **`drop`** опускает слот (дальнее **1.1 м**). Рельеф — три гаусса справа от дома на дальнем слоте, у стены не поднимаем. Камера **far 80**.
+- `StashOutsideProp` — glTF в слот: sit на землю по bbox, равномерный масштаб от `height`, материалы → MeshBasic (albedo × `tint`, `<1` уводит вдаль к цвету задника), `castShadow`/`receiveShadow` false. Листва: опциональный `alphaTest` (cutout вместо BLEND).
 
 Локальные оси внутри слота (ставить пропы в них, не в мировых):
 
@@ -127,6 +128,8 @@ Yaw **−7°**. Модель Sketchfab «Soviet Old Table» (`public/models/sovi
 
 Земля видна только дальше ~5 м — ближе срезает подоконник. `THREE.Fog` не использовать: перекомпилирует все шейдеры сцены, включая интерьер. Дальние пропы тушить `tint`, не туманом.
 
+Рельеф на всей плоскости — **отказались** (лез в комнату: плоскость заходит на 1 м под кладку). Второй заход: **только дальнее окно, только справа от дома** (x > 5, z < −8 у стены высота 0). Три гаусса: холм 1.35 м @ (6.8, −14), яма −0.9 @ (9.2, −18), дальний холм 2.4 м @ (11, −32) ломает горизонт. Левый слот не трогаем.
+
 Проп вешается слотом, не в мировых координатах:
 
 ```
@@ -135,7 +138,11 @@ Yaw **−7°**. Модель Sketchfab «Soviet Old Table» (`public/models/sovi
 </StashOutside>
 ```
 
-Первый проп: Sketchfab «Stalker House» (`public/models/stalker-house/`, CC-BY-4.0 f1___ / succdragon), 512 AVIF (исходник 256–1024, без апскейла), **776 КБ** (bin 408, AVIF 320). На дальнем окне: высота **8 м**, локально X **1.8** (чуть справа от оси), Z **−20**, yaw **−190°** (вправо, −Y), tint **0.85**. Земля/задник пока заливка.
+Первый проп: Sketchfab «Stalker House» (`public/models/stalker-house/`, CC-BY-4.0 f1___ / succdragon), 512 AVIF (исходник 256–1024, без апскейла), **776 КБ** (bin 408, AVIF 320). На дальнем окне: высота **8 м**, локально X **1.8** (чуть справа от оси), Z **−20**, yaw **−190°** (вправо, −Y), tint **0.85**. Земля — текстура; небо/задник — `#4a5560`.
+
+Куст: Sketchfab «Rose bush» (`public/models/rose-bush/`, CC-BY-4.0 RosticOstafi), 512 AVIF, **~1.0 МБ**. Высота **2.1 м**, X **4**, Z **−11.3**, yaw **+35°**, tint **0.92**, sink **8 см**, `alphaTest` **0.4**. Позицию двигаем по словам.
+
+Трава: Sketchfab «Autumn lowpoly grass» (`public/models/autumn-lowpoly-grass/`, CC-BY-4.0 foreverxing). Текстур нет (заливка), **~40 КБ** (bin 28). **28** травинок, одна загрузка, 5× InstancedMesh. Полоса между дальней стеной и ближней стеной дома: X **0.5..9.5**, Z **−16..−6**, высота **0.55 м** ±15%, yaw к камере ±90°, seed **17**. MeshBasic, без теней.
 
 Модели и фото-задник — хозяин ищет. Fog/ветер/камень окна — потом.
 
@@ -201,7 +208,7 @@ Yaw **−7°**. Модель Sketchfab «Soviet Old Table» (`public/models/sovi
 
 Правило: в `public/models` обычно **512 AVIF** (`*.512.avif`, `EXT_texture_avif`). Исключения: диван `old-sofa`, КПК `stalker-pda`, подоконники `windowsill-a1` / `windowsill-a2`, пол `old-persian-carpet` и рюкзак `backpack` — **2048 AVIF** (`*.2k.avif`; подоконники и персидский ковёр без даунскейла); напольная лампа `wooden-floor-lamp`, ковёр `carpet`, пол `worn-planks`, кирпич `broken-brick`, штукатурка `white-plaster`, потолок `rough-wood`, ящик `ammobox`, глушитель `makarov-pistol-silencer`, банка `non-stop-stalker-2`, икона `stalker-icon`, артефакт `cyan-artifact`, аптечки `medkit-low` / `medkit-high` и окна `broken-window-06` / `broken-window-05` — **1024 AVIF** (`*.1k.avif`; у аптечек исходник 256, без апскейла). Скрипт `scripts/compress-model-textures.mjs 512 avif --in <src> --out <dest>` (нужен `sharp`). Сырой дамп из Загрузок в репу не класть. Резать грани / Draco — потом, если меши станут тяжёлыми.
 
-Сцена сейчас качает **~24.1 МБ**: модели **22.22** (было 21.44 + дом **0.78**), карты комнаты **1.87**, boot-иконка **16 КБ**. На диске `public` **~24.8 МБ**. Тяжёлые модели: артефакт **3.45** (bin **2.54**, AVIF **0.90**), диван **2.41**, рюкзак **~2.24** (bin **1.92**, albedo 2k **~323 КБ**), подоконник a-1 **1.37**, a-2 **1.30**, комп и ПМ по **1.29**, стул **1.13**, радио **1.12**, СВД **1.09**, персидский ковёр **0.97**, КПК **0.88**. Окна 05/06 **0.41 / 0.33**. Напольная лампа **0.37**. Глушитель **0.37**. Ящик **0.36**. Керосинка **0.34**. Банка Non Stop **0.21**. GP-5 **0.17**. Дом за окном **0.78**. Сервант и стол лёгкие.
+Сцена сейчас качает **~25.1 МБ**: модели **23.26** (+ трава **0.04**), карты комнаты **1.87**, boot-иконка **16 КБ**. На диске `public` **~25.8 МБ**. Тяжёлые модели: артефакт **3.45** (bin **2.54**, AVIF **0.90**), диван **2.41**, рюкзак **~2.24** (bin **1.92**, albedo 2k **~323 КБ**), подоконник a-1 **1.37**, a-2 **1.30**, комп и ПМ по **1.29**, стул **1.13**, радио **1.12**, СВД **1.09**, куст **1.0**, персидский ковёр **0.97**, КПК **0.88**. Окна 05/06 **0.41 / 0.33**. Напольная лампа **0.37**. Глушитель **0.37**. Ящик **0.36**. Керосинка **0.34**. Банка Non Stop **0.21**. GP-5 **0.17**. Дом за окном **0.78**. Сервант и стол лёгкие.
 
 ### Перфоманс (перемеряно 2026-10-06, прежний диагноз был неверен)
 
