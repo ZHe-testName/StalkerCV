@@ -29,6 +29,7 @@ import {
   TextureLoader,
 } from 'three'
 import { useLoader } from '@tresjs/core'
+import { overcastSkyTexture } from '~/utils/overcastSky'
 
 const props = withDefaults(defineProps<{
   /** Какое окно: левая стена (−X) или дальняя (−Z). */
@@ -41,7 +42,7 @@ const props = withDefaults(defineProps<{
   backdropAt?: number
   backdropWidth?: number
   backdropHeight?: number
-  /** Текстура задника; без неё — заливка `skyColor`. */
+  /** Текстура задника. Без неё — пасмурный холст, не плоский `skyColor`. */
   backdropSrc?: string
   skyColor?: string
   groundColor?: string
@@ -133,6 +134,12 @@ const backdropMat = new MeshBasicMaterial({
   side: BackSide,
   toneMapped: false,
 })
+
+const skyTex = overcastSkyTexture()
+if (skyTex && !props.backdropSrc) {
+  backdropMat.map = skyTex
+  backdropMat.color.set('#ffffff')
+}
 
 if (props.groundSrc) {
   const { state } = useLoader(TextureLoader, props.groundSrc)

@@ -250,6 +250,16 @@ ceilingSlab.receiveShadow = false
       :alpha-test="0.4"
     />
     <StashOutsideProp
+      src="/models/rose-bush/scene.gltf"
+      :height="2.1"
+      :x="5.3"
+      :z="-11.3"
+      :yaw="-50"
+      :tint="0.92"
+      :sink="0.08"
+      :alpha-test="0.4"
+    />
+    <StashOutsideProp
       src="/models/dry-bush/scene.gltf"
       :height="2.6"
       :x="5.5"

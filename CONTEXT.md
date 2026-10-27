@@ -110,7 +110,7 @@ Yaw **−7°**. Модель Sketchfab «Soviet Old Table» (`public/models/sovi
 
 Компоненты:
 
-- `StashOutside` — земля (плоскость, y = 0, заходит на 1 м под стену) + задник на **48 м**, 76×46 м. Без фото заливка **`#4a5560`**, `toneMapped: false`; clear канваса тот же цвет, чтобы карта не читалась прямоугольником. Грунт — Poly Haven «Forrest Ground 01» (`public/textures/forrest-ground/`, CC0), **только albedo**, **512 AVIF**, тайл **5 м**, оба окна. **`drop`** опускает слот (дальнее **1.1 м**). Рельеф — три гаусса справа от дома на дальнем слоте, у стены не поднимаем. Камера **far 80**.
+- `StashOutside` — земля (плоскость, y = 0, заходит на 1 м под стену) + задник на **48 м**, 76×46 м. Небо — один холст **512×256**, пасмурные пятна, рисуется один раз и общий на оба окна (`app/utils/overcastSky.ts`). Clear канваса по-прежнему **`#4a5560`**, `toneMapped: false`, чтобы край плоскости не читался. Грунт — Poly Haven «Forrest Ground 01» (`public/textures/forrest-ground/`, CC0), **только albedo**, **512 AVIF**, тайл **5 м**, оба окна. **`drop`** опускает слот (дальнее **1.1 м**). Рельеф — три гаусса справа от дома на дальнем слоте, у стены не поднимаем. Камера **far 80**.
 - `StashOutsideProp` — glTF в слот: sit на землю по bbox, равномерный масштаб от `height`, материалы → MeshBasic (albedo × `tint`, `<1` уводит вдаль к цвету задника), `castShadow`/`receiveShadow` false. Листва: опциональный `alphaTest` (cutout вместо BLEND).
 
 Локальные оси внутри слота (ставить пропы в них, не в мировых):
@@ -138,9 +138,9 @@ Yaw **−7°**. Модель Sketchfab «Soviet Old Table» (`public/models/sovi
 </StashOutside>
 ```
 
-Первый проп: Sketchfab «Stalker House» (`public/models/stalker-house/`, CC-BY-4.0 f1___ / succdragon), 512 AVIF (исходник 256–1024, без апскейла), **776 КБ** (bin 408, AVIF 320). На дальнем окне: высота **8 м**, локально X **1.8** (чуть справа от оси), Z **−20**, yaw **−190°** (вправо, −Y), tint **0.85**. Земля — текстура; небо/задник — `#4a5560`.
+Первый проп: Sketchfab «Stalker House» (`public/models/stalker-house/`, CC-BY-4.0 f1___ / succdragon), 512 AVIF (исходник 256–1024, без апскейла), **776 КБ** (bin 408, AVIF 320). На дальнем окне: высота **8 м**, локально X **1.8** (чуть справа от оси), Z **−20**, yaw **−190°** (вправо, −Y), tint **0.85**. Земля — текстура; небо — пасмурный холст, clear `#4a5560`.
 
-Куст: Sketchfab «Rose bush» (`public/models/rose-bush/`, CC-BY-4.0 RosticOstafi), 512 AVIF, **~1.0 МБ**. Высота **2.1 м**, X **4**, Z **−11.3**, yaw **+35°**, tint **0.92**, sink **8 см**, `alphaTest` **0.4**. Позицию двигаем по словам.
+Куст: Sketchfab «Rose bush» (`public/models/rose-bush/`, CC-BY-4.0 RosticOstafi), 512 AVIF, **~1.0 МБ**. Высота **2.1 м**, X **4**, Z **−11.3**, yaw **+35°**, tint **0.92**, sink **8 см**, `alphaTest` **0.4**. Второй такой же справа, чуть ближе к первому: X **5.3**, Z **−11.3**, yaw **−50°**, остальное то же. Позицию двигаем по словам.
 
 Сухой куст: Sketchfab «Dry bush» (`public/models/dry-bush/`, CC-BY-4.0 Luis Gustavo). Исходник spec-gloss (Three 0.186 не читает) — переведён на metal-rough, **только albedo** 512 AVIF (нормаль снята: улица unlit), **~76 КБ**. Высота **2.6 м**, X **5.5**, Z **−7.8**, yaw **−40°**, tint **0.92**, sink **5 см**, `alphaTest` **0.5** (`MASK`).
 
