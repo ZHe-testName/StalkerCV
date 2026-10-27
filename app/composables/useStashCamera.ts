@@ -39,7 +39,7 @@ const ARC_SIDE = 0.078
 const ARC_UP = 0.095
 const EYE = 1.7
 const SIT_DIST = 0.7
-const READ_DIST = 0.17
+const READ_DIST = 0.24
 
 const deskShot = {
   position: [-1.42, EYE, 0.28] as Vec3,
@@ -47,7 +47,7 @@ const deskShot = {
 }
 
 const sitShot = shotAlongScreen(SIT_DIST)
-const readShot = shotAlongScreen(READ_DIST, 0.05, 0)
+const readShot = shotAlongScreen(READ_DIST)
 
 export function retargetDeskCrt(screen: Vec3, yaw: number) {
   const s = Math.sin(yaw)
@@ -61,7 +61,7 @@ export function retargetDeskCrt(screen: Vec3, yaw: number) {
     shot.position[2] = screen[2] + c * dist
   }
   write(sitShot, SIT_DIST, screen[1])
-  write(readShot, READ_DIST, screen[1] + 0.05)
+  write(readShot, READ_DIST, screen[1])
 }
 const sideboard = makeSideboardShots()
 const armchair = makeArmchairShots()

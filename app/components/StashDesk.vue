@@ -49,8 +49,8 @@ const silencerY = tableH + 0.005
 const silencerYaw = pistolYaw - 26 * Math.PI / 180
 
 const canH = 0.14 * 1.5 * 1.1
-const canX = pcX + (silencerX - pcX) * 0.68
-const canZ = silencerZ - 0.04
+const canX = -0.286
+const canZ = -0.095
 const canY = tableH
 
 const chairAngle = (-30 - 160) * Math.PI / 180
@@ -111,6 +111,61 @@ onBeforeRender(({ delta }) => {
     mat.emissiveIntensity = emitGlow
   }
 })
+
+function crtScreenPoint(root: Group) {
+  root.updateMatrixWorld(true)
+  const toRoot = root.matrixWorld.clone().invert()
+  let mesh: Mesh | null = null
+  root.traverse((child) => {
+    if (child instanceof Mesh && (child.name || '').includes('pack_2')) {
+      mesh = child
+    }
+  })
+  if (!mesh) {
+    return null
+  }
+  const pos = mesh.geometry.attributes.position
+  const index = mesh.geometry.index
+  const a = new Vector3()
+  const b = new Vector3()
+  const c = new Vector3()
+  const e1 = new Vector3()
+  const e2 = new Vector3()
+  const n = new Vector3()
+  const min = new Vector3(Infinity, Infinity, Infinity)
+  const max = new Vector3(-Infinity, -Infinity, -Infinity)
+  let hits = 0
+  const triCount = index ? index.count : pos.count
+  for (let i = 0; i < triCount; i += 3) {
+    const ia = index ? index.getX(i) : i
+    const ib = index ? index.getX(i + 1) : i + 1
+    const ic = index ? index.getX(i + 2) : i + 2
+    a.fromBufferAttribute(pos, ia).applyMatrix4(mesh.matrixWorld).applyMatrix4(toRoot)
+    b.fromBufferAttribute(pos, ib).applyMatrix4(mesh.matrixWorld).applyMatrix4(toRoot)
+    c.fromBufferAttribute(pos, ic).applyMatrix4(mesh.matrixWorld).applyMatrix4(toRoot)
+    e1.subVectors(b, a)
+    e2.subVectors(c, a)
+    n.crossVectors(e1, e2)
+    if (n.lengthSq() < 1e-10 || n.z < 0.85) {
+      continue
+    }
+    const cy = (a.y + b.y + c.y) / 3
+    if (cy < 0.24) {
+      continue
+    }
+    min.min(a)
+    min.min(b)
+    min.min(c)
+    max.max(a)
+    max.max(b)
+    max.max(c)
+    hits++
+  }
+  if (!hits) {
+    return null
+  }
+  return new Vector3((min.x + max.x) / 2, (min.y + max.y) / 2, max.z)
+}
 
 function sitGltfOnFloor(scene: Group, heightM: number) {
   const root = new Group()
@@ -241,35 +296,18 @@ watch(pcGltf, (gltf) => {
     mat.needsUpdate = true
     pcMats.push(mat)
   })
+  const screen = crtScreenPoint(root) ?? new Vector3(0.0425, 0.377, 0.245)
+  const c = Math.cos(pcYaw)
+  const s = Math.sin(pcYaw)
+  retargetDeskCrt(
+    [
+      originX + pcX + screen.x * c + screen.z * s,
+      tableH + screen.y,
+      originZ + pcZ - screen.x * s + screen.z * c,
+    ],
+    pcYaw,
+  )
   pcModel.value = root
-  root.updateMatrixWorld(true)
-  const crtBox = new Box3()
-  let found = false
-  root.traverse((child) => {
-    if (!(child instanceof Mesh)) {
-      return
-    }
-    const box = new Box3().setFromObject(child)
-    if (!found || box.max.y > crtBox.max.y) {
-      crtBox.copy(box)
-      found = true
-    }
-  })
-  if (found) {
-    const localX = (crtBox.min.x + crtBox.max.x) / 2
-    const localY = crtBox.min.y + (crtBox.max.y - crtBox.min.y) * 0.58
-    const localZ = crtBox.max.z - 0.03
-    const c = Math.cos(pcYaw)
-    const s = Math.sin(pcYaw)
-    retargetDeskCrt(
-      [
-        originX + pcX + localX * c + localZ * s,
-        tableH + localY,
-        originZ + pcZ - localX * s + localZ * c,
-      ],
-      pcYaw,
-    )
-  }
 }, { immediate: true })
 
 const { state: papersGltf } = useLoader(GLTFLoader, '/models/papers-envelopes/scene.gltf')
