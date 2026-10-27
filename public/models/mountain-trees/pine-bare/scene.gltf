@@ -1,0 +1,153 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "stalkercv-split",
+    "extras": {
+      "author": "Jagobo (https://sketchfab.com/Jagobo)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/mountain-trees-b914384f931d4b3585bd4f0bf48f0da3",
+      "title": "Mountain Trees"
+    }
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ],
+      "name": "pine-bare"
+    }
+  ],
+  "nodes": [
+    {
+      "name": "pine-bare",
+      "children": [
+        1
+      ]
+    },
+    {
+      "name": "Object_4",
+      "mesh": 0
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_4",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 0,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5123,
+      "count": 42822,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 17763,
+      "type": "VEC3",
+      "min": [
+        15.982705116271973,
+        -9.654948368316381e-08,
+        4.966632401802382
+      ],
+      "max": [
+        28.493956804275513,
+        19.01023070941003,
+        14.406449857599426
+      ]
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 17763,
+      "type": "VEC2",
+      "min": [
+        0.0,
+        0.0
+      ],
+      "max": [
+        1.0,
+        1.0
+      ]
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 85644,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 85644,
+      "byteLength": 213156,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 298800,
+      "byteLength": 142104,
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 440904,
+      "uri": "scene.bin"
+    }
+  ],
+  "materials": [
+    {
+      "name": "pine_bark",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      }
+    }
+  ],
+  "images": [
+    {
+      "uri": "../textures/pine_bark_baseColor.256.avif",
+      "mimeType": "image/avif"
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 0
+        }
+      }
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_texture_avif"
+  ]
+}

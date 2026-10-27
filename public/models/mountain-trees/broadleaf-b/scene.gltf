@@ -1,0 +1,252 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "stalkercv-split",
+    "extras": {
+      "author": "Jagobo (https://sketchfab.com/Jagobo)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/mountain-trees-b914384f931d4b3585bd4f0bf48f0da3",
+      "title": "Mountain Trees"
+    }
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ],
+      "name": "broadleaf-b"
+    }
+  ],
+  "nodes": [
+    {
+      "name": "broadleaf-b",
+      "children": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "Object_2",
+      "mesh": 0
+    },
+    {
+      "name": "Object_3",
+      "mesh": 1
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_2",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 0,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Object_3",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 4,
+            "TEXCOORD_0": 5
+          },
+          "indices": 3,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5123,
+      "count": 26748,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 8879,
+      "type": "VEC3",
+      "min": [
+        -17.950143814086914,
+        -1.0508680756232099e-07,
+        -1.2055278617623113
+      ],
+      "max": [
+        2.116818428039551,
+        39.72647468032087,
+        18.606061712370032
+      ]
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 8879,
+      "type": "VEC2",
+      "min": [
+        0.0,
+        0.0
+      ],
+      "max": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5123,
+      "count": 18960,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 4,
+      "componentType": 5126,
+      "count": 18948,
+      "type": "VEC3",
+      "min": [
+        -20.622278213500977,
+        14.136493214548752,
+        -5.935108998351712
+      ],
+      "max": [
+        5.198611259460449,
+        40.117008016975575,
+        20.838908838799448
+      ]
+    },
+    {
+      "bufferView": 5,
+      "componentType": 5126,
+      "count": 18948,
+      "type": "VEC2",
+      "min": [
+        0.0,
+        0.0
+      ],
+      "max": [
+        1.0,
+        1.0
+      ]
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 53496,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 53496,
+      "byteLength": 106548,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 160044,
+      "byteLength": 71032,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 231076,
+      "byteLength": 37920,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 268996,
+      "byteLength": 227376,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 496372,
+      "byteLength": 151584,
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 647956,
+      "uri": "scene.bin"
+    }
+  ],
+  "materials": [
+    {
+      "name": "Default_OBJ",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      }
+    },
+    {
+      "name": "Material.001",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 1
+        },
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "alphaMode": "MASK",
+      "doubleSided": true,
+      "alphaCutoff": 0.5
+    }
+  ],
+  "images": [
+    {
+      "uri": "../textures/Default_OBJ_baseColor.256.avif",
+      "mimeType": "image/avif"
+    },
+    {
+      "uri": "../textures/Material.001_baseColor.256.avif",
+      "mimeType": "image/avif"
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 0
+        }
+      }
+    },
+    {
+      "sampler": 0,
+      "source": 1,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 1
+        }
+      }
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_texture_avif"
+  ]
+}

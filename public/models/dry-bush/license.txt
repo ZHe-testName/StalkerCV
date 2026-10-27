@@ -1,0 +1,11 @@
+Model Information:
+* title:	Dry bush
+* source:	https://sketchfab.com/3d-models/dry-bush-1c2983644d6243f7993c3d8cbd11fe0d
+* author:	Luis Gustavo (https://sketchfab.com/Luissantos2)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Dry bush" (https://sketchfab.com/3d-models/dry-bush-1c2983644d6243f7993c3d8cbd11fe0d) by Luis Gustavo (https://sketchfab.com/Luissantos2) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

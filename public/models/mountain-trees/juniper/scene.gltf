@@ -1,0 +1,252 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "stalkercv-split",
+    "extras": {
+      "author": "Jagobo (https://sketchfab.com/Jagobo)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/mountain-trees-b914384f931d4b3585bd4f0bf48f0da3",
+      "title": "Mountain Trees"
+    }
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ],
+      "name": "juniper"
+    }
+  ],
+  "nodes": [
+    {
+      "name": "juniper",
+      "children": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "Object_5",
+      "mesh": 0
+    },
+    {
+      "name": "Object_6",
+      "mesh": 1
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_5",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 0,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Object_6",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 4,
+            "TEXCOORD_0": 5
+          },
+          "indices": 3,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5123,
+      "count": 13146,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 5033,
+      "type": "VEC3",
+      "min": [
+        19.27080774307251,
+        -9.197008913602314e-08,
+        -11.105051319983353
+      ],
+      "max": [
+        31.719314098358154,
+        17.772588412569938,
+        -1.2396551967584823
+      ]
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 5033,
+      "type": "VEC2",
+      "min": [
+        0.0,
+        0.0
+      ],
+      "max": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5123,
+      "count": 3600,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 4,
+      "componentType": 5126,
+      "count": 3600,
+      "type": "VEC3",
+      "min": [
+        17.78195858001709,
+        6.566140837982881,
+        -12.975439478286939
+      ],
+      "max": [
+        32.060386657714844,
+        18.301883254355108,
+        -1.7618543132868627
+      ]
+    },
+    {
+      "bufferView": 5,
+      "componentType": 5126,
+      "count": 3600,
+      "type": "VEC2",
+      "min": [
+        0.0,
+        0.0
+      ],
+      "max": [
+        1.0,
+        1.0
+      ]
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 26292,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 26292,
+      "byteLength": 60396,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 86688,
+      "byteLength": 40264,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 126952,
+      "byteLength": 7200,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 134152,
+      "byteLength": 43200,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 177352,
+      "byteLength": 28800,
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 206152,
+      "uri": "scene.bin"
+    }
+  ],
+  "materials": [
+    {
+      "name": "pine_bark",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      }
+    },
+    {
+      "name": "juniper_branch",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 1
+        },
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "alphaMode": "MASK",
+      "doubleSided": true,
+      "alphaCutoff": 0.5
+    }
+  ],
+  "images": [
+    {
+      "uri": "../textures/pine_bark_baseColor.256.avif",
+      "mimeType": "image/avif"
+    },
+    {
+      "uri": "../textures/juniper_branch_baseColor.256.avif",
+      "mimeType": "image/avif"
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 0
+        }
+      }
+    },
+    {
+      "sampler": 0,
+      "source": 1,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 1
+        }
+      }
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_texture_avif"
+  ]
+}

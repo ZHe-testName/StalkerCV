@@ -1,0 +1,252 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "stalkercv-split",
+    "extras": {
+      "author": "Jagobo (https://sketchfab.com/Jagobo)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/mountain-trees-b914384f931d4b3585bd4f0bf48f0da3",
+      "title": "Mountain Trees"
+    }
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ],
+      "name": "aspen-b"
+    }
+  ],
+  "nodes": [
+    {
+      "name": "aspen-b",
+      "children": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "Object_14",
+      "mesh": 0
+    },
+    {
+      "name": "Object_15",
+      "mesh": 1
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_14",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 0,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Object_15",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 4,
+            "TEXCOORD_0": 5
+          },
+          "indices": 3,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5123,
+      "count": 59415,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 23939,
+      "type": "VEC3",
+      "min": [
+        -12.535998344421387,
+        -4.717226560472357e-08,
+        -47.42710707978977
+      ],
+      "max": [
+        2.330811023712158,
+        30.171918663256584,
+        -33.16818272827195
+      ]
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 23939,
+      "type": "VEC2",
+      "min": [
+        0.0,
+        0.0
+      ],
+      "max": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5123,
+      "count": 24144,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 4,
+      "componentType": 5126,
+      "count": 24124,
+      "type": "VEC3",
+      "min": [
+        -14.573724269866943,
+        4.187034236720377,
+        -50.59058739367517
+      ],
+      "max": [
+        5.060561656951904,
+        29.913690376691402,
+        -30.387299068351822
+      ]
+    },
+    {
+      "bufferView": 5,
+      "componentType": 5126,
+      "count": 24124,
+      "type": "VEC2",
+      "min": [
+        0.0,
+        0.0
+      ],
+      "max": [
+        1.0,
+        1.0
+      ]
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 118830,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 118832,
+      "byteLength": 287268,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 406100,
+      "byteLength": 191512,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 597612,
+      "byteLength": 48288,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 645900,
+      "byteLength": 289488,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 935388,
+      "byteLength": 192992,
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 1128380,
+      "uri": "scene.bin"
+    }
+  ],
+  "materials": [
+    {
+      "name": "aspen_bark",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      }
+    },
+    {
+      "name": "aspen_branch",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 1
+        },
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "alphaMode": "MASK",
+      "doubleSided": true,
+      "alphaCutoff": 0.5
+    }
+  ],
+  "images": [
+    {
+      "uri": "../textures/aspen_bark_baseColor.256.avif",
+      "mimeType": "image/avif"
+    },
+    {
+      "uri": "../textures/aspen_branch_baseColor.256.avif",
+      "mimeType": "image/avif"
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 0
+        }
+      }
+    },
+    {
+      "sampler": 0,
+      "source": 1,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 1
+        }
+      }
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_texture_avif"
+  ]
+}

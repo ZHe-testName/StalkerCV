@@ -249,6 +249,16 @@ ceilingSlab.receiveShadow = false
       :sink="0.08"
       :alpha-test="0.4"
     />
+    <StashOutsideProp
+      src="/models/dry-bush/scene.gltf"
+      :height="2.6"
+      :x="5.5"
+      :z="-7.8"
+      :yaw="-40"
+      :tint="0.92"
+      :sink="0.05"
+      :alpha-test="0.5"
+    />
     <StashOutsideGrass
       key="grass-shift-2"
       src="/models/autumn-lowpoly-grass/scene.gltf"
@@ -256,7 +266,104 @@ ceilingSlab.receiveShadow = false
       :x-min="0.5"
       :x-max="9.5"
     />
+    <StashOutsideProp
+      src="/models/mountain-trees/broadleaf-a/scene.gltf"
+      :height="12"
+      :x="16.2"
+      :y="0.46"
+      :z="-47.5"
+      :yaw="80"
+      :tint="0.78"
+      :sink="0.2"
+      :alpha-test="0.5"
+    />
+    <StashOutsideProp
+      src="/models/mountain-trees/pine-bare/scene.gltf"
+      :height="10.3"
+      :x="17.28"
+      :y="0.41"
+      :z="-47.72"
+      :yaw="123"
+      :tint="0.78"
+      :sink="0.2"
+      :alpha-test="0.5"
+    />
+    <StashOutsideProp
+      src="/models/mountain-trees/aspen-b/scene.gltf"
+      :height="9.6"
+      :x="19.02"
+      :y="0.39"
+      :z="-47.23"
+      :yaw="-109"
+      :tint="0.78"
+      :sink="0.2"
+      :alpha-test="0.5"
+    />
+    <StashOutsideProp
+      src="/models/mountain-trees/pine-bare-b/scene.gltf"
+      :height="11.4"
+      :x="22.02"
+      :y="0.26"
+      :z="-47.42"
+      :yaw="142"
+      :tint="0.78"
+      :sink="0.2"
+      :alpha-test="0.5"
+    />
+    <StashOutsideProp
+      src="/models/mountain-trees/pine-a/scene.gltf"
+      :height="9.4"
+      :x="21.96"
+      :y="0.36"
+      :z="-45.63"
+      :yaw="-13"
+      :tint="0.78"
+      :sink="0.2"
+      :alpha-test="0.5"
+    />
+    <StashOutsideProp
+      src="/models/mountain-trees/pine-b/scene.gltf"
+      :height="9.4"
+      :x="20.66"
+      :y="0.51"
+      :z="-44.59"
+      :yaw="-118"
+      :tint="0.78"
+      :sink="0.2"
+      :alpha-test="0.5"
+    />
+    <StashOutsideProp
+      src="/models/mountain-trees/aspen-b/scene.gltf"
+      :height="9.9"
+      :x="23.2"
+      :y="0.26"
+      :z="-46.5"
+      :yaw="-35"
+      :tint="0.78"
+      :sink="0.2"
+      :alpha-test="0.5"
+    />
+    <StashOutsideProp
+      src="/models/mountain-trees/aspen/scene.gltf"
+      :height="10.3"
+      :x="24.5"
+      :y="0.24"
+      :z="-45.8"
+      :yaw="-140"
+      :tint="0.78"
+      :sink="0.2"
+      :alpha-test="0.5"
+    />
   </StashOutside>
+  <!-- Мир. 1.5 от половины родного. Бок к окну в 4 м от наружной левой грани. -->
+  <StashOutsideProp
+    src="/models/abounded-house/scene.gltf"
+    :height="3.0375"
+    :x="-11.063"
+    :z="-5.68"
+    :yaw="180"
+    :tint="1"
+  />
   <StashBrokenWindow
     src="/models/broken-window-05/scene.gltf"
     facing="back"

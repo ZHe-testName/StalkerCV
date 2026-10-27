@@ -28,6 +28,8 @@ const props = withDefaults(defineProps<{
   x?: number
   /** Локальный Z: наружу — отрицательный. */
   z?: number
+  /** Высота основания над землёй слота, метры (холм). */
+  y?: number
   /** Поворот вокруг Y, градусы. */
   yaw?: number
   /** Умножает albedo. <1 — увести вдаль к цвету задника. */
@@ -39,6 +41,7 @@ const props = withDefaults(defineProps<{
 }>(), {
   x: 0,
   z: -10,
+  y: 0,
   yaw: 0,
   tint: 1,
   sink: 0,
@@ -107,7 +110,7 @@ watch(gltf, (loaded) => {
 
   const wrap = new Group()
   wrap.add(scaled)
-  wrap.position.set(props.x, -props.sink, props.z)
+  wrap.position.set(props.x, props.y - props.sink, props.z)
   wrap.rotation.y = (props.yaw * Math.PI) / 180
   model.value = wrap
 }, { immediate: true })
