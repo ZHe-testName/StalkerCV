@@ -64,6 +64,7 @@ TresJS HMR часто падает, если добавить/снять `:rotat
 - `app/components/StashBrokenWindow.vue` — модели рам: 06 слева, 05 на дальней
 - `app/components/StashWindowsill.vue` — подоконники: a-1 слева, a-2 на дальней
 - `app/components/StashDesk.vue` — стол-кластер
+- `app/components/StashCrtScreen.vue` — картинка на стекле ЭЛТ: холст один раз, колесо сдвигает, строки развёртки отдельно
 - `app/components/StashSideboard.vue` — сервант + прибор скилов
 - `app/components/StashArmchair.vue` — кресло + КПК
 - `app/components/StashFloor.vue` — доски пола (карта, не меш)
@@ -81,8 +82,10 @@ TresJS HMR часто падает, если добавить/снять `:rotat
 - `app/components/StashOutsideProp.vue` — проп на эту площадку (glTF → MeshBasic, sit на землю, tint)
 - `app/components/StashOutsideGrass.vue` — кучка lowpoly-травы: одна загрузка, InstancedMesh
 - `app/utils/stashCastShadow.ts` — `enableCastShadow` / `disableShadows`
-- `app/data/stashCopy.ts` — весь читаемый текст сцены (сейчас `role` / `name`)
-- `public/fonts/BadScript-Regular.ttf` — Google Fonts «Bad Script» (OFL), латиница + кириллица
+- `app/data/stashCopy.ts` — весь читаемый текст сцены. Стена: `role` / `name`. Экран компа: всё остальное, объект `description`
+- `public/fonts/BadScript-Regular.ttf` — Google Fonts «Bad Script» (OFL), латиница + кириллица, только царапина на стене
+- `public/fonts/PressStart2P-Regular.ttf` — Google Fonts «Press Start 2P» (OFL, Cody Boisclair), экран компа. Рядом `PressStart2P-OFL.txt`
+- `public/screen/portfolio_photo.avif` — фото на экран, исходник 853×1280, без уменьшения, **49 КБ**
 - `app/components/StashBoot.vue` — экран загрузки (SCSS scoped): `.boot` → `.frame` / `.dial` / `.icon` (`.pulse`→`.armed`→`.reveal`→`.done`) / `.tick.on` / `.go.on`. Пульс **0.9↔1.05**; посадка **1.6 с** (scale ~18, 2 оборота Z, opacity с доездом); «Вперёд» **0.4 с**. 20 штрихов. Рамка 1px `#b99b30`, 20px от края, радиус 4px. Классы короткие, без BEM/дефисов; вложенность через SCSS.
 - `app/components/StashRenderGate.vue` — ручной рендер: тишина во время качания, прогрев после filesReady, always после «Вперёд»
 
@@ -95,6 +98,8 @@ TresJS HMR часто падает, если добавить/снять `:rotat
 Graybox: `tableW` 1.85, `tableD` 1.12, `tableH` 0.84, `wallGap` 0.28. ЭЛТ слева, yaw **+14°**. Системник правее монитора с зазором 0.22. Клавиатура у ближнего края, yaw **+15°**. Стул yaw **−190°**. Лампа между системником и правым краем стола.
 
 **Сейчас смотрим модель:** столешница — Sketchfab «Old Soviet table» (CC-BY-4.0 kayumov127), высота **0.92 м**, ширина ×**1.215**, yaw **+272°**. Лампа — Sketchfab «Rusty Kerosene Lamp» (CC-BY-4.0 GameDev Nick), **0.47 м**, к камере +9 см, покой 0.48 / ховер-фокус 2.2, поверх базы лёгкое мерцание (±16% покой / ±22% ховер, сглаженный рандом). Комп — Sketchfab «Abandoned Computer Terminal» (`public/models/abandoned-computer-terminal/`, CC-BY-4.0 olegolegperepelica): монитор+системник снизу+клава одним пропом, высота **0.52 м**, слева на столе, yaw **+14°**, сдвинут к дальней стене на **8 см** и вправо на **6.5 см**. Эмиссив экрана пульсирует с ховером стола. Стул — Sketchfab «Chair - Texture & Render» (`public/models/chair-texture-render/`, CC-BY-4.0 Rafiul Islam), высота **1.1 м**, yaw **−190°** (ещё −160° вправо от −30°), текстуры 512 AVIF. Бумаги — Sketchfab «Papers & Envelopes» (`public/models/papers-envelopes/`, CC-BY-4.0 bossdeff), между компом и лампой, +12 см вправо от середины, пролёт **0.65 м**, yaw **−21°**, 512 AVIF. Пистолет — Sketchfab «PTM 02356-1967 | S.T.A.L.K.E.R. 2» (`public/models/ptm-02356-1967/`, CC-BY-4.0 pr1mer), на бумажках ближе к ближнему краю стола (+16 см к камере, +5 мм над столешницей), длина **0.2 м**, лежит на боку (X **−90°**, не Z — иначе встаёт на ствол), yaw **−204°** (ещё −40° вправо), 512 AVIF. Глушитель — Sketchfab «Makarov Pistol Silencer» (`public/models/makarov-pistol-silencer/`, CC-BY-4.0 GameDev Nick), на столе **за** пистолетом (к дальней стене **−20 см** по локальному Z: было −12, ещё −8), тот же X, yaw **−230°** (ещё −26° вправо от ПМ), без укладки на бок (труба уже вдоль стола; X −90° как у ПМ ставит её столбом), длина **0.14 м**, 1024 AVIF. Банка — Sketchfab «Non Stop S.T.A.L.K.E.R. 2» (`public/models/non-stop-stalker-2/`, CC-BY-4.0 Alex_Bond), впритык к правому боку системника, затем ещё **+2 см** вправо (центр X **−0.286**), на **8 см** дальше от камеры (Z **−0.095**), высота **0.231 м** (×1.5 от 0.14, ещё ×1.1), стоит, 1024 AVIF, metalness ≤0.18. Рюкзак — Sketchfab «Backpack» (`public/models/backpack/`, CC-BY-NC-SA-4.0 cryptoisaac), справа от стола **+30 см** от края, к камере **+12 см**, высота **0.702 м** (×1.1 ещё раз), yaw **+180°** (ещё +90° влево), наклон Z **+14°** в боковину, **2048 AVIF** (albedo brightness 0.72). Исходник **unlit** — в сцене переведён на MeshStandardMaterial, иначе игнорирует лампу/окно.
+
+Экран компа: `StashCrtScreen`, плоскость на стекле (не подмена материала терминала). Холст **1024** рисуется один раз из `stashCopy.description`, шрифт Press Start 2P, фото слева сверху, справа имя / работа / текст, ниже секции About и Education. Колесо сдвигает окно, только когда стол в фокусе. Unlit, без теней, без тонмапа. Строки развёртки — отдельная карта 1×4, не едет с текстом.
 
 ### Сервант (дальняя стена, справа, зазор 0.5 м до правой стены)
 

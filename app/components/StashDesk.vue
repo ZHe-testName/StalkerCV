@@ -164,7 +164,7 @@ function crtScreenPoint(root: Group) {
   if (!hits) {
     return null
   }
-  return new Vector3((min.x + max.x) / 2, (min.y + max.y) / 2, max.z)
+  return { min: min.clone(), max: max.clone() }
 }
 
 function sitGltfOnFloor(scene: Group, heightM: number) {
@@ -283,6 +283,8 @@ watch(lampGltf, (gltf) => {
 
 const { state: pcGltf } = useLoader(GLTFLoader, '/models/abandoned-computer-terminal/scene.gltf')
 const pcModel = shallowRef<Group | null>(null)
+const crtFace = shallowRef<{ min: [number, number, number], max: [number, number, number] } | null>(null)
+const crtFit = ref(1)
 
 watch(pcGltf, (gltf) => {
   const scene = gltf?.scene
@@ -296,7 +298,15 @@ watch(pcGltf, (gltf) => {
     mat.needsUpdate = true
     pcMats.push(mat)
   })
-  const screen = crtScreenPoint(root) ?? new Vector3(0.0425, 0.377, 0.245)
+  const face = crtScreenPoint(root) ?? {
+    min: new Vector3(-0.133, 0.235, 0.214),
+    max: new Vector3(0.218, 0.519, 0.245),
+  }
+  const screen = new Vector3(
+    (face.min.x + face.max.x) / 2,
+    (face.min.y + face.max.y) / 2,
+    face.max.z,
+  )
   const c = Math.cos(pcYaw)
   const s = Math.sin(pcYaw)
   retargetDeskCrt(
@@ -307,6 +317,11 @@ watch(pcGltf, (gltf) => {
     ],
     pcYaw,
   )
+  crtFit.value = root.scale.x
+  crtFace.value = {
+    min: [face.min.x, face.min.y, face.min.z],
+    max: [face.max.x, face.max.y, face.max.z],
+  }
   pcModel.value = root
 }, { immediate: true })
 
@@ -425,6 +440,7 @@ watch(packGltf, (gltf) => {
 
     <TresGroup :position="[pcX, tableH, pcZ]" :rotation="[0, pcYaw, 0]">
       <primitive v-if="pcModel" :object="pcModel" />
+      <StashCrtScreen v-if="crtFace" :face="crtFace" :fit="crtFit" />
     </TresGroup>
 
     <TresGroup :position="[papersX, tableH, papersZ]" :rotation="[0, papersYaw, 0]">
