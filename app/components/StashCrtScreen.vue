@@ -127,8 +127,8 @@ function paintPhosphor(ctx: CanvasRenderingContext2D, photo: HTMLImageElement, x
 
 function drawDocument(ctx: CanvasRenderingContext2D, photo: HTMLImageElement | null, sidePad: number) {
   const copy = stashCopy.description
-  const pad = 32
-  const padX = Math.max(pad, sidePad)
+  const padY = 107
+  const padX = Math.max(48, sidePad - 24)
   const photoW = 272
   const photoH = photo ? Math.round(photoW * photo.height / photo.width) : 0
   const textX = padX + (photo ? photoW + 24 : 0)
@@ -140,13 +140,13 @@ function drawDocument(ctx: CanvasRenderingContext2D, photo: HTMLImageElement | n
   ctx.imageSmoothingEnabled = false
 
   if (photo && photoH) {
-    paintPhosphor(ctx, photo, padX, pad, photoW, photoH)
+    paintPhosphor(ctx, photo, padX, padY, photoW, photoH)
     ctx.strokeStyle = GREEN
     ctx.lineWidth = 3
-    ctx.strokeRect(padX + 1.5, pad + 1.5, photoW - 3, photoH - 3)
+    ctx.strokeRect(padX + 1.5, padY + 1.5, photoW - 3, photoH - 3)
   }
 
-  let textY = pad + 26
+  let textY = padY + 26
   const write = (text: string, size: number, lh: number, color: string, x: number, width: number) => {
     ctx.font = `${size}px ${FONT}`
     ctx.fillStyle = color
@@ -164,7 +164,7 @@ function drawDocument(ctx: CanvasRenderingContext2D, photo: HTMLImageElement | n
   textY += 14
   write(copy.details, 16, 28, DIM, textX, textW)
 
-  let y = Math.max(pad + photoH, textY) + 40
+  let y = Math.max(padY + photoH, textY) + 40
 
   const heading = (title: string) => {
     ctx.font = `18px ${FONT}`
@@ -193,6 +193,12 @@ function drawDocument(ctx: CanvasRenderingContext2D, photo: HTMLImageElement | n
   item(copy.about.projects, GREEN, 0)
   y += 16
 
+  heading(copy.experience.title)
+  for (const place of copy.experience.data) {
+    item(place, GREEN, 0)
+  }
+  y += 16
+
   heading(copy.education.title)
   for (const [key, school] of Object.entries(copy.education)) {
     if (key === 'title' || typeof school === 'string') {
@@ -203,7 +209,7 @@ function drawDocument(ctx: CanvasRenderingContext2D, photo: HTMLImageElement | n
     y += 6
   }
 
-  return y + pad
+  return y + padY
 }
 
 async function build() {
@@ -220,17 +226,17 @@ async function build() {
   const [x1, y1, z1] = props.face.max
   const spanX = x1 - x0
   const spanY = y1 - y0
-  const insetLeft = spanX * 0.078
-  const insetRight = spanX * 0.07
-  const insetTop = spanY * 0.01
-  const insetBottom = spanY * 0.13
   const s = props.fit || 1
+  const insetLeft = spanX * 0.078 - 0.011 / s
+  const insetRight = spanX * 0.07 - 0.011 / s
+  const insetTop = spanY * 0.01 - 0.005 / s
+  const insetBottom = spanY * 0.13 - 0.002 / s
   const planeW = (spanX - insetLeft - insetRight) * s
   const planeH = (spanY - insetTop - insetBottom) * s
   const radiusTop = 0.1
   const radiusBot = 0.05
-  const bowTop = 0.026
-  const bowBot = 0.023
+  const bowTop = 0.002
+  const bowBot = 0
   const sidePad = Math.ceil(radiusTop * (planeH / planeW) * TEX_W) + 8
 
   const measure = document.createElement('canvas').getContext('2d')
@@ -280,12 +286,17 @@ async function build() {
       uRadiusBot: { value: radiusBot },
       uBowTop: { value: bowTop },
       uBowBot: { value: bowBot },
+      uBulge: { value: 0.012 },
     },
     vertexShader: /* glsl */ `
+      uniform float uBulge;
       varying vec2 vUv;
       void main() {
         vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        float nx = uv.x * 2.0 - 1.0;
+        vec3 pos = position;
+        pos.z += uBulge * (1.0 - nx * nx);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
       }
     `,
     fragmentShader: /* glsl */ `
@@ -333,11 +344,11 @@ async function build() {
     `,
   })
 
-  const mesh = new Mesh(new PlaneGeometry(planeW, planeH), material)
+  const mesh = new Mesh(new PlaneGeometry(planeW, planeH, 32, 2), material)
   mesh.position.set(
     (x0 + insetLeft + (spanX - insetLeft - insetRight) / 2) * s,
     (y0 + insetBottom + (spanY - insetTop - insetBottom) / 2) * s,
-    z1 * s + 0.012,
+    z1 * s - 0.004,
   )
   mesh.raycast = () => {}
   mesh.castShadow = false
@@ -358,17 +369,6 @@ function onWheel(event: WheelEvent) {
   scroll = Math.min(maxScroll, Math.max(0, scroll + dy * 0.0009))
   material.uniforms.uScroll.value = scroll
 }
-
-watch(stashFocused, (id) => {
-  if (id === 'desk') {
-    return
-  }
-  const mesh = screenMesh.value
-  scroll = 0
-  if (mesh) {
-    (mesh.material as ShaderMaterial).uniforms.uScroll.value = 0
-  }
-})
 
 onMounted(() => {
   void build().catch((err) => {

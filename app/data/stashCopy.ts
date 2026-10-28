@@ -13,6 +13,14 @@ export const stashCopy = {
       experience: '4+ years of experience',
       projects: '12+ commercial projects',
     },
+    experience: {
+      title: 'experience',
+      data: [
+        'FIVE',
+        'DevOcean',
+        'Frozeneon',
+      ],
+    },
     education: {
       title: 'Education',
       vpnu: {
