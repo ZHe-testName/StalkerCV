@@ -64,10 +64,12 @@ export const stashCopy = {
       subject: 'Your subject',
       msg: 'Your message',
       send: 'Send',
+      icon: '/public/icons/plane.svg',
     },
     phone: {
       title: 'Call me',
       number: '+3 8063 882 80 81',
+      icon: '/public/icons/phone.svg',
     },
     links: [
       {

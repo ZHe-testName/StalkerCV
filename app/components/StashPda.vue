@@ -65,6 +65,7 @@ let linkCursor = false
 
 type LinkSpot = { x: number, y: number, w: number, h: number, url: string }
 const linkSpots: LinkSpot[] = []
+let sendBox: { x: number, y: number, w: number, h: number } | null = null
 const raycaster = new Raycaster()
 const ndc = new Vector2()
 
@@ -93,7 +94,10 @@ function drawTitle(
   w: number,
   h: number,
   icons: (HTMLImageElement | null)[],
+  phoneIcon: HTMLImageElement | null,
+  sendIcon: HTMLImageElement | null,
 ) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0)
   ctx.fillStyle = BIOS_BG
   ctx.fillRect(0, 0, w, h)
 
@@ -126,7 +130,136 @@ function drawTitle(
     y += subLh
   }
 
-  drawLinks(ctx, viewW, viewH, subSize, icons)
+  const phoneRule = drawPhone(ctx, viewW, y, subSize, phoneIcon)
+  drawForm(ctx, viewW, viewH, phoneRule, subSize, sendIcon)
+  drawLinks(ctx, viewH, subSize, icons)
+}
+
+function drawPhone(
+  ctx: CanvasRenderingContext2D,
+  viewW: number,
+  y: number,
+  size: number,
+  icon: HTMLImageElement | null,
+) {
+  const phone = stashCopy.form.phone
+  const gap = Math.round(size * 0.75)
+  y += gap
+  rule(ctx, viewW, y)
+
+  y += gap
+  ctx.fillStyle = BIOS_TEXT
+  ctx.textBaseline = 'top'
+  ctx.font = `500 ${size}px ${FONT}`
+  ctx.fillText(phone.title, 0, y)
+  y += Math.round(size * 1.35) + Math.round(size * 0.35)
+
+  const gapX = Math.round(size * 0.4)
+  const iconY = y - size * 0.08
+  if (icon) {
+    ctx.drawImage(icon, 0, iconY, size, size)
+  }
+  ctx.textBaseline = 'middle'
+  ctx.fillText(phone.number, size + gapX, y + size / 2)
+  const ruleY = y + size + gap
+  rule(ctx, viewW, ruleY)
+  return ruleY
+}
+
+function drawForm(
+  ctx: CanvasRenderingContext2D,
+  viewW: number,
+  viewH: number,
+  y: number,
+  size: number,
+  sendIcon: HTMLImageElement | null,
+) {
+  const fields = stashCopy.form.email
+  const colGap = Math.round(size * 0.7)
+  const fontSize = Math.round(size * 0.85)
+  const labelH = Math.round(fontSize * 1.2)
+  const labelGap = Math.round(size * 0.22)
+  const inputH = Math.round(size * 2.15)
+  const inputsW = Math.round((viewW - colGap) / 3)
+  const textW = viewW - colGap - inputsW
+  const formTop = y + Math.round(size * 0.75)
+  const textBottom = viewH - size - Math.round(size * 2.4)
+  const slot = labelH + labelGap
+  const rowGap = Math.round(size * 0.45)
+  const radius = Math.round(size * 0.28)
+  sendBox = null
+  const labels = [fields.name, fields.mail, fields.subject]
+  const textX = inputsW + colGap
+  ctx.font = `500 ${fontSize}px ${FONT}`
+  ctx.fillStyle = BIOS_TEXT
+  ctx.strokeStyle = BIOS_TEXT
+  ctx.lineWidth = 1
+  ctx.textBaseline = 'top'
+  let firstInput = formTop
+  labels.forEach((title, i) => {
+    const blockTop = formTop + i * (slot + inputH + rowGap)
+    const inputTop = blockTop + slot
+    if (i === 0) {
+      firstInput = inputTop
+    }
+    ctx.fillText(title, 0, blockTop)
+    roundBox(ctx, 0, inputTop, inputsW, inputH, radius)
+  })
+  ctx.fillText(fields.msg, textX, formTop)
+  const msgH = textBottom - firstInput
+  roundBox(ctx, textX, firstInput, textW, msgH, radius)
+  drawSend(ctx, viewW, viewH, size, fontSize, radius, sendIcon)
+}
+
+function drawSend(
+  ctx: CanvasRenderingContext2D,
+  viewW: number,
+  viewH: number,
+  size: number,
+  fontSize: number,
+  radius: number,
+  icon: HTMLImageElement | null,
+) {
+  const label = stashCopy.form.email.send
+  const iconSize = fontSize
+  const gap = Math.round(size * 0.4)
+  const padX = Math.round(size * 0.7)
+  const btnH = Math.round(size * 2.15)
+  ctx.font = `500 ${fontSize}px ${FONT}`
+  const textW = ctx.measureText(label).width
+  const btnW = padX * 2 + textW + gap + iconSize
+  const x = viewW - btnW
+  const y = viewH - btnH
+  sendBox = { x, y, w: btnW, h: btnH }
+  roundBox(ctx, x, y, btnW, btnH, radius)
+  ctx.textBaseline = 'middle'
+  const mid = y + btnH / 2
+  ctx.fillText(label, x + padX, mid)
+  if (icon) {
+    ctx.drawImage(icon, x + padX + textW + gap, mid - iconSize / 2, iconSize, iconSize)
+  }
+}
+
+function roundBox(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  ctx.beginPath()
+  ctx.roundRect(x, y, w, h, r)
+  ctx.stroke()
+}
+
+function rule(ctx: CanvasRenderingContext2D, viewW: number, y: number) {
+  ctx.strokeStyle = BIOS_TEXT
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(0, y)
+  ctx.lineTo(viewW, y)
+  ctx.stroke()
 }
 
 function iconSrc(path: string) {
@@ -148,7 +281,6 @@ function loadIcon(path: string) {
 
 function drawLinks(
   ctx: CanvasRenderingContext2D,
-  viewW: number,
   viewH: number,
   size: number,
   icons: (HTMLImageElement | null)[],
@@ -161,15 +293,7 @@ function drawLinks(
   ctx.font = `500 ${size}px ${FONT}`
   ctx.textBaseline = 'middle'
   ctx.fillStyle = BIOS_TEXT
-  const links = stashCopy.form.links
-  let row = 0
-  for (let i = 0; i < links.length; i++) {
-    row += ctx.measureText(links[i].title).width + gap + icon
-    if (i < links.length - 1) {
-      row += itemGap
-    }
-  }
-  let x = viewW - row
+  let x = 0
   stashCopy.form.links.forEach((item, i) => {
     const metrics = ctx.measureText(item.title)
     const titleW = metrics.width
@@ -208,7 +332,11 @@ async function paintScreen(mat: MeshBasicMaterial, planeW: number, planeH: numbe
   const aspect = planeW / Math.max(planeH, 1e-6)
   texW = aspect >= 1 ? 1024 : Math.max(2, Math.round(1024 * aspect))
   texH = aspect >= 1 ? Math.max(2, Math.round(1024 / aspect)) : 1024
-  const icons = await Promise.all(stashCopy.form.links.map(item => loadIcon(item.icon)))
+  const [icons, phoneIcon, sendIcon] = await Promise.all([
+    Promise.all(stashCopy.form.links.map(item => loadIcon(item.icon))),
+    loadIcon(stashCopy.form.phone.icon),
+    loadIcon(stashCopy.form.email.icon),
+  ])
   const canvas = document.createElement('canvas')
   canvas.width = texW
   canvas.height = texH
@@ -216,7 +344,7 @@ async function paintScreen(mat: MeshBasicMaterial, planeW: number, planeH: numbe
   if (!ctx) {
     return
   }
-  drawTitle(ctx, texW, texH, icons)
+  drawTitle(ctx, texW, texH, icons, phoneIcon, sendIcon)
 
   const map = new CanvasTexture(canvas)
   map.colorSpace = SRGBColorSpace
@@ -292,11 +420,11 @@ function inHand() {
   return stashFocused.value === 'armchair' && h.id === 'armchair' && h.lift > 0.95
 }
 
-function spotAt(e: MouseEvent) {
+function textAt(e: MouseEvent) {
   const pane = screenPane
   const cam = camera.value
   const el = renderer.domElement
-  if (!pane || !cam || !el || !inHand() || !linkSpots.length) {
+  if (!pane || !cam || !el || !inHand()) {
     return null
   }
   const rect = el.getBoundingClientRect()
@@ -315,36 +443,53 @@ function spotAt(e: MouseEvent) {
   // Холст повёрнут тем же transform, что и заголовок: textX вправо кадра, textY вниз.
   const canvasX = uv.x * texW
   const canvasY = (1 - uv.y) * texH
-  const textX = canvasY - padPx
-  const textY = (texW - padPx) - canvasX
-  return linkSpots.find(spot =>
-    textX >= spot.x && textX <= spot.x + spot.w
-    && textY >= spot.y && textY <= spot.y + spot.h,
+  return {
+    x: canvasY - padPx,
+    y: (texW - padPx) - canvasX,
+  }
+}
+
+function boxHit<T extends { x: number, y: number, w: number, h: number }>(
+  list: T[],
+  x: number,
+  y: number,
+) {
+  return list.find(spot =>
+    x >= spot.x && x <= spot.x + spot.w
+    && y >= spot.y && y <= spot.y + spot.h,
   ) ?? null
 }
 
 function setLinkCursor(on: boolean) {
-  if (on === linkCursor) {
+  const el = renderer.domElement
+  const next = on ? 'pointer' : ''
+  if (on === linkCursor && el.style.cursor === next) {
     return
   }
   linkCursor = on
-  document.body.style.cursor = on ? 'pointer' : ''
+  el.style.cursor = next
 }
 
 function onMove(e: PointerEvent) {
-  if (!inHand()) {
+  const at = textAt(e)
+  if (!at) {
     setLinkCursor(false)
     return
   }
-  setLinkCursor(spotAt(e) !== null)
+  const over = boxHit(linkSpots, at.x, at.y)
+    || (sendBox && boxHit([sendBox], at.x, at.y))
+  setLinkCursor(over !== null)
 }
 
 function onClick(e: MouseEvent) {
-  const spot = spotAt(e)
-  if (!spot) {
+  const at = textAt(e)
+  if (!at) {
     return
   }
-  window.open(spot.url, '_blank', 'noopener,noreferrer')
+  const spot = boxHit(linkSpots, at.x, at.y)
+  if (spot) {
+    window.open(spot.url, '_blank', 'noopener,noreferrer')
+  }
 }
 
 onMounted(() => {
