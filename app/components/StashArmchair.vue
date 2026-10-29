@@ -87,20 +87,28 @@ const pdaQuat = ref<[number, number, number, number]>([
 ])
 const pdaPos = ref<[number, number, number]>([...restWorldPos])
 const pdaScale = ref(1)
+let pdaAtRest = true
 const { onBeforeRender } = useLoop()
 onBeforeRender(() => {
   const h = stashHold.value
   const k = h.id === 'armchair' ? h.lift : 0
+  if (k < 0.001) {
+    if (pdaAtRest) {
+      return
+    }
+    pdaAtRest = true
+    pdaPos.value = [...restWorldPos]
+    pdaQuat.value = [restQuat.x, restQuat.y, restQuat.z, restQuat.w]
+    pdaScale.value = 1
+    return
+  }
+  pdaAtRest = false
   pdaPos.value = [
     restWorldPos[0] + (h.x - restWorldPos[0]) * k,
     restWorldPos[1] + (h.y - restWorldPos[1]) * k,
     restWorldPos[2] + (h.z - restWorldPos[2]) * k,
   ]
   pdaScale.value = 1 + (h.scale - 1) * k
-  if (k < 0.001) {
-    pdaQuat.value = [restQuat.x, restQuat.y, restQuat.z, restQuat.w]
-    return
-  }
   dummy.position.set(pdaPos.value[0], pdaPos.value[1], pdaPos.value[2])
   dummy.up.set(0, 1, 0)
   dummy.lookAt(h.camX, h.camY, h.camZ)

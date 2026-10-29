@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
- * Три стены. Микс кирпич/штукатурка по маске.
- * Левая/правая 80/20, дальняя 60/40. Откос окна — только кирпич.
+ * Три стены. Внутренние грани — запечённый микс.
+ * Откос окна — только кирпич. Живой микс оставлен в StashWallMix.
  */
 const props = defineProps<{
   room: {
@@ -183,16 +183,14 @@ const backPanels = [
     :position="[innerLeftX, panel.y, panel.z]"
     :rotation="[0, leftYaw, 0]"
   >
-    <StashWallMix
+    <StashWallBaked
       :width="panel.w"
       :height="panel.h"
-      :tile-width="wallD"
-      :tile-height="wallH"
       :u0="panel.u0"
       :v0="panel.v0"
       :u1="panel.u1"
       :v1="panel.v1"
-      mask-url="/textures/wall-masks/left.80.png"
+      wall="left"
     />
   </TresGroup>
 
@@ -214,16 +212,14 @@ const backPanels = [
     :key="'b' + i"
     :position="[panel.x, panel.y, innerBackZ]"
   >
-    <StashWallMix
+    <StashWallBaked
       :width="panel.w"
       :height="panel.h"
-      :tile-width="innerW"
-      :tile-height="wallH"
       :u0="panel.u0"
       :v0="panel.v0"
       :u1="panel.u1"
       :v1="panel.v1"
-      mask-url="/textures/wall-masks/back.60.png"
+      wall="back"
     />
   </TresGroup>
 
@@ -240,10 +236,10 @@ const backPanels = [
     <StashBrickOnly :width="room.wall" :height="backOpening.height" cast-shadow />
   </TresGroup>
   <TresGroup :position="[innerRightX, wallY, 0]" :rotation="[0, rightYaw, 0]">
-    <StashWallMix
+    <StashWallBaked
       :width="room.depth"
       :height="room.height"
-      mask-url="/textures/wall-masks/right.80.png"
+      wall="right"
     />
   </TresGroup>
 </template>
