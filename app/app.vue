@@ -71,6 +71,7 @@ onUnmounted(() => {
     <StashRenderGate />
     <StashExperience />
   </TresCanvas>
+  <StashPdaFields />
   <div class="vignette" aria-hidden="true" />
   <StashBoot v-if="!sceneOpen" @enter="sceneOpen = true" />
   <Teleport to="body">

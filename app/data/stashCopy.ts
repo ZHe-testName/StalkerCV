@@ -71,6 +71,10 @@ export const stashCopy = {
       number: '+3 8063 882 80 81',
       icon: '/public/icons/phone.svg',
     },
+    cv: {
+      text: 'Download CV',
+      icon: '/public/icons/download.svg',
+    },
     links: [
       {
         title: 'GitHub',
@@ -87,6 +91,15 @@ export const stashCopy = {
         link: 'https://www.facebook.com/horunzhy.wgen',
         icon: '/public/icons/fb.svg',
       },
-    ]
+    ],
+    validation: {
+      name: 'Name is required',
+      email: 'Email is required',
+      incorrectEmail: 'Incorrect e-mail address',
+      subject: 'Subject is required',
+      msg: 'Message is required',
+      success: 'Successfully sended',
+      error: 'Sending error', 
+    },
   },
 } as const
