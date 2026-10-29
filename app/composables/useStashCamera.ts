@@ -6,6 +6,7 @@
 import { onUnmounted, ref } from 'vue'
 import { useLoop, useTres } from '@tresjs/core'
 import { Object3D, Vector3 } from 'three'
+import { play } from '~/composables/useStashAudio'
 
 type Vec3 = [number, number, number]
 export type AnchorId = 'desk' | 'sideboard' | 'armchair'
@@ -398,6 +399,8 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
   let liftFrom = 0
   let focused: AnchorId | null = null
   let walkSteps = DESK_STEPS
+  let foot = 0
+  let stepRight = false
   let perpX = 0
   let perpZ = 1
 
@@ -426,6 +429,9 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
     walkSteps = focused === 'sideboard' && (next === 'to-anchor' || next === 'to-home')
       ? SIDEBOARD_STEPS
       : DESK_STEPS
+    if (next === 'to-anchor' || next === 'to-home') {
+      foot = 0
+    }
     moveTime = durationFor(next, walkSteps)
     if (next === 'to-hold' || next === 'to-place') {
       liftFrom = stashHold.value.lift
@@ -529,6 +535,7 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
       return
     }
     startMove(deskShot.position, deskShot.lookAt, 'to-stand')
+    play('chiar_off')
   }
 
   const { onBeforeRender } = useLoop()
@@ -556,6 +563,12 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
       pos[1] += bob.y
       pos[2] += perpZ * bob.side
       apply(pos, walkLook(u))
+      const planted = Math.floor(u * walkSteps + 1e-4)
+      if (planted > foot) {
+        play(stepRight ? 'step2' : 'step1')
+        stepRight = !stepRight
+        foot = planted
+      }
     }
     else {
       const k = mode === 'to-sit' || mode === 'to-stand' || mode === 'to-hold' || mode === 'to-place' || mode === 'to-turn'
@@ -581,9 +594,11 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
       }
       if (focused === 'armchair') {
         startMove(armchair.sit, armchair.sitLookAt, 'to-sit')
+        play('sofa_on')
         return
       }
       startMove(sitShot.position, sitShot.lookAt, 'to-sit')
+      play('chiar_on')
       return
     }
     if (mode === 'to-sit') {

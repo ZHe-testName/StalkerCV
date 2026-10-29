@@ -8,6 +8,7 @@ import { Box3, Group, Mesh, MeshStandardMaterial, Vector3 } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { stashFocused } from '~/composables/useStashCamera'
 import { stashHovered } from '~/composables/useStashAnchor'
+import { play } from '~/composables/useStashAudio'
 
 const props = defineProps<{
   src: string
@@ -116,6 +117,7 @@ onBeforeRender(({ delta }) => {
       lampBase = lampIntensity.value
       armSparkWait()
       wasLit = true
+      play('light_on')
     }
     lampBase += (LAMP_HOT - lampBase) * k
     lampIntensity.value = lampBase
@@ -124,6 +126,7 @@ onBeforeRender(({ delta }) => {
     if (wasLit) {
       armSparkWait()
       wasLit = false
+      play('light_off')
     }
 
     sparkTimer -= delta

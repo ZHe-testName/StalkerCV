@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { TresCanvas } from '@tresjs/core'
 import { stashAway, stashFocused, stashFocus } from '~/composables/useStashCamera'
+import { preloadStashAudio, unlockStashAudio } from '~/composables/useStashAudio'
 
 useStashBootLoad()
 
@@ -11,6 +12,11 @@ const backGone = ref(false)
 let hideBack = 0
 const showBack = computed(() => !backGone.value && (stashAway.value || stashFocused.value !== null))
 const backTop = computed(() => stashFocused.value === 'armchair')
+
+function enter() {
+  unlockStashAudio()
+  sceneOpen.value = true
+}
 
 function leave() {
   if (!showBack.value) {
@@ -46,6 +52,7 @@ function onKey(e: KeyboardEvent) {
 }
 
 onMounted(() => {
+  preloadStashAudio()
   window.addEventListener('keydown', onKey)
 })
 onUnmounted(() => {
@@ -73,7 +80,7 @@ onUnmounted(() => {
   </TresCanvas>
   <StashPdaFields />
   <div class="vignette" aria-hidden="true" />
-  <StashBoot v-if="!sceneOpen" @enter="sceneOpen = true" />
+  <StashBoot v-if="!sceneOpen" @enter="enter" />
   <Teleport to="body">
     <button
       v-show="showBack"
