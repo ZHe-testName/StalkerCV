@@ -55,4 +55,36 @@ export const stashCopy = {
       }
     },
   },
+  form: {
+    title: 'Feel free to contact me.',
+    subtitle: 'I am always open to discuss new projects, creative ideas or opportunity become a part of your vision.',
+    email: {
+      name: 'Your name',
+      mail: 'Your email',
+      subject: 'Your subject',
+      msg: 'Your message',
+      send: 'Send',
+    },
+    phone: {
+      title: 'Call me',
+      number: '+3 8063 882 80 81',
+    },
+    links: [
+      {
+        title: 'GitHub',
+        link: 'https://github.com/ZHe-testName',
+        icon: '/public/icons/git.svg',
+      },
+      {
+        title: 'Linkedin',
+        link: 'https://linkedin.com/in/евгений-хорунжий-10556b223',
+        icon: '/public/icons/linkedin.svg',
+      },
+      {
+        title: 'Facebook',
+        link: 'https://www.facebook.com/horunzhy.wgen',
+        icon: '/public/icons/fb.svg',
+      },
+    ]
+  },
 } as const

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { TresCanvas } from '@tresjs/core'
 import { stashAway, stashFocused, stashFocus } from '~/composables/useStashCamera'
 
@@ -7,14 +7,42 @@ useStashBootLoad()
 
 const sceneOpen = ref(false)
 provide('stashSceneOpen', sceneOpen)
-const showBack = computed(() => stashAway.value || stashFocused.value !== null)
+const backGone = ref(false)
+let hideBack = 0
+const showBack = computed(() => !backGone.value && (stashAway.value || stashFocused.value !== null))
+const backTop = computed(() => stashFocused.value === 'armchair')
+
+function leave() {
+  if (!showBack.value) {
+    return
+  }
+  stashFocus.goHome()
+  if (hideBack) {
+    return
+  }
+  hideBack = window.setTimeout(() => {
+    backGone.value = true
+    hideBack = 0
+  }, 1000)
+}
+
+watch(stashFocused, (id) => {
+  if (!id) {
+    return
+  }
+  backGone.value = false
+  if (hideBack) {
+    window.clearTimeout(hideBack)
+    hideBack = 0
+  }
+})
 
 function onKey(e: KeyboardEvent) {
   if (e.key !== 'Escape' || e.repeat || !showBack.value) {
     return
   }
   e.preventDefault()
-  stashFocus.goHome()
+  leave()
 }
 
 onMounted(() => {
@@ -22,6 +50,9 @@ onMounted(() => {
 })
 onUnmounted(() => {
   window.removeEventListener('keydown', onKey)
+  if (hideBack) {
+    window.clearTimeout(hideBack)
+  }
 })
 </script>
 
@@ -47,7 +78,8 @@ onUnmounted(() => {
       v-show="showBack"
       class="back"
       type="button"
-      @click="stashFocus.goHome()"
+      :class="{ top: backTop }"
+      @click="leave()"
     >
       Назад
     </button>
@@ -91,6 +123,11 @@ onUnmounted(() => {
   &:hover {
     background: rgb(18 18 16 / 0.88);
     color: #fff;
+  }
+
+  &.top {
+    top: 9vh;
+    bottom: auto;
   }
 }
 </style>
