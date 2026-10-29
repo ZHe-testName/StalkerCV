@@ -3,6 +3,7 @@
  * Картинка на стекле ЭЛТ. Холст один раз, колесо сдвигает окно.
  * Строки развёртки отдельной картой и не едут вместе с текстом.
  */
+import { useLoop } from '@tresjs/core'
 import {
   CanvasTexture,
   ClampToEdgeWrapping,
@@ -13,6 +14,7 @@ import {
   RepeatWrapping,
   ShaderMaterial,
   Vector2,
+  Vector4,
 } from 'three'
 import { stashCopy } from '~/data/stashCopy'
 import { stashFocused } from '~/composables/useStashCamera'
@@ -26,6 +28,26 @@ const FONT_URL = '/fonts/PressStart2P-Regular.ttf'
 const FONT = 'PressStart2P'
 const PHOTO_URL = '/screen/portfolio_photo.avif'
 const TEX_W = 1024
+const PHOTO_W = 272
+const PAD_Y = 107
+
+function photoPadX(sidePad: number) {
+  return Math.max(48, sidePad - 24)
+}
+
+function photoRect(sidePad: number, photo: HTMLImageElement | null, texH: number) {
+  const padX = photoPadX(sidePad)
+  const photoH = photo ? Math.round(PHOTO_W * photo.height / photo.width) : 0
+  if (!photoH) {
+    return new Vector4()
+  }
+  return new Vector4(
+    padX / TEX_W,
+    1 - (PAD_Y + photoH) / texH,
+    (padX + PHOTO_W) / TEX_W,
+    1 - PAD_Y / texH,
+  )
+}
 
 const GREEN = '#6be85a'
 const DIM = '#3d9a40'
@@ -33,8 +55,17 @@ const RULE = '#1c5a28'
 const BG = '#041208'
 
 const screenMesh = shallowRef<Mesh | null>(null)
+let screenMat: ShaderMaterial | null = null
 let scroll = 0
 let maxScroll = 0
+
+const { onBeforeRender } = useLoop()
+onBeforeRender(({ elapsed }) => {
+  if (!screenMat) {
+    return
+  }
+  screenMat.uniforms.uTime.value = elapsed
+})
 
 function wrap(ctx: CanvasRenderingContext2D, text: string, maxW: number) {
   const words = text.split(/\s+/).filter(Boolean)
@@ -127,9 +158,9 @@ function paintPhosphor(ctx: CanvasRenderingContext2D, photo: HTMLImageElement, x
 
 function drawDocument(ctx: CanvasRenderingContext2D, photo: HTMLImageElement | null, sidePad: number) {
   const copy = stashCopy.description
-  const padY = 107
-  const padX = Math.max(48, sidePad - 24)
-  const photoW = 272
+  const padY = PAD_Y
+  const padX = photoPadX(sidePad)
+  const photoW = PHOTO_W
   const photoH = photo ? Math.round(photoW * photo.height / photo.width) : 0
   const textX = padX + (photo ? photoW + 24 : 0)
   const textW = TEX_W - textX - padX
@@ -287,6 +318,8 @@ async function build() {
       uBowTop: { value: bowTop },
       uBowBot: { value: bowBot },
       uBulge: { value: 0.012 },
+      uTime: { value: 0 },
+      uPhoto: { value: photoRect(sidePad, photo, texH) },
     },
     vertexShader: /* glsl */ `
       uniform float uBulge;
@@ -310,6 +343,8 @@ async function build() {
       uniform float uRadiusBot;
       uniform float uBowTop;
       uniform float uBowBot;
+      uniform float uTime;
+      uniform vec4 uPhoto;
       varying vec2 vUv;
 
       float roundedBox(vec2 p, vec2 b, vec4 rad) {
@@ -336,7 +371,25 @@ async function build() {
         float aa = fwidth(dist);
         if (dist > aa) discard;
         float v = 1.0 - uScroll - (1.0 - vUv.y) * uWindow;
-        vec3 col = texture2D(uMap, vec2(vUv.x, clamp(v, 0.0, 1.0))).rgb;
+        float u = vUv.x;
+        float inV = step(uPhoto.y, v) * step(v, uPhoto.w);
+        float cycle = mod(uTime, 4.4);
+        float burst = step(cycle, 0.18);
+        float burstId = floor(uTime / 4.4);
+        float dir = fract(sin(burstId * 12.9898) * 43758.5453) > 0.5 ? 1.0 : -1.0;
+        dir *= cycle < 0.09 ? 1.0 : -1.0;
+        float block = dir * 0.02 * burst;
+        float inMoved = step(uPhoto.x + block, u) * step(u, uPhoto.z + block) * inV;
+        float inOrig = step(uPhoto.x, u) * step(u, uPhoto.z) * inV;
+        float span = max(uPhoto.w - uPhoto.y, 0.0001);
+        float band = floor((v - uPhoto.y) / span * 12.0);
+        float tick = floor(uTime * 22.0);
+        float n = fract(sin(band * 91.7 + tick * 17.3) * 43758.5453);
+        float shift = (n - 0.5) * 0.028 * burst * step(0.55, n);
+        float su = clamp(u - block + shift, uPhoto.x, uPhoto.z);
+        vec3 col = texture2D(uMap, vec2(mix(u, su, inMoved), clamp(v, 0.0, 1.0))).rgb;
+        col = mix(col, vec3(0.0157, 0.0706, 0.0314), inOrig * (1.0 - inMoved));
+        col += vec3(0.04, 0.2, 0.05) * burst * inMoved * step(0.86, n);
         float scan = texture2D(uScan, vUv * uScanRepeat).r;
         col *= 0.8 + 0.2 * scan;
         gl_FragColor = vec4(col, 1.0);
@@ -355,6 +408,7 @@ async function build() {
   mesh.receiveShadow = false
   mesh.renderOrder = 2
   maxScroll = Math.max(0, 1 - windowFrac)
+  screenMat = material
   screenMesh.value = mesh
 }
 
