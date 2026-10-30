@@ -91,6 +91,48 @@ let loading: Promise<void> | null = null
 const buffers = new Map<string, AudioBuffer>()
 const loops = new Map<string, HTMLAudioElement>()
 const loopStarted = new Set<string>()
+let attentionBound = false
+let away = false
+
+function pageHeard() {
+  return !away && document.visibilityState === 'visible' && document.hasFocus()
+}
+
+function syncLoops() {
+  for (const name of loopStarted) {
+    const el = loops.get(name)
+    if (!el) {
+      continue
+    }
+    if (pageHeard()) {
+      void el.play().catch(() => {})
+    }
+    else {
+      el.pause()
+    }
+  }
+}
+
+function onAttention(event: Event) {
+  if (event.type === 'blur' || (event.type === 'visibilitychange' && document.hidden)) {
+    away = true
+  }
+  else if (document.visibilityState === 'visible' && document.hasFocus()) {
+    away = false
+  }
+  syncLoops()
+}
+
+function bindAttention() {
+  if (attentionBound) {
+    return
+  }
+  attentionBound = true
+  away = document.hidden || !document.hasFocus()
+  document.addEventListener('visibilitychange', onAttention)
+  window.addEventListener('blur', onAttention)
+  window.addEventListener('focus', onAttention)
+}
 
 function context() {
   if (!ctx) {
@@ -105,6 +147,7 @@ export function preloadStashAudio() {
   }
   try {
     const audio = context()
+    bindAttention()
     for (const sound of catalog) {
       if (sound.loop) {
         ensureLoop(sound)
@@ -137,6 +180,11 @@ function ensureLoop(sound: StashSound) {
     el = new Audio(sound.file)
     el.loop = true
     el.preload = 'auto'
+    el.addEventListener('play', () => {
+      if (!pageHeard()) {
+        el.pause()
+      }
+    })
     loops.set(sound.name, el)
   }
   return el
@@ -153,7 +201,9 @@ function startLoop(sound: StashSound) {
   source.connect(gain)
   gain.connect(ctx.destination)
   loopStarted.add(sound.name)
-  void el.play()
+  if (pageHeard()) {
+    void el.play().catch(() => {})
+  }
 }
 
 export function play(name: SoundName) {
