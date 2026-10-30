@@ -208,8 +208,17 @@ ceilingSlab.receiveShadow = false
     <!-- Пропы: StashOutsideProp. Локально −Z наружу, +X вправо из окна, y = 0 земля.
          Видимый конус кадра 0: 5 м → X 2.2..5.3 | 10 м → X 6.9..11.9 | 20 м → X 14.4..23.1.
          Прямо перед окном (X≈0) с кадра 0 не видно — камера смотрит сбоку. -->
-    <StashOutsideRain :x="4.2" :z="-3.6" :width="3.8" :height="5.2" :y="2.6" :speed="0.85" />
-    <StashOutsideRain :x="10.4" :z="-10" :width="6.4" :height="6.5" :y="3.2" :speed="0.55" :opacity="0.4" />
+    <!-- Ближний край — косяк ближе к камере. Дальний — между дальним косяком и левым углом. -->
+    <StashOutsideRainDrops
+      :x-min="1.72"
+      :x-max="5.53"
+      :x-min-far="4.81"
+      :x-max-far="11.21"
+      :z-near="-3.5"
+      :z-far="-8"
+      :count="120"
+      :length-scale="0.65"
+    />
   </StashOutside>
   <StashBrokenWindow
     src="/models/broken-window-06/scene.gltf"
@@ -261,9 +270,8 @@ ceilingSlab.receiveShadow = false
       :sink="0.08"
       :alpha-test="0.4"
     />
-    <!-- Левый край: 1 м левее левого края окна (−0.675 − 1). Правый: правый угол дома, x 8.82. -->
-    <StashOutsideRain :x="3.57" :z="-7.2" :width="10.5" :height="5.4" :y="3" :speed="0.8" />
-    <StashOutsideRain :x="3.57" :z="-13" :width="10.5" :height="6.2" :y="3.4" :speed="0.5" :opacity="0.4" />
+    <!-- Капли: левый край 1 м левее окна, правый напротив правого угла дома. Перед домом, не в нём. -->
+    <StashOutsideRainDrops :x-min="-0.68" :x-max="7.82" :z-near="-6.2" :z-far="-12.2" :count="100" />
     <StashOutsideProp
       src="/models/dry-bush/scene.gltf"
       :height="2.6"
