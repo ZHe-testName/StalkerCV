@@ -6,8 +6,7 @@ import { Box3, Group, Mesh, MeshStandardMaterial, Object3D, Quaternion, Vector3 
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { useLoader, useLoop } from '@tresjs/core'
-import { stashAway, stashFocused, stashHold } from '~/composables/useStashCamera'
-import { play } from '~/composables/useStashAudio'
+import { stashFocused, stashHold } from '~/composables/useStashCamera'
 
 const cabSrc = '/models/soviet-old-table/scene.gltf'
 const cabYawY = -90 * Math.PI / 180
@@ -61,42 +60,6 @@ const emit = defineEmits<{
 }>()
 
 const { hovered, glow, onPointerEnter, onPointerLeave } = useStashAnchor('sideboard')
-let skipRadio = false
-
-function onSideboardEnter() {
-  const already = hovered.value
-  onPointerEnter()
-  if (stashAway.value) {
-    skipRadio = true
-    return
-  }
-  if (!already && !skipRadio && stashFocused.value !== 'sideboard') {
-    play('radio_on')
-  }
-}
-
-function onSideboardClick() {
-  skipRadio = true
-  emit('select')
-}
-
-watch(hovered, (on) => {
-  if (!on && !stashAway.value && stashFocused.value !== 'sideboard') {
-    skipRadio = false
-  }
-})
-
-watch(stashAway, (away) => {
-  if (away) {
-    skipRadio = true
-  }
-})
-
-watch(stashFocused, (id) => {
-  if (id !== 'sideboard' && !hovered.value) {
-    skipRadio = false
-  }
-})
 
 const restLocal = rotateXZ(deviceX, deviceZ)
 const restWorldPos: [number, number, number] = [
@@ -605,9 +568,9 @@ const devicePose = computed(() => {
     <TresGroup :position="[originX, 0, originZ]" :rotation="[0, yaw, 0]">
     <TresMesh
       :position="[0, hoverY, 0]"
-      @pointerenter="onSideboardEnter"
+      @pointerenter="onPointerEnter"
       @pointerleave="onPointerLeave"
-      @click="onSideboardClick"
+      @click="emit('select')"
     >
       <TresBoxGeometry :args="[hoverW, hoverH, hoverD]" />
       <TresMeshBasicMaterial :transparent="true" :opacity="0" :depth-write="false" />

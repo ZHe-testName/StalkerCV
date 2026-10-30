@@ -504,6 +504,7 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
     bindHold(id)
     if (id === 'sideboard') {
       startMove(sideboard.stand.position, sideboard.stand.lookAt, 'to-anchor')
+      play('radio_move')
       return
     }
     if (id === 'armchair') {
@@ -532,10 +533,11 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
         return
       }
       startMove(armchair.stand.position, armchair.stand.lookAt, 'to-stand')
+      play('sofa_off')
       return
     }
     startMove(deskShot.position, deskShot.lookAt, 'to-stand')
-    play('chiar_off')
+    play('chair_off')
   }
 
   const { onBeforeRender } = useLoop()
@@ -598,7 +600,7 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
         return
       }
       startMove(sitShot.position, sitShot.lookAt, 'to-sit')
-      play('chiar_on')
+      play('chair_on')
       return
     }
     if (mode === 'to-sit') {
@@ -620,6 +622,7 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
       setLift(0)
       if (focused === 'armchair') {
         startMove(armchair.stand.position, armchair.stand.lookAt, 'to-stand')
+        play('sofa_off')
         return
       }
       startMove([...homePosition], [...homeLookAt], 'to-home')
