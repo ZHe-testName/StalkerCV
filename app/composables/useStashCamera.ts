@@ -521,6 +521,9 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
     if (mode === 'to-anchor' || mode === 'sideboard-wait') {
       setLift(0)
       startMove([...homePosition], [...homeLookAt], 'to-home')
+      if (focused === 'sideboard') {
+        play('radio_backmove')
+      }
       return
     }
     if (focused === 'sideboard') {
@@ -626,6 +629,7 @@ export function useStashCamera(homePosition: Vec3, homeLookAt: Vec3) {
         return
       }
       startMove([...homePosition], [...homeLookAt], 'to-home')
+      play('radio_backmove')
       return
     }
     if (mode === 'to-stand') {

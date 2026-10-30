@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { TresCanvas } from '@tresjs/core'
 import { stashAway, stashFocused, stashFocus } from '~/composables/useStashCamera'
-import { preloadStashAudio, unlockStashAudio } from '~/composables/useStashAudio'
+import { play, preloadStashAudio, unlockStashAudio } from '~/composables/useStashAudio'
 
 useStashBootLoad()
 
@@ -15,6 +15,7 @@ const backTop = computed(() => stashFocused.value === 'armchair')
 
 function enter() {
   unlockStashAudio()
+  play('rain')
   sceneOpen.value = true
 }
 

@@ -16,13 +16,13 @@ const catalog = [
   {
     name: 'step1',
     file: '/audio/step_1.mp3',
-    volume: 0.55,
+    volume: 0.4,
     loop: false,
   },
   {
     name: 'step2',
     file: '/audio/step_2.mp3',
-    volume: 0.55,
+    volume: 0.4,
     loop: false,
   },
   {
@@ -40,6 +40,12 @@ const catalog = [
   {
     name: 'radio_move',
     file: '/audio/radio_move.mp3',
+    volume: 0.4,
+    loop: false,
+  },
+  {
+    name: 'radio_backmove',
+    file: '/audio/radio_backmove.mp3',
     volume: 0.4,
     loop: false,
   },
@@ -67,6 +73,12 @@ const catalog = [
     volume: 0.4,
     loop: false,
   },
+  {
+    name: 'rain',
+    file: '/audio/rain.mp3',
+    volume: 0.32,
+    loop: true,
+  },
 ] as const satisfies readonly StashSound[]
 
 type SoundName = (typeof catalog)[number]['name']
@@ -78,6 +90,7 @@ let unlocked = false
 let loading: Promise<void> | null = null
 const buffers = new Map<string, AudioBuffer>()
 const loops = new Map<string, HTMLAudioElement>()
+const loopStarted = new Set<string>()
 
 function context() {
   if (!ctx) {
@@ -92,6 +105,11 @@ export function preloadStashAudio() {
   }
   try {
     const audio = context()
+    for (const sound of catalog) {
+      if (sound.loop) {
+        ensureLoop(sound)
+      }
+    }
     const urls = catalog.filter(sound => !sound.loop).map(sound => sound.file)
     loading = Promise.all(urls.map(async (url) => {
       const res = await fetch(url)
@@ -113,28 +131,41 @@ export function unlockStashAudio() {
   unlocked = true
 }
 
+function ensureLoop(sound: StashSound) {
+  let el = loops.get(sound.name)
+  if (!el) {
+    el = new Audio(sound.file)
+    el.loop = true
+    el.preload = 'auto'
+    loops.set(sound.name, el)
+  }
+  return el
+}
+
 function startLoop(sound: StashSound) {
-  if (!ctx || loops.has(sound.name)) {
+  if (!ctx || loopStarted.has(sound.name)) {
     return
   }
-  const el = new Audio(sound.file)
-  el.loop = true
+  const el = ensureLoop(sound)
   const source = ctx.createMediaElementSource(el)
   const gain = ctx.createGain()
   gain.gain.value = sound.volume
   source.connect(gain)
   gain.connect(ctx.destination)
+  loopStarted.add(sound.name)
   void el.play()
-  loops.set(sound.name, el)
 }
 
 export function play(name: SoundName) {
   const sound = byName.get(name)
-  if (!sound || !unlocked || !ctx || ctx.state !== 'running') {
+  if (!sound || !unlocked || !ctx) {
     return
   }
   if (sound.loop) {
     startLoop(sound)
+    return
+  }
+  if (ctx.state !== 'running') {
     return
   }
   const buffer = buffers.get(sound.file)
