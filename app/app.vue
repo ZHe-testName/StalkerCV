@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { TresCanvas } from '@tresjs/core'
 import { stashAway, stashFocused, stashFocus } from '~/composables/useStashCamera'
 import { play, preloadStashAudio, unlockStashAudio } from '~/composables/useStashAudio'
+import { stashDeviceDialHeld, stepStashDeviceDial } from '~/composables/useStashDeviceDial'
 
 useStashBootLoad()
 
@@ -92,6 +93,25 @@ onUnmounted(() => {
     >
       Назад
     </button>
+    <div
+      v-show="stashDeviceDialHeld"
+      class="dialnav"
+    >
+      <button
+        class="dialnavbtn"
+        type="button"
+        @click="stepStashDeviceDial(-1)"
+      >
+        Назад
+      </button>
+      <button
+        class="dialnavbtn"
+        type="button"
+        @click="stepStashDeviceDial(1)"
+      >
+        Вперёд
+      </button>
+    </div>
   </Teleport>
 </template>
 
@@ -115,7 +135,7 @@ onUnmounted(() => {
 
 .back {
   position: fixed;
-  bottom: 9vh;
+  bottom: 3vh;
   left: 50%;
   z-index: 100;
   transform: translateX(-50%);
@@ -137,6 +157,36 @@ onUnmounted(() => {
   &.top {
     top: 9vh;
     bottom: auto;
+  }
+}
+
+.dialnav {
+  position: fixed;
+  right: 0;
+  bottom: 3vh;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 3vw;
+  pointer-events: none;
+}
+
+.dialnavbtn {
+  pointer-events: auto;
+  margin: 0;
+  padding: 0.85rem 1.8rem;
+  border: 1px solid #ece4d4;
+  background: rgb(10 10 11 / 0.82);
+  color: #f3eee4;
+  font: 650 16px/1.2 system-ui, sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+
+  &:hover {
+    background: rgb(18 18 16 / 0.88);
+    color: #fff;
   }
 }
 </style>

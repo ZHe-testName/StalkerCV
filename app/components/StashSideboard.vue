@@ -2,11 +2,34 @@
 /**
  * Сервант справа от стола. Soviet Old Table — прибор скилов на крышке.
  */
-import { Box3, Group, Mesh, MeshStandardMaterial, Object3D, Quaternion, Vector3 } from 'three'
+import {
+  AnimationAction,
+  AnimationMixer,
+  Box3,
+  Group,
+  LoopOnce,
+  Mesh,
+  MeshStandardMaterial,
+  Object3D,
+  Quaternion,
+  Vector3,
+} from 'three'
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { useLoader, useLoop } from '@tresjs/core'
 import { stashFocused, stashHold } from '~/composables/useStashCamera'
+import { stashCopy } from '~/data/stashCopy'
+import {
+  bindStashDeviceDialStep,
+  stashDeviceDialHeld,
+} from '~/composables/useStashDeviceDial'
+import {
+  createSkillDialRing,
+  DIAL_PHASE_TWEAK,
+  knobPointerAngleY,
+  skillStepAngle,
+} from '~/utils/skillDialRing'
+import { createSkillScreenDisplay } from '~/utils/skillScreenDisplay'
 
 const cabSrc = '/models/soviet-old-table/scene.gltf'
 const cabYawY = -90 * Math.PI / 180
@@ -42,13 +65,17 @@ const footprint = [
 const originX = props.innerRightX - wallGap - Math.max(...footprint.map(p => p.x))
 const originZ = props.innerBackZ - Math.min(...footprint.map(p => p.z)) + cabCamZ
 
-const deviceW = 0.26
-const deviceH = 0.13
-const deviceD = 0.2
-const deviceX = -cabW / 2 + 0.22
-const deviceY = cabH + deviceH / 2
+const deviceSrc = '/models/bear-detector/scene.gltf'
+const deviceSpan = 0.26
+const deviceX = -cabW / 2 + 0.07
+const deviceY = cabH
 const deviceZ = 0.18
 const deviceYaw = -24 * Math.PI / 180
+const deviceHoldTiltX = 70 * Math.PI / 180
+const deviceSkills = stashCopy.skills
+const deviceSkillStep = skillStepAngle(deviceSkills.length)
+/** Индекс скила до перезагрузки страницы. */
+const deviceSkillIndex = ref(0)
 
 const hoverW = cabW + 0.03
 const hoverH = cabH + 0.16
@@ -59,7 +86,7 @@ const emit = defineEmits<{
   select: []
 }>()
 
-const { hovered, glow, onPointerEnter, onPointerLeave } = useStashAnchor('sideboard')
+const { hovered, onPointerEnter, onPointerLeave } = useStashAnchor('sideboard')
 
 const restLocal = rotateXZ(deviceX, deviceZ)
 const restWorldPos: [number, number, number] = [
@@ -167,6 +194,36 @@ const artifactGlowMats: MeshStandardMaterial[] = []
 let artifactTime = 0
 let artifactLift = 0
 let artifactSpinVel = 0
+
+let deviceMixer: AnimationMixer | null = null
+let antennaAction: AnimationAction | null = null
+let switchAction: AnimationAction | null = null
+const deviceLampMats: MeshStandardMaterial[] = []
+const deviceScreenMats: MeshStandardMaterial[] = []
+let antennaU = 0
+let switchU = 0
+const deviceLampColor = { r: 1, g: 0.04, b: 0.03 }
+const deviceLampOn = 2.2
+const deviceScreenOn = 1.35
+const deviceScreen = createSkillScreenDisplay()
+/** Экран живёт только при включённом тумблере; на столе — 0 и гаснущие сегменты. */
+let deviceScreenPowered = false
+
+function scrubDeviceAction(action: AnimationAction | null, u: number) {
+  if (!action) {
+    return
+  }
+  const duration = action.getClip().duration || 1
+  action.paused = true
+  action.enabled = true
+  action.time = Math.min(1, Math.max(0, u)) * duration
+}
+
+function approachU(current: number, target: number, delta: number, rise: number, fall: number) {
+  const rate = target > current ? rise : fall
+  return current + (target - current) * (1 - Math.exp(-rate * delta))
+}
+
 const { onBeforeRender } = useLoop()
 onBeforeRender(({ delta }) => {
   const lit = hovered.value || stashFocused.value === 'sideboard'
@@ -181,6 +238,34 @@ onBeforeRender(({ delta }) => {
   for (const mat of artifactGlowMats) {
     mat.emissiveIntensity = glowK
   }
+
+  const hold = stashHold.value
+  const powerOn = hold.id === 'sideboard' && hold.lift > 0.92
+  const powerTarget = powerOn ? 1 : 0
+  // Медленнее прежнего: ползунок и крышка без рывка.
+  antennaU = approachU(antennaU, powerTarget, delta, 4.2, 3.6)
+  switchU = approachU(switchU, powerTarget, delta, 5.5, 4.8)
+  scrubDeviceAction(antennaAction, antennaU)
+  scrubDeviceAction(switchAction, switchU)
+  deviceMixer?.update(0)
+  const lampLit = switchU >= 0.98
+  for (const mat of deviceLampMats) {
+    mat.emissive.setRGB(deviceLampColor.r, deviceLampColor.g, deviceLampColor.b)
+    mat.emissiveIntensity = lampLit ? deviceLampOn : 0
+  }
+  for (const mat of deviceScreenMats) {
+    mat.emissiveIntensity = lampLit ? deviceScreenOn : 0.08
+  }
+  if (lampLit !== deviceScreenPowered) {
+    deviceScreenPowered = lampLit
+    if (lampLit) {
+      syncDeviceScreen(true)
+    }
+    else {
+      deviceScreen.setLevel(0, true)
+    }
+  }
+  deviceScreen.update(delta)
 })
 
 function findNamed(root: Object3D, name: string) {
@@ -544,6 +629,150 @@ watch(maskGltf, (gltf) => {
   maskModel.value = holder
 }, { immediate: true })
 
+const { state: deviceGltf } = useLoader(GLTFLoader, deviceSrc)
+const deviceModel = shallowRef<Group | null>(null)
+let deviceKnob: Object3D | null = null
+/** Накопленный угол ручки — чтобы обход по кругу не прыгал на полный оборот. */
+let deviceKnobYaw = 0
+
+function applyDeviceSkillAngle() {
+  if (!deviceKnob) {
+    return
+  }
+  deviceKnob.rotation.y = deviceKnobYaw
+}
+
+function syncDeviceScreen(animate: boolean) {
+  const skill = deviceSkills[deviceSkillIndex.value]
+  deviceScreen.setLevel(skill?.level ?? 0, animate)
+}
+
+function stepDeviceSkill(dir: -1 | 1) {
+  const n = deviceSkills.length
+  if (!n) {
+    return
+  }
+  deviceSkillIndex.value = (deviceSkillIndex.value + dir + n) % n
+  // В ту же сторону, что клик: index↑ → yaw− (как раньше −index*step).
+  deviceKnobYaw -= dir * deviceSkillStep
+  applyDeviceSkillAngle()
+  syncDeviceScreen(true)
+}
+
+const deviceHeld = computed(() =>
+  stashHold.value.id === 'sideboard' && stashHold.value.lift > 0.95)
+
+watch(deviceHeld, (on) => {
+  stashDeviceDialHeld.value = on
+}, { immediate: true })
+
+const unbindDeviceDial = bindStashDeviceDialStep(stepDeviceSkill)
+onUnmounted(() => {
+  unbindDeviceDial()
+  stashDeviceDialHeld.value = false
+})
+
+function onDeviceDialClick(event: { uv?: { x: number } | null }) {
+  if (!deviceHeld.value) {
+    return
+  }
+  const u = event.uv?.x
+  if (u == null) {
+    return
+  }
+  stepDeviceSkill(u < 0.5 ? -1 : 1)
+}
+
+watch(deviceGltf, (gltf) => {
+  const scene = gltf?.scene
+  if (!scene || deviceModel.value) {
+    return
+  }
+  const { root, model } = sitGltfOnFloorBySpan(scene, deviceSpan)
+  deviceLampMats.length = 0
+  deviceScreenMats.length = 0
+  model.traverse((child) => {
+    if (!(child instanceof Mesh)) {
+      return
+    }
+    const materials = Array.isArray(child.material) ? child.material : [child.material]
+    for (const mat of materials) {
+      if (!(mat instanceof MeshStandardMaterial)) {
+        continue
+      }
+      mat.metalness = Math.min(mat.metalness, 0.45)
+      mat.roughness = Math.max(mat.roughness, 0.55)
+      const isLamp = child.name === 'lamp' || mat.name === 'lamp_glow'
+      const isScreen = child.name === 'screen' || mat.name.startsWith('Screen_Locator')
+      if (isLamp) {
+        mat.emissive.setRGB(deviceLampColor.r, deviceLampColor.g, deviceLampColor.b)
+        mat.emissiveIntensity = 0
+        if (!deviceLampMats.includes(mat)) {
+          deviceLampMats.push(mat)
+        }
+      }
+      else if (isScreen) {
+        mat.emissiveIntensity = 0.08
+        if (!deviceScreenMats.includes(mat)) {
+          deviceScreenMats.push(mat)
+        }
+      }
+      mat.needsUpdate = true
+    }
+  })
+  const screenObj = findNamed(model, 'screen')
+  if (screenObj instanceof Mesh) {
+    deviceScreen.attach(screenObj)
+  }
+  deviceScreenPowered = false
+  deviceScreen.setLevel(0, false)
+  deviceMixer = new AnimationMixer(model)
+  antennaAction = null
+  switchAction = null
+  for (const clip of gltf.animations || []) {
+    const action = deviceMixer.clipAction(clip)
+    action.setLoop(LoopOnce, 1)
+    action.clampWhenFinished = true
+    action.play()
+    action.paused = true
+    action.time = 0
+    if (clip.name === 'antenna_open') {
+      antennaAction = action
+    }
+    if (clip.name === 'switch_on') {
+      switchAction = action
+    }
+  }
+  antennaU = 0
+  switchU = 0
+  deviceMixer.update(0)
+
+  root.updateMatrixWorld(true)
+  const knob = findNamed(model, 'knob')
+  deviceKnob = knob
+  if (knob) {
+    const parent = knob.parent ?? model
+    parent.updateMatrixWorld(true)
+    // Считаем bbox ручки в локали родителя (как в blend), scale root ужмёт оба одинаково.
+    const worldBox = new Box3().setFromObject(knob)
+    const localBox = worldBox.clone().applyMatrix4(parent.matrixWorld.clone().invert())
+    const localSize = localBox.getSize(new Vector3())
+    const dialR = Math.max(localSize.x, localSize.z) * 0.5 * 1.55
+    // Phase в paint, не yaw меша — подписи остаются ровными относительно прибора.
+    const phase = knobPointerAngleY(knob) + DIAL_PHASE_TWEAK
+    const { mesh } = createSkillDialRing(deviceSkills, dialR, phase)
+    mesh.position.set(
+      knob.position.x,
+      localBox.max.y + 0.12,
+      knob.position.z,
+    )
+    parent.add(mesh)
+    applyDeviceSkillAngle()
+  }
+
+  deviceModel.value = root
+}, { immediate: true })
+
 const devicePose = computed(() => {
   const h = stashHold.value
   const k = h.id === 'sideboard' ? h.lift : 0
@@ -554,7 +783,7 @@ const devicePose = computed(() => {
       restWorldPos[2] + (h.z - restWorldPos[2]) * k,
     ] as [number, number, number],
     rotation: [
-      h.pitch * k,
+      deviceHoldTiltX * k + h.pitch * k,
       restWorldYaw + (h.yaw - restWorldYaw) * k,
       0,
     ] as [number, number, number],
@@ -625,33 +854,15 @@ const devicePose = computed(() => {
       :rotation="devicePose.rotation"
       :scale="[devicePose.scale, devicePose.scale, devicePose.scale]"
     >
-      <TresMesh>
-        <TresBoxGeometry :args="[deviceW, deviceH, deviceD]" />
-        <TresMeshStandardMaterial
-          color="#4a5238"
-          emissive="#4a5238"
-          :emissive-intensity="glow * 0.25"
-          :roughness="0.9"
-          :metalness="0.08"
-        />
-      </TresMesh>
-      <TresMesh :position="[0, deviceH / 2 + 0.012, 0]">
-        <TresBoxGeometry :args="[deviceW * 0.55, 0.024, 0.03]" />
-        <TresMeshStandardMaterial color="#3a3e32" :roughness="0.85" :metalness="0.1" />
-      </TresMesh>
-      <TresMesh :position="[0, 0.01, deviceD / 2 + 0.004]">
-        <TresBoxGeometry :args="[deviceW * 0.42, deviceH * 0.38, 0.008]" />
-        <TresMeshStandardMaterial
-          color="#c4a04a"
-          emissive="#e0c060"
-          :emissive-intensity="glow"
-          :roughness="0.4"
-          :metalness="0"
-        />
-      </TresMesh>
-      <TresMesh :position="[deviceW / 2 - 0.03, deviceH / 2 + 0.05, -deviceD / 2 + 0.04]">
-        <TresBoxGeometry :args="[0.012, 0.1, 0.012]" />
-        <TresMeshStandardMaterial color="#3a3e32" :roughness="0.8" :metalness="0.15" />
+      <primitive v-if="deviceModel" :object="deviceModel" />
+      <TresMesh
+        v-if="deviceHeld"
+        :position="[0, deviceSpan * 0.22, 0]"
+        :rotation="[-Math.PI / 2.6, 0, 0]"
+        @click.stop="onDeviceDialClick"
+      >
+        <TresPlaneGeometry :args="[deviceSpan * 1.15, deviceSpan * 0.9]" />
+        <TresMeshBasicMaterial :transparent="true" :opacity="0" :depth-write="false" />
       </TresMesh>
     </TresGroup>
   </TresGroup>

@@ -102,4 +102,34 @@ export const stashCopy = {
       error: 'Sending error', 
     },
   },
+  skills: [
+    {
+      title: 'JS',
+      level: 85,
+    },
+    {
+      title: 'TS',
+      level: 75,
+    },
+    {
+      title: 'CSS',
+      level: 80,
+    },
+    {
+      title: 'ThreeJS',
+      level: 70,
+    },
+    {
+      title: 'Nuxt',
+      level: 70,
+    },
+    {
+      title: 'Vue',
+      level: 75,
+    },
+    {
+      title: 'HTML',
+      level: 85,
+    },
+  ],
 } as const
