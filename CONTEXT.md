@@ -33,7 +33,9 @@
 - UI-стили: **SCSS** (`sass` in devDependencies), `lang="scss"` в scoped-блоках; классы короткие без BEM/дефисов (`.boot .icon.pulse`)
 - Favicon вкладки: `public/ui/favicon.avif` (из stalker_favicon.png, 64 AVIF, светлый фон вырезан в альфу), в `nuxt.config` `app.head.link`
 
-`app/app.vue` — `TresCanvas window-size`, `shadows`, `render-mode="manual"`, clear `#4a5560` (как заливка задника улицы, иначе тёмное `#0b0b0c` рисует край карты на небе), внутри `StashRenderGate` + `StashExperience`. Поверх — `StashBoot` (загрузка, z 200). Canvas не рисует, пока качаются файлы; после filesReady — ~16 кадров прогрева под оверлеем; после «Вперёд» — кадр каждый rAF.
+`app/app.vue` — `.stage` как лист прелоада: высота окна, ширина до **2560px**, по центру, поля `#0b0b0c`. Холст заполняет `.stage` (без `window-size`), `shadows`, `render-mode="manual"`, clear `#4a5560` (как заливка задника улицы, иначе тёмное `#0b0b0c` рисует край карты на небе), внутри `StashRenderGate` + `StashExperience`. Виньетка, подсказка, «Назад» и кнопки шкалы — внутри `.stage`. Поверх — `StashBoot` (загрузка, z 200). Canvas не рисует, пока качаются файлы; после filesReady — ~16 кадров прогрева под оверлеем; после «Вперёд» — кадр каждый rAF.
+
+Вход: скрипт `stash-gate` в `nuxt.config` `app.head`, до сцены. Одна проверка при открытии, ресайз не смотрим. На `localhost` и `127.0.0.1` не уводит. Мобильная ОС (в том числе iPad, который представляется Маком) или окно уже **1000px** — `location.replace` на `https://zhe-testname.github.io/my_portfolio/`. Десктоп от **1000px** — наша сцена, даже если окно потом сузят.
 
 ## Координаты и повороты
 
@@ -86,7 +88,7 @@ TresJS HMR часто падает, если добавить/снять `:rotat
 - `public/fonts/PressStart2P-Regular.ttf` — Google Fonts «Press Start 2P» (OFL, Cody Boisclair), экран компа. Рядом `PressStart2P-OFL.txt`
 - `public/fonts/Tektur.ttf` — Google Fonts «Tektur» (OFL, variable wdth+wght), экран КПК. Рядом `Tektur-OFL.txt`
 - `public/screen/portfolio_photo.avif` — фото на экран, исходник 853×1280, без уменьшения, **49 КБ**
-- `app/components/StashBoot.vue` — экран загрузки (SCSS scoped): `.boot` → `.frame` / `.dial` / `.icon` (`.pulse`→`.armed`→`.reveal`→`.done`) / `.tick.on` / `.go.on`. Пульс **0.9↔1.05**; посадка **1.6 с** (scale ~18, 2 оборота Z, opacity с доездом); «Вперёд» **0.4 с**. Под лоадером, пока иконка в пульсе: `description.preload.waiting` и ниже `textures`. Обе строки снимаются в момент старта посадки знака, до появления увеличенной прозрачной иконки. Шрифт **16px**, цвет `#8d8a84`. 20 штрихов. Рамка 1px `#b99b30`, 20px от края, радиус 4px. Классы короткие, без BEM/дефисов; вложенность через SCSS.
+- `app/components/StashBoot.vue` — экран загрузки (SCSS scoped): `.boot` → `.frame` / `.dial` / `.icon` (`.pulse`→`.armed`→`.reveal`→`.done`) / `.tick.on` / `.go.on`. Пульс **0.9↔1.05**; посадка **1.6 с** (scale ~18, 2 оборота Z, opacity с доездом); «Вперёд» **0.4 с**. Под лоадером, пока иконка в пульсе: `description.preload.waiting` и ниже `textures`. Обе строки снимаются в момент старта посадки знака, до появления увеличенной прозрачной иконки. Лист на всю высоту окна и на всю ширину до **2560px**, шире — по центру, поля того же фона. Круг **104px**, шрифт **16px**, кнопка **18px** — фиксированные пиксели. Цвет текста `#8d8a84`. 20 штрихов. Рамка 1px `#b99b30`, 20px от края. Классы короткие, без BEM/дефисов; вложенность через SCSS.
 - `app/components/StashRenderGate.vue` — ручной рендер: тишина во время качания, прогрев после filesReady, always после «Вперёд»
 
 ### Окно

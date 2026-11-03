@@ -79,29 +79,20 @@ onUnmounted(() => {
 
 <template>
   <NuxtRouteAnnouncer />
-  <TresCanvas
-    window-size
-    shadows
-    render-mode="manual"
-    clear-color="#4a5560"
-    power-preference="high-performance"
-    :dpr="[1, 1.5]"
-    :antialias="false"
-    :alpha="false"
-  >
-    <StashRenderGate />
-    <StashExperience />
-  </TresCanvas>
-  <StashPdaFields />
-  <div class="vignette" aria-hidden="true" />
-  <StashBoot v-if="!sceneOpen" @enter="enter" />
-  <Teleport to="body">
-    <p
-      v-if="sceneOpen && hintOn"
-      class="hint"
+  <div class="screen">
+  <div class="stage">
+    <TresCanvas
+      shadows
+      render-mode="manual"
+      clear-color="#4a5560"
+      power-preference="high-performance"
+      :dpr="[1, 1.5]"
+      :antialias="false"
+      :alpha="false"
     >
-      {{ stashCopy.description.modalTxt }}
-    </p>
+      <StashRenderGate />
+      <StashExperience />
+    </TresCanvas>
     <button
       v-show="showBack"
       class="back"
@@ -130,12 +121,37 @@ onUnmounted(() => {
         {{ stashCopy.buttons.bearRightSwitch }}
       </button>
     </div>
-  </Teleport>
+    <div class="vignette" aria-hidden="true" />
+    <p
+      v-if="sceneOpen && hintOn"
+      class="hint"
+    >
+      {{ stashCopy.description.modalTxt }}
+    </p>
+  </div>
+  </div>
+  <StashPdaFields />
+  <StashBoot v-if="!sceneOpen" @enter="enter" />
 </template>
 
 <style scoped lang="scss">
-.vignette {
+.screen {
   position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #0b0b0c;
+}
+
+.stage {
+  position: relative;
+  width: min(100vw, 2560px);
+  height: 100vh;
+  overflow: hidden;
+}
+
+.vignette {
+  position: absolute;
   inset: 0;
   z-index: 10;
   pointer-events: none;
@@ -152,12 +168,12 @@ onUnmounted(() => {
 }
 
 .hint {
-  position: fixed;
-  top: 3vh;
-  right: 3vw;
+  position: absolute;
+  top: 3%;
+  right: 3%;
   z-index: 100;
   box-sizing: border-box;
-  width: min(380px, 36vw);
+  width: min(380px, 36%);
   margin: 0;
   padding: 1.15rem 1.3rem;
   border: 1px solid #ece4d4;
@@ -168,8 +184,8 @@ onUnmounted(() => {
 }
 
 .back {
-  position: fixed;
-  bottom: 3vh;
+  position: absolute;
+  bottom: 3%;
   left: 50%;
   z-index: 100;
   transform: translateX(-50%);
@@ -189,20 +205,20 @@ onUnmounted(() => {
   }
 
   &.top {
-    top: 9vh;
+    top: 9%;
     bottom: auto;
   }
 }
 
 .dialnav {
-  position: fixed;
+  position: absolute;
   right: 0;
-  bottom: 3vh;
+  bottom: 3%;
   left: 0;
   z-index: 100;
   display: flex;
   justify-content: space-between;
-  padding: 0 3vw;
+  padding: 0 3%;
   pointer-events: none;
 }
 

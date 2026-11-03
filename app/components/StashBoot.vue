@@ -62,6 +62,7 @@ watch(filesReady, (ready) => {
 
 <template>
   <div class="boot">
+    <div class="sheet">
     <div class="frame" aria-hidden="true" />
     <div class="dial" aria-hidden="true">
       <span
@@ -98,6 +99,7 @@ watch(filesReady, (ready) => {
     >
       {{ stashCopy.buttons.go }}
     </button>
+    </div>
   </div>
 </template>
 
@@ -106,13 +108,21 @@ watch(filesReady, (ready) => {
   position: fixed;
   inset: 0;
   z-index: 200;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.6rem;
+  display: grid;
+  place-items: center;
   background: #0b0b0c;
-  overflow: hidden;
+
+  .sheet {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: min(100vw, 2560px);
+    height: 100vh;
+    gap: 26px;
+    overflow: hidden;
+  }
 
   .frame {
     position: absolute;
@@ -186,18 +196,18 @@ watch(filesReady, (ready) => {
     }
 
     p + p {
-      margin-top: 0.45rem;
+      margin-top: 7px;
     }
   }
 
   .go {
     margin: 0;
-    padding: 0.95rem 2.4rem;
+    padding: 15px 38px;
     border: 1px solid #ece4d4;
     background: rgb(10 10 11 / 0.82);
     color: #f3eee4;
     font: 650 18px/1.2 system-ui, sans-serif;
-    letter-spacing: 0.18em;
+    letter-spacing: 3px;
     text-transform: uppercase;
     cursor: pointer;
     opacity: 0;
