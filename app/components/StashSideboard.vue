@@ -18,6 +18,7 @@ import {
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { useLoader, useLoop } from '@tresjs/core'
+import { play } from '~/composables/useStashAudio'
 import { stashFocused, stashHold } from '~/composables/useStashCamera'
 import { stashCopy } from '~/data/stashCopy'
 import {
@@ -204,6 +205,8 @@ const deviceLampMats: MeshStandardMaterial[] = []
 const deviceScreenMats: MeshStandardMaterial[] = []
 let antennaU = 0
 let switchU = 0
+/** Крышка уже пошла открываться. Звук только на смене, не каждый кадр. */
+let antennaCoverOpen = false
 const deviceLampColor = { r: 1, g: 0.04, b: 0.03 }
 const deviceLampOn = 2.2
 const deviceScreenOn = 1.35
@@ -243,6 +246,10 @@ onBeforeRender(({ delta }) => {
 
   const hold = stashHold.value
   const powerOn = hold.id === 'sideboard' && hold.lift > 0.92
+  if (powerOn !== antennaCoverOpen) {
+    antennaCoverOpen = powerOn
+    play(powerOn ? 'bear_open' : 'bear_close')
+  }
   const powerTarget = powerOn ? 1 : 0
   // Медленнее прежнего: ползунок и крышка без рывка.
   antennaU = approachU(antennaU, powerTarget, delta, 4.2, 3.6)
@@ -696,6 +703,7 @@ function stepDeviceSkill(dir: -1 | 1) {
   // В ту же сторону, что клик: index↑ → yaw−. Меш доезжает в tickDeviceKnob.
   deviceKnobYaw -= dir * deviceSkillStep
   syncDeviceScreen(true)
+  play('bear_switch')
 }
 
 const deviceHeld = computed(() =>

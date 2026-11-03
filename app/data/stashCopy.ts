@@ -8,7 +8,7 @@ export const stashCopy = {
   description: {
     name: 'My name is Eugene Horunzhyi',
     job: 'JS Developer',
-    details: 'I am JS/TS (React, Vue, Three.js, Pixi) developer from Ukraine, specializing in creating web interfaces and applications. I am passionate about creating software that will improve the lives of people around me.',
+    details: 'I am JS/TS (React, Vue, Three.js) developer from Ukraine, specializing in creating web interfaces and applications. I am passionate about creating software that will improve the lives of people around me.',
     about: {
       experience: '4+ years of experience',
       projects: '12+ commercial projects',
@@ -21,6 +21,11 @@ export const stashCopy = {
         'Frozeneon',
       ],
     },
+    preload: {
+      waiting: 'Please wait...',
+      textures: 'Loading textures ang geometry',
+    },
+    modalTxt: 'Use your mouse to hover and click to active areas on scene (Table, Sideboard or Couch) to get more information',
     education: {
       title: 'Education',
       vpnu: {
@@ -101,6 +106,12 @@ export const stashCopy = {
       success: 'Successfully sended',
       error: 'Sending error', 
     },
+  },
+  buttons: {
+    go: 'GO',
+    back: 'Move back',
+    bearRightSwitch: 'Click here or press right arrow to switch forward',
+    bearLeftSwitch: 'Click here or press left arrow to switch backward',
   },
   skills: [
     {

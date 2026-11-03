@@ -4,12 +4,14 @@ import { TresCanvas } from '@tresjs/core'
 import { stashAway, stashFocused, stashFocus } from '~/composables/useStashCamera'
 import { play, preloadStashAudio, unlockStashAudio } from '~/composables/useStashAudio'
 import { stashDeviceDialHeld, stepStashDeviceDial } from '~/composables/useStashDeviceDial'
+import { stashCopy } from '~/data/stashCopy'
 
 useStashBootLoad()
 
 const sceneOpen = ref(false)
 provide('stashSceneOpen', sceneOpen)
 const backGone = ref(false)
+const hintOn = ref(true)
 let hideBack = 0
 const showBack = computed(() => !backGone.value && (stashAway.value || stashFocused.value !== null))
 const backTop = computed(() => stashFocused.value === 'armchair')
@@ -38,6 +40,7 @@ watch(stashFocused, (id) => {
   if (!id) {
     return
   }
+  hintOn.value = false
   backGone.value = false
   if (hideBack) {
     window.clearTimeout(hideBack)
@@ -46,6 +49,15 @@ watch(stashFocused, (id) => {
 })
 
 function onKey(e: KeyboardEvent) {
+  if (stashDeviceDialHeld.value && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+    const tag = (e.target as HTMLElement | null)?.tagName
+    if (tag === 'INPUT' || tag === 'TEXTAREA') {
+      return
+    }
+    e.preventDefault()
+    stepStashDeviceDial(e.key === 'ArrowLeft' ? -1 : 1)
+    return
+  }
   if (e.key !== 'Escape' || e.repeat || !showBack.value) {
     return
   }
@@ -84,6 +96,12 @@ onUnmounted(() => {
   <div class="vignette" aria-hidden="true" />
   <StashBoot v-if="!sceneOpen" @enter="enter" />
   <Teleport to="body">
+    <p
+      v-if="sceneOpen && hintOn"
+      class="hint"
+    >
+      {{ stashCopy.description.modalTxt }}
+    </p>
     <button
       v-show="showBack"
       class="back"
@@ -91,7 +109,7 @@ onUnmounted(() => {
       :class="{ top: backTop }"
       @click="leave()"
     >
-      Назад
+      {{ stashCopy.buttons.back }}
     </button>
     <div
       v-show="stashDeviceDialHeld"
@@ -102,14 +120,14 @@ onUnmounted(() => {
         type="button"
         @click="stepStashDeviceDial(-1)"
       >
-        Назад
+        {{ stashCopy.buttons.bearLeftSwitch }}
       </button>
       <button
         class="dialnavbtn"
         type="button"
         @click="stepStashDeviceDial(1)"
       >
-        Вперёд
+        {{ stashCopy.buttons.bearRightSwitch }}
       </button>
     </div>
   </Teleport>
@@ -131,6 +149,22 @@ onUnmounted(() => {
     rgb(0 0 0 / 0.92) 97.5%,
     #000 100%
   );
+}
+
+.hint {
+  position: fixed;
+  top: 3vh;
+  right: 3vw;
+  z-index: 100;
+  box-sizing: border-box;
+  width: min(380px, 36vw);
+  margin: 0;
+  padding: 1.15rem 1.3rem;
+  border: 1px solid #ece4d4;
+  background: rgb(10 10 11 / 0.82);
+  color: #f3eee4;
+  font: 600 18px/1.35 system-ui, sans-serif;
+  pointer-events: none;
 }
 
 .back {
@@ -174,14 +208,20 @@ onUnmounted(() => {
 
 .dialnavbtn {
   pointer-events: auto;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(280px, 38vh);
+  aspect-ratio: 1;
   margin: 0;
-  padding: 0.85rem 1.8rem;
+  padding: 1.1rem;
   border: 1px solid #ece4d4;
   background: rgb(10 10 11 / 0.82);
   color: #f3eee4;
-  font: 650 16px/1.2 system-ui, sans-serif;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font: 650 30px/1.25 system-ui, sans-serif;
+  text-align: center;
+  text-wrap: balance;
   cursor: pointer;
 
   &:hover {

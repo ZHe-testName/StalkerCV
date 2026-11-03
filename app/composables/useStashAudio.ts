@@ -74,6 +74,24 @@ const catalog = [
     loop: false,
   },
   {
+    name: 'bear_open',
+    file: '/audio/bear_open.mp3',
+    volume: 0.4,
+    loop: false,
+  },
+  {
+    name: 'bear_close',
+    file: '/audio/bear_close.mp3',
+    volume: 0.4,
+    loop: false,
+  },
+  {
+    name: 'bear_switch',
+    file: '/audio/bear_switch.mp3',
+    volume: 0.4,
+    loop: false,
+  },
+  {
     name: 'rain',
     file: '/audio/rain.mp3',
     volume: 0.32,

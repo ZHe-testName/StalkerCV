@@ -3,6 +3,8 @@
  * Экран загрузки: пульс scale 0.9↔1.05; посадка из гиганта
  * (opacity медленно → быстрый доезд, 2 оборота Z, 1.6 с); потом «Вперёд».
  */
+import { stashCopy } from '~/data/stashCopy'
+
 const emit = defineEmits<{
   enter: []
 }>()
@@ -80,6 +82,13 @@ watch(filesReady, (ready) => {
         @animationend="onRevealEnd"
       >
     </div>
+    <div
+      v-if="phase === 'pulse'"
+      class="status"
+    >
+      <p>{{ stashCopy.description.preload.waiting }}</p>
+      <p>{{ stashCopy.description.preload.textures }}</p>
+    </div>
     <button
       class="go"
       :class="{ on: showGo }"
@@ -87,7 +96,7 @@ watch(filesReady, (ready) => {
       :tabindex="showGo ? 0 : -1"
       @click="showGo && emit('enter')"
     >
-      Вперёд
+      {{ stashCopy.buttons.go }}
     </button>
   </div>
 </template>
@@ -163,6 +172,21 @@ watch(filesReady, (ready) => {
 
     &.on {
       opacity: 1;
+    }
+  }
+
+  .status {
+    margin: 0;
+    color: #8d8a84;
+    font: 600 16px/1.35 system-ui, sans-serif;
+    text-align: center;
+
+    p {
+      margin: 0;
+    }
+
+    p + p {
+      margin-top: 0.45rem;
     }
   }
 
