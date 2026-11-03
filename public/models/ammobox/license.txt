@@ -1,0 +1,11 @@
+Model Information:
+* title:	AmmoBox
+* source:	https://sketchfab.com/3d-models/ammobox-cc5bb459e04449ac9e862dcf73727338
+* author:	Mikey x pc (https://sketchfab.com/mikeyxpc)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "AmmoBox" (https://sketchfab.com/3d-models/ammobox-cc5bb459e04449ac9e862dcf73727338) by Mikey x pc (https://sketchfab.com/mikeyxpc) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Condensed_milk
+* source:	https://sketchfab.com/3d-models/condensed-milk-1667f977023746f29c2c90b16248c31a
+* author:	3dmodelsst (https://sketchfab.com/3dmodelsst)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Condensed_milk" (https://sketchfab.com/3d-models/condensed-milk-1667f977023746f29c2c90b16248c31a) by 3dmodelsst (https://sketchfab.com/3dmodelsst) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

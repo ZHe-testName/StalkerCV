@@ -1,0 +1,11 @@
+Model Information:
+* title:	Backpack
+* source:	https://sketchfab.com/3d-models/backpack-81f39e334d4b4e8c84f5080ef5892f72
+* author:	cryptoisaac (https://sketchfab.com/cryptoisaac)
+
+Model License:
+* license type:	CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions must have the same license.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Backpack" (https://sketchfab.com/3d-models/backpack-81f39e334d4b4e8c84f5080ef5892f72) by cryptoisaac (https://sketchfab.com/cryptoisaac) licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)

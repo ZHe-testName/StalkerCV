@@ -1,0 +1,11 @@
+Model Information:
+* title:	Tipografiya (Plk1 cosmonaut poster only)
+* source:	https://sketchfab.com/3d-models/tipografiya-2fbdd6e176094aa7bc3e7194bf7edd8e
+* author:	blenderist (https://sketchfab.com/blenderist)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Tipografiya" (https://sketchfab.com/3d-models/tipografiya-2fbdd6e176094aa7bc3e7194bf7edd8e) by blenderist (https://sketchfab.com/blenderist) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

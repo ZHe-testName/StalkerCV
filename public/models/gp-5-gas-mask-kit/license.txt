@@ -1,0 +1,11 @@
+Model Information:
+* title:	GP-5 Gask Mask Kit
+* source:	https://sketchfab.com/3d-models/gp-5-gask-mask-kit-e7e4b068a7f54e14aa0dd7a41ad292a8
+* author:	GrostyBoi (https://sketchfab.com/GrostyBoi)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "GP-5 Gask Mask Kit" (https://sketchfab.com/3d-models/gp-5-gask-mask-kit-e7e4b068a7f54e14aa0dd7a41ad292a8) by GrostyBoi (https://sketchfab.com/GrostyBoi) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
