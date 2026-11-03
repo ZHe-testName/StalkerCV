@@ -106,30 +106,37 @@ export const stashCopy = {
     {
       title: 'JS',
       level: 85,
+      arcMm: 3,
     },
     {
       title: 'TS',
       level: 75,
+      arcMm: 3,
     },
     {
       title: 'CSS',
       level: 80,
+      arcMm: 3,
     },
     {
       title: 'ThreeJS',
       level: 70,
+      downMm: 1,
     },
     {
       title: 'Nuxt',
       level: 70,
+      arcMm: 3,
     },
     {
       title: 'Vue',
       level: 75,
+      arcMm: 2,
     },
     {
       title: 'HTML',
       level: 85,
+      arcMm: 2,
     },
   ],
 } as const

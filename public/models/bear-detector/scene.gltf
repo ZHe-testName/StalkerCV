@@ -35,9 +35,9 @@
       "mesh": 2,
       "name": "knob",
       "translation": [
-        1.3669073581695557,
+        1.3844074010849,
         2.592711925506592,
-        4.503817558288574
+        4.457317352294922
       ]
     },
     {
@@ -288,93 +288,6 @@
       ]
     }
   ],
-  "textures": [
-    {
-      "sampler": 0,
-      "source": 0,
-      "extensions": {
-        "EXT_texture_avif": {
-          "source": 0
-        }
-      }
-    },
-    {
-      "sampler": 0,
-      "source": 1,
-      "extensions": {
-        "EXT_texture_avif": {
-          "source": 1
-        }
-      }
-    },
-    {
-      "sampler": 0,
-      "source": 2,
-      "extensions": {
-        "EXT_texture_avif": {
-          "source": 2
-        }
-      }
-    },
-    {
-      "sampler": 0,
-      "source": 0,
-      "extensions": {
-        "EXT_texture_avif": {
-          "source": 0
-        }
-      }
-    },
-    {
-      "sampler": 0,
-      "source": 1,
-      "extensions": {
-        "EXT_texture_avif": {
-          "source": 1
-        }
-      }
-    },
-    {
-      "sampler": 0,
-      "source": 2,
-      "extensions": {
-        "EXT_texture_avif": {
-          "source": 2
-        }
-      }
-    },
-    {
-      "sampler": 0,
-      "source": 3,
-      "extensions": {
-        "EXT_texture_avif": {
-          "source": 3
-        }
-      }
-    }
-  ],
-  "images": [
-    {
-      "mimeType": "image/avif",
-      "name": "Bear_Detector_normal",
-      "uri": "textures/Bear_Detector_normal.1k.avif"
-    },
-    {
-      "mimeType": "image/avif",
-      "name": "Bear_Detector_metallicRoughness",
-      "uri": "textures/Bear_Detector_metallicRoughness.1k.avif"
-    },
-    {
-      "mimeType": "image/avif",
-      "name": "Bear_Detector_baseColor",
-      "uri": "textures/Bear_Detector_baseColor.1k.avif"
-    },
-    {
-      "mimeType": "image/avif",
-      "name": "Screen_Locator_baseColor",
-      "uri": "textures/Screen_Locator_baseColor.1k.avif"
-    }
-  ],
   "accessors": [
     {
       "bufferView": 0,
@@ -449,14 +362,14 @@
       "componentType": 5126,
       "count": 171,
       "max": [
-        0.742499828338623,
+        0.7249997854232788,
         0.20844340324401855,
-        0.6785011291503906
+        0.725001335144043
       ],
       "min": [
-        -0.7075000405311584,
+        -0.7250000834465027,
         -0.36170363426208496,
-        -0.9156086444854736
+        -0.8691084384918213
       ],
       "type": "VEC3"
     },
@@ -841,16 +754,103 @@
       "byteOffset": 270944
     }
   ],
-  "samplers": [
-    {
-      "magFilter": 9729,
-      "minFilter": 9987
-    }
-  ],
   "buffers": [
     {
       "byteLength": 271004,
       "uri": "scene.bin"
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 0
+        }
+      }
+    },
+    {
+      "sampler": 0,
+      "source": 1,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 1
+        }
+      }
+    },
+    {
+      "sampler": 0,
+      "source": 2,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 2
+        }
+      }
+    },
+    {
+      "sampler": 0,
+      "source": 0,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 0
+        }
+      }
+    },
+    {
+      "sampler": 0,
+      "source": 1,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 1
+        }
+      }
+    },
+    {
+      "sampler": 0,
+      "source": 2,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 2
+        }
+      }
+    },
+    {
+      "sampler": 0,
+      "source": 3,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 3
+        }
+      }
+    }
+  ],
+  "images": [
+    {
+      "mimeType": "image/avif",
+      "name": "Bear_Detector_normal",
+      "uri": "textures/Bear_Detector_normal.1k.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "Bear_Detector_metallicRoughness",
+      "uri": "textures/Bear_Detector_metallicRoughness.1k.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "Bear_Detector_baseColor",
+      "uri": "textures/Bear_Detector_baseColor.1k.avif"
+    },
+    {
+      "mimeType": "image/avif",
+      "name": "Screen_Locator_baseColor",
+      "uri": "textures/Screen_Locator_baseColor.1k.avif"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987
     }
   ],
   "extensionsUsed": [

@@ -20,9 +20,15 @@ import {
 export type SkillDialItem = {
   title: string
   level: number
+  /** Сдвиг по дуге, мм. Плюс — по часовой, буквы не крутим. */
+  arcMm?: number
+  /** Сдвиг вниз по экрану, мм. Не по дуге. */
+  downMm?: number
 }
 
 const TEX = 1024
+/** Центр надписи — доля радиуса диска. Меньше — дальше от края, длинные слова не режутся. */
+export const DIAL_LABEL_RADIUS_FRAC = 0.7
 const FONT_URL = '/fonts/PressStart2P-Regular.ttf'
 const FONT_FAMILY = 'PressStart2P'
 
@@ -33,6 +39,8 @@ function paintDial(
   skills: readonly SkillDialItem[],
   ctx: CanvasRenderingContext2D,
   phase: number,
+  /** Радиус строки в метрах сцены — чтобы arcMm был дугой, не углом. */
+  labelRadiusM: number,
 ) {
   const canvas = ctx.canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -44,20 +52,26 @@ function paintDial(
   }
 
   const step = (Math.PI * 2) / n
-  const textR = TEX * 0.4
-  const fontPx = Math.max(26, Math.round(TEX * 0.038))
+  const textR = (TEX / 2) * DIAL_LABEL_RADIUS_FRAC
+  const fontPx = Math.max(26, Math.round(TEX * 0.046))
+  const labelAngle = (i: number) => {
+    const arcMm = skills[i].arcMm ?? 0
+    const arc = labelRadiusM > 0 ? (arcMm / 1000) / labelRadiusM : 0
+    return -Math.PI / 2 + phase + i * step + arc
+  }
 
-  ctx.fillStyle = 'rgba(22, 18, 12, 0.95)'
   ctx.font = `${fontPx}px "${FONT_FAMILY}", monospace`
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
 
   for (let i = 0; i < n; i++) {
-    // index 0 сверху холста → после rotX −90° смотрит в −Z; phase крутит только позиции.
-    const angle = -Math.PI / 2 + phase + i * step
-    const tx = cx + Math.cos(angle) * textR
-    const ty = cy + Math.sin(angle) * textR
+    const text = labelAngle(i)
+    const downMm = skills[i].downMm ?? 0
+    const downPx = labelRadiusM > 0 ? (downMm / 1000) / labelRadiusM * textR : 0
+    const tx = cx + Math.cos(text) * textR
+    const ty = cy + Math.sin(text) * textR + downPx
     // Горизонтально относительно прибора: без поворота глифа и без yaw меша.
+    ctx.fillStyle = 'rgba(22, 18, 12, 0.95)'
     ctx.fillText(skills[i].title, tx, ty)
   }
 }
@@ -67,6 +81,7 @@ export function createSkillDialRing(
   skills: readonly SkillDialItem[],
   radius: number,
   phase = 0,
+  labelRadiusM = 0.02,
 ) {
   const canvas = document.createElement('canvas')
   canvas.width = TEX
@@ -75,7 +90,7 @@ export function createSkillDialRing(
   if (!ctx) {
     throw new Error('skill dial canvas')
   }
-  paintDial(skills, ctx, phase)
+  paintDial(skills, ctx, phase, labelRadiusM)
 
   const map = new CanvasTexture(canvas)
   map.colorSpace = SRGBColorSpace
@@ -101,7 +116,7 @@ export function createSkillDialRing(
 
   void new FontFace(FONT_FAMILY, `url(${FONT_URL})`).load().then((face) => {
     document.fonts.add(face)
-    paintDial(skills, ctx, phase)
+    paintDial(skills, ctx, phase, labelRadiusM)
     map.needsUpdate = true
   }).catch(() => {})
 

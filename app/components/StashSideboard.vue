@@ -25,6 +25,7 @@ import {
 } from '~/composables/useStashDeviceDial'
 import {
   createSkillDialRing,
+  DIAL_LABEL_RADIUS_FRAC,
   DIAL_PHASE_TWEAK,
   knobPointerAngleY,
   skillStepAngle,
@@ -266,6 +267,7 @@ onBeforeRender(({ delta }) => {
     }
   }
   deviceScreen.update(delta)
+  tickDeviceKnob(delta)
 })
 
 function findNamed(root: Object3D, name: string) {
@@ -632,14 +634,35 @@ watch(maskGltf, (gltf) => {
 const { state: deviceGltf } = useLoader(GLTFLoader, deviceSrc)
 const deviceModel = shallowRef<Group | null>(null)
 let deviceKnob: Object3D | null = null
-/** Накопленный угол ручки — чтобы обход по кругу не прыгал на полный оборот. */
+/** Накопленная цель — чтобы обход по кругу не прыгал на полный оборот. */
 let deviceKnobYaw = 0
+/** Угол, который сейчас на меше. Доезжает к цели. */
+let deviceKnobYawShown = 0
+/** Секунд на одно деление. Несколько кликов — один непрерывный ход. */
+const deviceKnobStepSec = 0.2
 
 function applyDeviceSkillAngle() {
   if (!deviceKnob) {
     return
   }
-  deviceKnob.rotation.y = deviceKnobYaw
+  deviceKnob.rotation.y = deviceKnobYawShown
+}
+
+function tickDeviceKnob(delta: number) {
+  const gap = deviceKnobYaw - deviceKnobYawShown
+  if (gap === 0) {
+    return
+  }
+  const maxStep = deviceSkillStep > 0
+    ? (deviceSkillStep / deviceKnobStepSec) * delta
+    : Math.abs(gap)
+  if (Math.abs(gap) <= maxStep) {
+    deviceKnobYawShown = deviceKnobYaw
+  }
+  else {
+    deviceKnobYawShown += Math.sign(gap) * maxStep
+  }
+  applyDeviceSkillAngle()
 }
 
 function syncDeviceScreen(animate: boolean) {
@@ -653,9 +676,8 @@ function stepDeviceSkill(dir: -1 | 1) {
     return
   }
   deviceSkillIndex.value = (deviceSkillIndex.value + dir + n) % n
-  // В ту же сторону, что клик: index↑ → yaw− (как раньше −index*step).
+  // В ту же сторону, что клик: index↑ → yaw−. Меш доезжает в tickDeviceKnob.
   deviceKnobYaw -= dir * deviceSkillStep
-  applyDeviceSkillAngle()
   syncDeviceScreen(true)
 }
 
@@ -757,12 +779,15 @@ watch(deviceGltf, (gltf) => {
     const worldBox = new Box3().setFromObject(knob)
     const localBox = worldBox.clone().applyMatrix4(parent.matrixWorld.clone().invert())
     const localSize = localBox.getSize(new Vector3())
-    const dialR = Math.max(localSize.x, localSize.z) * 0.5 * 1.55
+    const dialR = Math.max(localSize.x, localSize.z) * 0.5 * 1.77
     // Phase в paint, не yaw меша — подписи остаются ровными относительно прибора.
     const phase = knobPointerAngleY(knob) + DIAL_PHASE_TWEAK
-    const { mesh } = createSkillDialRing(deviceSkills, dialR, phase)
+    const labelRadiusM = dialR * DIAL_LABEL_RADIUS_FRAC * root.scale.x
+    const { mesh } = createSkillDialRing(deviceSkills, dialR, phase, labelRadiusM)
+    // В руках локальный −X — влево по экрану. ~2 мм.
+    const dialShiftX = -0.11
     mesh.position.set(
-      knob.position.x,
+      knob.position.x + dialShiftX,
       localBox.max.y + 0.12,
       knob.position.z,
     )
