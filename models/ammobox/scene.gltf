@@ -1,0 +1,608 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 3169,
+      "max": [
+        47.98358154296875,
+        46.83138656616211,
+        68.2479248046875
+      ],
+      "min": [
+        -44.72076416015625,
+        0.1054229736328125,
+        -68.2479248046875
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 38028,
+      "componentType": 5126,
+      "count": 3169,
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 3169,
+      "max": [
+        1,
+        0.9998841285705566,
+        1,
+        1
+      ],
+      "min": [
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 3169,
+      "max": [
+        0.751953125,
+        0.990234375
+      ],
+      "min": [
+        0.403564453125,
+        0.51708984375
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 25352,
+      "componentType": 5126,
+      "count": 3169,
+      "max": [
+        0.751953125,
+        0.990234375
+      ],
+      "min": [
+        0.403564453125,
+        0.51708984375
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 5748,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 76056,
+      "componentType": 5126,
+      "count": 987,
+      "max": [
+        49.78826904296875,
+        48.65748596191406,
+        44.0283203125
+      ],
+      "min": [
+        -49.78826904296875,
+        14.315948486328125,
+        -44.0283203125
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 87900,
+      "componentType": 5126,
+      "count": 987,
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "min": [
+        -0.9999991655349731,
+        -1,
+        -1
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 50704,
+      "componentType": 5126,
+      "count": 987,
+      "max": [
+        1,
+        0.9955415725708008,
+        1,
+        1
+      ],
+      "min": [
+        -1,
+        -0.9955415725708008,
+        -1,
+        -1
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 50704,
+      "componentType": 5126,
+      "count": 987,
+      "max": [
+        0.619140625,
+        0.8623046875
+      ],
+      "min": [
+        0.430419921875,
+        0.779296875
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 58600,
+      "componentType": 5126,
+      "count": 987,
+      "max": [
+        0.619140625,
+        0.8623046875
+      ],
+      "min": [
+        0.430419921875,
+        0.779296875
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 22992,
+      "componentType": 5125,
+      "count": 2034,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 99744,
+      "componentType": 5126,
+      "count": 233,
+      "max": [
+        0.00630950927734375,
+        11.70513916015625,
+        60.39739990234375
+      ],
+      "min": [
+        -96.4505386352539,
+        -0.8977203369140625,
+        -60.39739990234375
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 102540,
+      "componentType": 5126,
+      "count": 233,
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "min": [
+        -0.9999995231628418,
+        -0.9505017399787903,
+        -1
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 66496,
+      "componentType": 5126,
+      "count": 233,
+      "max": [
+        0.58478182554245,
+        1,
+        1,
+        1
+      ],
+      "min": [
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 66496,
+      "componentType": 5126,
+      "count": 233,
+      "max": [
+        0.99755859375,
+        0.9912109375
+      ],
+      "min": [
+        0.403564453125,
+        0.60498046875
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 68360,
+      "componentType": 5126,
+      "count": 233,
+      "max": [
+        0.99755859375,
+        0.9912109375
+      ],
+      "min": [
+        0.403564453125,
+        0.60498046875
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 31128,
+      "componentType": 5125,
+      "count": 375,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "Mikey x pc (https://sketchfab.com/mikeyxpc)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/ammobox-cc5bb459e04449ac9e862dcf73727338",
+      "title": "AmmoBox"
+    },
+    "generator": "Sketchfab-15.79.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 32628,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 70224,
+      "byteOffset": 32628,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 105336,
+      "byteOffset": 102852,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 70224,
+      "byteOffset": 208188,
+      "byteStride": 16,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 278412,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/AmmoBox_baseColor.1k.avif",
+      "mimeType": "image/avif"
+    },
+    {
+      "uri": "textures/AmmoBox_normal.1k.avif",
+      "mimeType": "image/avif"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "AmmoBox",
+      "normalTexture": {
+        "index": 1
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "AmmoBox03_AmmoBox_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TANGENT": 2,
+            "TEXCOORD_0": 3,
+            "TEXCOORD_1": 4
+          },
+          "indices": 5,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "AmmoBox03.001_AmmoBox_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 7,
+            "POSITION": 6,
+            "TANGENT": 8,
+            "TEXCOORD_0": 9,
+            "TEXCOORD_1": 10
+          },
+          "indices": 11,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "AmmoBox03.002_AmmoBox_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 13,
+            "POSITION": 12,
+            "TANGENT": 14,
+            "TEXCOORD_0": 15,
+            "TEXCOORD_1": 16
+          },
+          "indices": 17,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        2.220446049250313e-16,
+        -1,
+        0,
+        0,
+        1,
+        2.220446049250313e-16,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "matrix": [
+        0.009999999776482582,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0.009999999776482582,
+        0,
+        0,
+        -0.009999999776482582,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "03b2d3efc2eb45c4a1bbe5fdc9832e15.fbx"
+    },
+    {
+      "children": [
+        3
+      ],
+      "name": "RootNode"
+    },
+    {
+      "children": [
+        4
+      ],
+      "name": "AmmoBox03 (merge)"
+    },
+    {
+      "children": [
+        5,
+        7,
+        9
+      ],
+      "matrix": [
+        0.7799999713897705,
+        0,
+        0,
+        0,
+        0,
+        0.7799999713897705,
+        0,
+        0,
+        0,
+        0,
+        0.7799999713897705,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "AmmoBox03"
+    },
+    {
+      "children": [
+        6
+      ],
+      "matrix": [
+        0.009999999776482582,
+        0,
+        0,
+        0,
+        0,
+        0.009999999776482449,
+        1.6292067154739717e-9,
+        0,
+        0,
+        -1.6292067154739717e-9,
+        0.009999999776482449,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "AmmoBox03"
+    },
+    {
+      "mesh": 0,
+      "name": "AmmoBox03_AmmoBox_0"
+    },
+    {
+      "children": [
+        8
+      ],
+      "matrix": [
+        0.009999999776482582,
+        0,
+        0,
+        0,
+        0,
+        0.009999999776482449,
+        1.6292067154739717e-9,
+        0,
+        0,
+        -1.6292067154739717e-9,
+        0.009999999776482449,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "AmmoBox03.001"
+    },
+    {
+      "mesh": 1,
+      "name": "AmmoBox03.001_AmmoBox_0"
+    },
+    {
+      "children": [
+        10
+      ],
+      "matrix": [
+        0.009999999776482582,
+        0,
+        0,
+        0,
+        0,
+        0.009999999776482449,
+        1.6292067154739717e-9,
+        0,
+        0,
+        -1.6292067154739717e-9,
+        0.009999999776482449,
+        0,
+        0.47767433524131775,
+        0.4683137536048889,
+        8.94069742685133e-8,
+        1
+      ],
+      "name": "AmmoBox03.002"
+    },
+    {
+      "mesh": 2,
+      "name": "AmmoBox03.002_AmmoBox_0"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 0
+        }
+      }
+    },
+    {
+      "sampler": 0,
+      "source": 1,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 1
+        }
+      }
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_texture_avif"
+  ]
+}

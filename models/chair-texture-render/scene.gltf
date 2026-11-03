@@ -1,0 +1,355 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 10880,
+      "max": [
+        0.0967986211180687,
+        0.3348856568336487,
+        0.08409813046455383
+      ],
+      "min": [
+        -0.0967986211180687,
+        -0.001181109924800694,
+        -0.08409810066223145
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 130560,
+      "componentType": 5126,
+      "count": 10880,
+      "max": [
+        0.999987006187439,
+        0.9999996423721313,
+        0.9999938607215881
+      ],
+      "min": [
+        -0.9999904632568359,
+        -0.9999998807907104,
+        -0.9999821186065674
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 10880,
+      "max": [
+        0.9999985694885254,
+        0.9999974370002747,
+        0.9999700784683228,
+        1
+      ],
+      "min": [
+        -0.9999939799308777,
+        -1,
+        -0.9999991655349731,
+        1
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 10880,
+      "max": [
+        0.9922999739646912,
+        0.9980000257492065
+      ],
+      "min": [
+        0.0020000000949949026,
+        0.001999974250793457
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 87040,
+      "componentType": 5126,
+      "count": 10880,
+      "max": [
+        0.9922999739646912,
+        0.9980000257492065
+      ],
+      "min": [
+        0.0020000000949949026,
+        0.001999974250793457
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 174080,
+      "componentType": 5126,
+      "count": 10880,
+      "max": [
+        0.9922999739646912,
+        0.9980000257492065
+      ],
+      "min": [
+        0.0020000000949949026,
+        0.001999974250793457
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 261120,
+      "componentType": 5126,
+      "count": 10880,
+      "max": [
+        0.9922999739646912,
+        0.9980000257492065
+      ],
+      "min": [
+        0.0020000000949949026,
+        0.001999974250793457
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 348160,
+      "componentType": 5126,
+      "count": 10880,
+      "max": [
+        0.9922999739646912,
+        0.9980000257492065
+      ],
+      "min": [
+        0.0020000000949949026,
+        0.001999974250793457
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 57174,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "Rafiul Islam (https://sketchfab.com/rafiulzn)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/chair-texture-render-33abd5156ddb4bc2b2a9a6b3307fce11",
+      "title": "Chair - Texture & Render"
+    },
+    "generator": "Sketchfab-17.14.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 228696,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 435200,
+      "byteOffset": 228696,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 261120,
+      "byteOffset": 663896,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 174080,
+      "byteOffset": 925016,
+      "byteStride": 16,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 1099096,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/CHAIR_1001_baseColor.512.avif",
+      "mimeType": "image/avif"
+    },
+    {
+      "uri": "textures/CHAIR_1001_metallicRoughness.512.avif",
+      "mimeType": "image/avif"
+    },
+    {
+      "uri": "textures/CHAIR_1001_normal.512.avif",
+      "mimeType": "image/avif"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "CHAIR_1001",
+      "normalTexture": {
+        "index": 2
+      },
+      "occlusionTexture": {
+        "index": 1
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0,
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TANGENT": 2,
+            "TEXCOORD_0": 3,
+            "TEXCOORD_1": 4,
+            "TEXCOORD_2": 5,
+            "TEXCOORD_3": 6,
+            "TEXCOORD_4": 7
+          },
+          "indices": 8,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        -0.02636796049773693,
+        -2.2196740581282296e-16,
+        0.9996523261070251,
+        0,
+        0.9996523261070251,
+        -5.854863371398829e-18,
+        0.02636796049773693,
+        0,
+        0,
+        1,
+        2.220446049250313e-16,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "name": "root"
+    },
+    {
+      "children": [
+        3
+      ],
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        2.220446049250313e-16,
+        1,
+        0,
+        0,
+        -1,
+        2.220446049250313e-16,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "GLTF_SceneRootNode"
+    },
+    {
+      "children": [
+        4
+      ],
+      "name": "41259844__5369P_n3d_1"
+    },
+    {
+      "mesh": 0,
+      "name": "Object_4"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9729,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 0
+        }
+      }
+    },
+    {
+      "sampler": 0,
+      "source": 1,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 1
+        }
+      }
+    },
+    {
+      "sampler": 0,
+      "source": 2,
+      "extensions": {
+        "EXT_texture_avif": {
+          "source": 2
+        }
+      }
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_texture_avif"
+  ]
+}

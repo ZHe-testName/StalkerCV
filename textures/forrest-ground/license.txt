@@ -1,0 +1,5 @@
+Forrest Ground 01 — Poly Haven
+https://polyhaven.com/a/forrest_ground_01
+License: CC0 1.0 (public domain)
+In scene: albedo only, 512 AVIF (source 1k JPEG, no other maps)
+Tile: 5 m
