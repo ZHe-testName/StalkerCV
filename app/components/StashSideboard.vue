@@ -12,6 +12,7 @@ import {
   MeshStandardMaterial,
   Object3D,
   Quaternion,
+  Raycaster,
   Vector3,
 } from 'three'
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js'
@@ -396,6 +397,22 @@ function sitLongAxisUp(scene: Group, lengthM: number) {
   root.add(model)
   root.scale.setScalar(lengthM / (size.y || 1))
   return { root, model }
+}
+
+/** Локальный Y верхней грани корпуса под точкой. Диск шкалы садится сюда, не на макушку ручки. */
+function bodyFaceY(body: Mesh, x: number, z: number) {
+  body.updateMatrixWorld(true)
+  const origin = new Vector3(x, 30, z).applyMatrix4(body.matrixWorld)
+  const down = new Vector3(0, -1, 0).transformDirection(body.matrixWorld)
+  const up = new Vector3(0, 1, 0).transformDirection(body.matrixWorld)
+  const hit = new Raycaster(origin, down).intersectObject(body, false).find((item) => {
+    const normal = item.face?.normal
+    return !!normal && normal.clone().transformDirection(body.matrixWorld).dot(up) > 0.75
+  })
+  if (!hit) {
+    return null
+  }
+  return hit.point.clone().applyMatrix4(body.matrixWorld.clone().invert()).y
 }
 
 function forEachStandardMat(object: Group, fn: (mat: MeshStandardMaterial) => void) {
@@ -784,11 +801,16 @@ watch(deviceGltf, (gltf) => {
     const phase = knobPointerAngleY(knob) + DIAL_PHASE_TWEAK
     const labelRadiusM = dialR * DIAL_LABEL_RADIUS_FRAC * root.scale.x
     const { mesh } = createSkillDialRing(deviceSkills, dialR, phase, labelRadiusM)
-    // В руках локальный −X — влево по экрану. ~2 мм.
-    const dialShiftX = -0.11
+    // В руках локальный +X — вправо по панели. 0.055 локали ≈ 1 мм.
+    const dialShiftX = 0
+    const faceY = parent instanceof Mesh
+      ? bodyFaceY(parent, knob.position.x + dialShiftX, knob.position.z)
+      : null
+    // 0.01 локали корпуса ≈ 0.2 мм над гранью, чтобы не мерцать.
+    const dialY = (faceY ?? localBox.max.y) + 0.01
     mesh.position.set(
       knob.position.x + dialShiftX,
-      localBox.max.y + 0.12,
+      dialY,
       knob.position.z,
     )
     parent.add(mesh)

@@ -117,6 +117,7 @@ export const stashCopy = {
       title: 'CSS',
       level: 80,
       arcMm: 3,
+      rightMm: 1,
     },
     {
       title: 'ThreeJS',
@@ -132,6 +133,7 @@ export const stashCopy = {
       title: 'Vue',
       level: 75,
       arcMm: 2,
+      rightMm: -1,
     },
     {
       title: 'HTML',

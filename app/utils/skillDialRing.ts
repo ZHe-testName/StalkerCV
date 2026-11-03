@@ -24,6 +24,8 @@ export type SkillDialItem = {
   arcMm?: number
   /** Сдвиг вниз по экрану, мм. Не по дуге. */
   downMm?: number
+  /** Сдвиг вправо по экрану, мм. Не по дуге. */
+  rightMm?: number
 }
 
 const TEX = 1024
@@ -67,9 +69,10 @@ function paintDial(
   for (let i = 0; i < n; i++) {
     const text = labelAngle(i)
     const downMm = skills[i].downMm ?? 0
-    const downPx = labelRadiusM > 0 ? (downMm / 1000) / labelRadiusM * textR : 0
-    const tx = cx + Math.cos(text) * textR
-    const ty = cy + Math.sin(text) * textR + downPx
+    const rightMm = skills[i].rightMm ?? 0
+    const mmToPx = labelRadiusM > 0 ? (1 / 1000) / labelRadiusM * textR : 0
+    const tx = cx + Math.cos(text) * textR + rightMm * mmToPx
+    const ty = cy + Math.sin(text) * textR + downMm * mmToPx
     // Горизонтально относительно прибора: без поворота глифа и без yaw меша.
     ctx.fillStyle = 'rgba(22, 18, 12, 0.95)'
     ctx.fillText(skills[i].title, tx, ty)
