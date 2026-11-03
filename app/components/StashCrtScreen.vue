@@ -24,9 +24,9 @@ const props = defineProps<{
   fit: number
 }>()
 
-const FONT_URL = '/fonts/PressStart2P-Regular.ttf'
+const FONT_URL = publicPath('/fonts/PressStart2P-Regular.ttf')
 const FONT = 'PressStart2P'
-const PHOTO_URL = '/screen/portfolio_photo.avif'
+const PHOTO_URL = publicPath('/screen/portfolio_photo.avif')
 const TEX_W = 1024
 const PHOTO_W = 272
 const PAD_Y = 107

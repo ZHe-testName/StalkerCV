@@ -34,7 +34,7 @@ import {
 } from '~/utils/skillDialRing'
 import { createSkillScreenDisplay } from '~/utils/skillScreenDisplay'
 
-const cabSrc = '/models/soviet-old-table/scene.gltf'
+const cabSrc = publicPath('/models/soviet-old-table/scene.gltf')
 const cabYawY = -90 * Math.PI / 180
 const cabCamZ = 0.05
 const svdLeft = 0.22
@@ -68,7 +68,7 @@ const footprint = [
 const originX = props.innerRightX - wallGap - Math.max(...footprint.map(p => p.x))
 const originZ = props.innerBackZ - Math.min(...footprint.map(p => p.z)) + cabCamZ
 
-const deviceSrc = '/models/bear-detector/scene.gltf'
+const deviceSrc = publicPath('/models/bear-detector/scene.gltf')
 const deviceSpan = 0.26
 const deviceX = -cabW / 2 + 0.07
 const deviceY = cabH
@@ -151,8 +151,8 @@ const milkCans = [
 const radioTopY = 1.081
 const radioFarLeft = { x: -0.424, z: -0.32 }
 const medkitSpan = 0.2 * 0.8
-const medkitLowSrc = '/models/medkit-low/scene.gltf'
-const medkitHighSrc = '/models/medkit-high/scene.gltf'
+const medkitLowSrc = publicPath('/models/medkit-low/scene.gltf')
+const medkitHighSrc = publicPath('/models/medkit-high/scene.gltf')
 const medkitBase = {
   src: medkitLowSrc,
   x: radioFarLeft.x + 0.02 + 0.178 / 2 - 0.03,
@@ -436,7 +436,7 @@ function forEachStandardMat(object: Group, fn: (mat: MeshStandardMaterial) => vo
   })
 }
 
-const { state: svdGltf } = useLoader(GLTFLoader, '/models/dragunov-svd/scene.gltf')
+const { state: svdGltf } = useLoader(GLTFLoader, publicPath('/models/dragunov-svd/scene.gltf'))
 const svdModel = shallowRef<Group | null>(null)
 
 watch(svdGltf, (gltf) => {
@@ -456,7 +456,7 @@ watch(svdGltf, (gltf) => {
   svdModel.value = root
 }, { immediate: true })
 
-const { state: radioGltf } = useLoader(GLTFLoader, '/models/radio/scene.gltf')
+const { state: radioGltf } = useLoader(GLTFLoader, publicPath('/models/radio/scene.gltf'))
 const radioModel = shallowRef<Group | null>(null)
 
 watch(radioGltf, (gltf) => {
@@ -477,7 +477,7 @@ watch(radioGltf, (gltf) => {
   radioModel.value = root
 }, { immediate: true })
 
-const { state: papersGltf } = useLoader(GLTFLoader, '/models/papers-envelopes/scene.gltf')
+const { state: papersGltf } = useLoader(GLTFLoader, publicPath('/models/papers-envelopes/scene.gltf'))
 const papersModel = shallowRef<Group | null>(null)
 
 watch(papersGltf, (gltf) => {
@@ -495,7 +495,7 @@ watch(papersGltf, (gltf) => {
   papersModel.value = root
 }, { immediate: true })
 
-const { state: milkGltf } = useLoader(GLTFLoader, '/models/condensed-milk/scene.gltf')
+const { state: milkGltf } = useLoader(GLTFLoader, publicPath('/models/condensed-milk/scene.gltf'))
 const milkModels = shallowRef<Group[]>([])
 
 watch(milkGltf, (gltf) => {
@@ -552,7 +552,7 @@ watch([medkitLowGltf, medkitHighGltf], ([lowGltf, highGltf]) => {
   medkitModels.value = roots
 }, { immediate: true })
 
-const { state: artifactGltf } = useLoader(GLTFLoader, '/models/cyan-artifact/scene.gltf')
+const { state: artifactGltf } = useLoader(GLTFLoader, publicPath('/models/cyan-artifact/scene.gltf'))
 const artifactModel = shallowRef<Group | null>(null)
 
 watch(artifactGltf, (gltf) => {
@@ -572,7 +572,7 @@ watch(artifactGltf, (gltf) => {
   artifactModel.value = root
 }, { immediate: true })
 
-const { state: maskGltf } = useLoader(GLTFLoader, '/models/gp-5-gas-mask-kit/scene.gltf')
+const { state: maskGltf } = useLoader(GLTFLoader, publicPath('/models/gp-5-gas-mask-kit/scene.gltf'))
 const maskModel = shallowRef<Group | null>(null)
 
 watch(maskGltf, (gltf) => {

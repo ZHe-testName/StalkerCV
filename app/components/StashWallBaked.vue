@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<{
   v1: 1,
 })
 
-const base = `/textures/wall-baked/${props.wall}`
+const base = publicPath(`/textures/wall-baked/${props.wall}`)
 const { state: diff } = useLoader(TextureLoader, `${base}-diff.avif`)
 const { state: nor } = useLoader(TextureLoader, `${base}-nor.avif`)
 const { state: rough } = useLoader(TextureLoader, `${base}-rough.avif`)

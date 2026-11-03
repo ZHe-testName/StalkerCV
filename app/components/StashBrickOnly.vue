@@ -16,9 +16,9 @@ const props = withDefaults(defineProps<{
 
 const TILE = 1.8
 
-const { state: diff } = useLoader(TextureLoader, '/textures/broken-brick/broken_brick_wall_diff.1k.avif')
-const { state: nor } = useLoader(TextureLoader, '/textures/broken-brick/broken_brick_wall_nor_gl.1k.avif')
-const { state: arm } = useLoader(TextureLoader, '/textures/broken-brick/broken_brick_wall_arm.1k.avif')
+const { state: diff } = useLoader(TextureLoader, publicPath('/textures/broken-brick/broken_brick_wall_diff.1k.avif'))
+const { state: nor } = useLoader(TextureLoader, publicPath('/textures/broken-brick/broken_brick_wall_nor_gl.1k.avif'))
+const { state: arm } = useLoader(TextureLoader, publicPath('/textures/broken-brick/broken_brick_wall_arm.1k.avif'))
 
 function prep(tex: Texture, srgb: boolean) {
   tex.wrapS = RepeatWrapping

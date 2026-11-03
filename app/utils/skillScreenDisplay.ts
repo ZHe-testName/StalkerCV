@@ -14,7 +14,7 @@ import {
 const TEX = 512
 const LED_COUNT = 20
 const PCT_PER_LED = 5
-const FONT_URL = '/fonts/Tektur.ttf'
+const FONT_URL = publicPath('/fonts/Tektur.ttf')
 const FONT_FAMILY = 'Tektur'
 /** Секунд на одну лампочку: гашение быстрее зажигания. */
 const LED_DOWN_SEC = 0.014

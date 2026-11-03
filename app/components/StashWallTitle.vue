@@ -16,7 +16,7 @@ import {
 } from 'three'
 import { stashCopy } from '~/data/stashCopy'
 
-const FONT_URL = '/fonts/BadScript-Regular.ttf'
+const FONT_URL = publicPath('/fonts/BadScript-Regular.ttf')
 const FONT_FAMILY = 'StashScratch'
 const TEX_W = 2048
 const TEX_H = 768

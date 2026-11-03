@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+const assetBase = (process.env.NUXT_APP_BASE_URL || '/').replace(/\/$/, '')
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   modules: ['@tresjs/nuxt'],
@@ -6,7 +8,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [
-        { rel: 'icon', type: 'image/avif', href: '/ui/favicon.avif' },
+        { rel: 'icon', type: 'image/avif', href: `${assetBase}/ui/favicon.avif` },
       ],
       script: [
         {

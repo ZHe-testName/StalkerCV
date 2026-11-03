@@ -7,7 +7,7 @@ import { useLoop } from '@tresjs/core'
 import { Euler, Object3D, Quaternion } from 'three'
 import { stashHold } from '~/composables/useStashCamera'
 
-const sofaSrc = '/models/old-sofa/scene.gltf'
+const sofaSrc = publicPath('/models/old-sofa/scene.gltf')
 const sofaH = 0.90
 
 const props = defineProps<{

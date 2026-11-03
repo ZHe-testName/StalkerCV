@@ -49,25 +49,25 @@ const backOpening = {
 const homeLookAt: [number, number, number] = [0, 1.15, 0]
 const { position, lookAt, goTo } = useStashCamera(cameraPosition, homeLookAt)
 
-const lampSrc = '/models/wooden-floor-lamp/scene.gltf'
+const lampSrc = publicPath('/models/wooden-floor-lamp/scene.gltf')
 const lampX = innerRightX - 0.30 - 0.10
 const lampZ = 0.18 - 0.30 - 0.10
 const lampH = 1.55
 
-const carpetSrc = '/models/carpet/scene.gltf'
+const carpetSrc = publicPath('/models/carpet/scene.gltf')
 const carpetLong = 1.55 * 1.3 * 1.2
 const carpetZ = 0.845 - 1.2 + 0.50
 
-const ammoSrc = '/models/ammobox/scene.gltf'
+const ammoSrc = publicPath('/models/ammobox/scene.gltf')
 const ammoH = 0.30
 const ammoZ = opening.z + 0.25 + 0.20
 
-const iconSrc = '/models/stalker-icon/scene.gltf'
+const iconSrc = publicPath('/models/stalker-icon/scene.gltf')
 const iconH = 0.36
 const iconTop = opening.sill + opening.height - 0.15
 const iconZ = (opening.z - opening.width / 2 + innerBackZ) / 2
 
-const posterSrc = '/models/cosmonaut-poster/scene.gltf'
+const posterSrc = publicPath('/models/cosmonaut-poster/scene.gltf')
 const posterH = 0.48
 const posterTop = backOpening.sill + backOpening.height - 0.20
 const posterPierL = backOpening.x + backOpening.width / 2
@@ -82,9 +82,9 @@ const titleY = 1.78 + 0.30
 // Влево по Z (на стене) = +Z.
 const titleRoll = (12 * Math.PI) / 180
 
-const sillSrc = '/models/windowsill-a1/scene.gltf'
-const backSillSrc = '/models/windowsill-a2/scene.gltf'
-const floorCarpetSrc = '/models/old-persian-carpet/scene.gltf'
+const sillSrc = publicPath('/models/windowsill-a1/scene.gltf')
+const backSillSrc = publicPath('/models/windowsill-a2/scene.gltf')
+const floorCarpetSrc = publicPath('/models/old-persian-carpet/scene.gltf')
 const floorCarpetLong = 2.2 * 1.2
 const floorCarpetX = 0.45
 const floorCarpetZ = 0.98 - 0.40
@@ -202,7 +202,7 @@ ceilingSlab.receiveShadow = false
     facing="left"
     :wall-at="-(room.width / 2)"
     :opening-at="opening.z"
-    ground-src="/textures/forrest-ground/forrest_ground_01_diff.512.avif"
+    :ground-src="publicPath('/textures/forrest-ground/forrest_ground_01_diff.512.avif')"
     :ground-tile="5"
   >
     <!-- Пропы: StashOutsideProp. Локально −Z наружу, +X вправо из окна, y = 0 земля.
@@ -221,7 +221,7 @@ ceilingSlab.receiveShadow = false
     />
   </StashOutside>
   <StashBrokenWindow
-    src="/models/broken-window-06/scene.gltf"
+    :src="publicPath('/models/broken-window-06/scene.gltf')"
     :wall-x="leftX"
     :opening="opening"
   />
@@ -237,13 +237,13 @@ ceilingSlab.receiveShadow = false
     :wall-at="-(room.depth / 2)"
     :opening-at="backOpening.x"
     :drop="1.1"
-    ground-src="/textures/forrest-ground/forrest_ground_01_diff.512.avif"
+    :ground-src="publicPath('/textures/forrest-ground/forrest_ground_01_diff.512.avif')"
     :ground-tile="5"
   >
     <!-- Пропы: StashOutsideProp. Те же локальные оси.
          Видимый конус кадра 0: 5 м → X 0.0..2.8 | 10 м → X 0.6..5.0 | 20 м → X 1.8..9.2. -->
     <StashOutsideProp
-      src="/models/stalker-house/scene.gltf"
+      :src="publicPath('/models/stalker-house/scene.gltf')"
       :height="8"
       :x="1.8"
       :z="-20"
@@ -251,7 +251,7 @@ ceilingSlab.receiveShadow = false
       :tint="0.85"
     />
     <StashOutsideProp
-      src="/models/rose-bush/scene.gltf"
+      :src="publicPath('/models/rose-bush/scene.gltf')"
       :height="2.1"
       :x="4"
       :z="-11.3"
@@ -261,7 +261,7 @@ ceilingSlab.receiveShadow = false
       :alpha-test="0.4"
     />
     <StashOutsideProp
-      src="/models/rose-bush/scene.gltf"
+      :src="publicPath('/models/rose-bush/scene.gltf')"
       :height="2.1"
       :x="5.3"
       :z="-11.3"
@@ -273,7 +273,7 @@ ceilingSlab.receiveShadow = false
     <!-- Капли: левый край 1 м левее окна, правый напротив правого угла дома. Перед домом, не в нём. -->
     <StashOutsideRainDrops :x-min="-0.68" :x-max="7.82" :z-near="-6.2" :z-far="-12.2" :count="100" />
     <StashOutsideProp
-      src="/models/dry-bush/scene.gltf"
+      :src="publicPath('/models/dry-bush/scene.gltf')"
       :height="2.6"
       :x="5.5"
       :z="-7.8"
@@ -284,13 +284,13 @@ ceilingSlab.receiveShadow = false
     />
     <StashOutsideGrass
       key="grass-shift-2"
-      src="/models/autumn-lowpoly-grass/scene.gltf"
+      :src="publicPath('/models/autumn-lowpoly-grass/scene.gltf')"
       :count="28"
       :x-min="0.5"
       :x-max="9.5"
     />
     <StashOutsideProp
-      src="/models/mountain-trees/broadleaf-a/scene.gltf"
+      :src="publicPath('/models/mountain-trees/broadleaf-a/scene.gltf')"
       :height="12"
       :x="16.2"
       :y="0.46"
@@ -301,7 +301,7 @@ ceilingSlab.receiveShadow = false
       :alpha-test="0.5"
     />
     <StashOutsideProp
-      src="/models/mountain-trees/pine-bare/scene.gltf"
+      :src="publicPath('/models/mountain-trees/pine-bare/scene.gltf')"
       :height="10.3"
       :x="17.28"
       :y="0.41"
@@ -312,7 +312,7 @@ ceilingSlab.receiveShadow = false
       :alpha-test="0.5"
     />
     <StashOutsideProp
-      src="/models/mountain-trees/aspen-b/scene.gltf"
+      :src="publicPath('/models/mountain-trees/aspen-b/scene.gltf')"
       :height="9.6"
       :x="19.02"
       :y="0.39"
@@ -323,7 +323,7 @@ ceilingSlab.receiveShadow = false
       :alpha-test="0.5"
     />
     <StashOutsideProp
-      src="/models/mountain-trees/pine-bare-b/scene.gltf"
+      :src="publicPath('/models/mountain-trees/pine-bare-b/scene.gltf')"
       :height="11.4"
       :x="22.02"
       :y="0.26"
@@ -334,7 +334,7 @@ ceilingSlab.receiveShadow = false
       :alpha-test="0.5"
     />
     <StashOutsideProp
-      src="/models/mountain-trees/pine-a/scene.gltf"
+      :src="publicPath('/models/mountain-trees/pine-a/scene.gltf')"
       :height="9.4"
       :x="21.96"
       :y="0.36"
@@ -345,7 +345,7 @@ ceilingSlab.receiveShadow = false
       :alpha-test="0.5"
     />
     <StashOutsideProp
-      src="/models/mountain-trees/pine-b/scene.gltf"
+      :src="publicPath('/models/mountain-trees/pine-b/scene.gltf')"
       :height="9.4"
       :x="20.66"
       :y="0.51"
@@ -356,7 +356,7 @@ ceilingSlab.receiveShadow = false
       :alpha-test="0.5"
     />
     <StashOutsideProp
-      src="/models/mountain-trees/aspen-b/scene.gltf"
+      :src="publicPath('/models/mountain-trees/aspen-b/scene.gltf')"
       :height="9.9"
       :x="23.2"
       :y="0.26"
@@ -367,7 +367,7 @@ ceilingSlab.receiveShadow = false
       :alpha-test="0.5"
     />
     <StashOutsideProp
-      src="/models/mountain-trees/aspen/scene.gltf"
+      :src="publicPath('/models/mountain-trees/aspen/scene.gltf')"
       :height="10.3"
       :x="24.5"
       :y="0.24"
@@ -380,7 +380,7 @@ ceilingSlab.receiveShadow = false
   </StashOutside>
   <!-- Мир. 1.5 от половины родного. Бок к окну в 4 м от наружной левой грани. -->
   <StashOutsideProp
-    src="/models/abounded-house/scene.gltf"
+    :src="publicPath('/models/abounded-house/scene.gltf')"
     :height="3.0375"
     :x="-11.063"
     :z="-5.68"
@@ -388,7 +388,7 @@ ceilingSlab.receiveShadow = false
     :tint="1"
   />
   <StashBrokenWindow
-    src="/models/broken-window-05/scene.gltf"
+    :src="publicPath('/models/broken-window-05/scene.gltf')"
     facing="back"
     fit-sash
     :wall-z="backZ"

@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { onPdaInput, pdaFields, pdaType, revealPdaType } from '~/composables/pdaFields'
 
+const tekturUrl = publicPath('/fonts/Tektur.ttf')
+useHead({
+  style: [{
+    innerHTML: `@font-face{font-family:Tektur;src:url("${tekturUrl}") format("truetype");font-weight:400 900;font-display:swap}`,
+  }],
+})
+
 function onInput(id: 'name' | 'mail' | 'subject' | 'msg', event: Event) {
   const target = event.target as HTMLInputElement | HTMLTextAreaElement
   onPdaInput(id, target.value)
@@ -58,13 +65,6 @@ function onInput(id: 'name' | 'mail' | 'subject' | 'msg', event: Event) {
 </template>
 
 <style scoped lang="scss">
-@font-face {
-  font-family: Tektur;
-  src: url('/fonts/Tektur.ttf') format('truetype');
-  font-weight: 400 900;
-  font-display: swap;
-}
-
 .field {
   position: fixed;
   z-index: 5;

@@ -75,7 +75,7 @@ watch(filesReady, (ready) => {
       <img
         class="icon"
         :class="phase"
-        src="/ui/radiation.avif"
+        :src="publicPath('/ui/radiation.avif')"
         alt=""
         width="80"
         height="80"

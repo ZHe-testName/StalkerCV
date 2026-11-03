@@ -48,7 +48,7 @@ function sitGltfOnFloorBySpan(scene: Group, maxSpanM: number, extraRot: [number,
   return { root, model, size }
 }
 
-const FONT_URL = '/fonts/Tektur.ttf'
+const FONT_URL = publicPath('/fonts/Tektur.ttf')
 const FONT = 'Tektur'
 const BIOS_BG = '#0000AA'
 const BIOS_TEXT = '#FFFFFF'
@@ -60,7 +60,7 @@ const MAIL_SERVICE = 'my_prtfolio_service'
 const MAIL_TEMPLATE = 'template_ninja_portfolio'
 const MAIL_KEY = 'user_PN1UtxxZmvfpNdfJkk6dh'
 
-const { state: gltf } = useLoader(GLTFLoader, '/models/stalker-pda/scene.gltf')
+const { state: gltf } = useLoader(GLTFLoader, publicPath('/models/stalker-pda/scene.gltf'))
 const { camera, renderer } = useTres()
 const pdaModel = shallowRef<Group | null>(null)
 const screenMat = shallowRef<MeshBasicMaterial | null>(null)
@@ -421,7 +421,7 @@ function loadIcon(path: string) {
       console.error('[StashPda] icon', src)
       resolve(null)
     }
-    img.src = src
+    img.src = publicPath(src)
   })
 }
 
@@ -693,7 +693,7 @@ function validateForm() {
 
 function downloadCv() {
   const a = document.createElement('a')
-  a.href = '/cv/cv.pdf'
+  a.href = publicPath('/cv/cv.pdf')
   a.download = 'cv.pdf'
   a.click()
 }

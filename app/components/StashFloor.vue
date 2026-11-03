@@ -13,9 +13,9 @@ const props = defineProps<{
 
 const TILE = 1.4
 
-const { state: diff } = useLoader(TextureLoader, '/textures/worn-planks/worn_planks_diff.1k.avif')
-const { state: nor } = useLoader(TextureLoader, '/textures/worn-planks/worn_planks_nor_gl.1k.avif')
-const { state: arm } = useLoader(TextureLoader, '/textures/worn-planks/worn_planks_arm.1k.avif')
+const { state: diff } = useLoader(TextureLoader, publicPath('/textures/worn-planks/worn_planks_diff.1k.avif'))
+const { state: nor } = useLoader(TextureLoader, publicPath('/textures/worn-planks/worn_planks_nor_gl.1k.avif'))
+const { state: arm } = useLoader(TextureLoader, publicPath('/textures/worn-planks/worn_planks_arm.1k.avif'))
 
 function prep(tex: Texture, srgb: boolean, repeatX: number, repeatY: number) {
   tex.wrapS = RepeatWrapping

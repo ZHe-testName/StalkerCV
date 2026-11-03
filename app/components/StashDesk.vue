@@ -240,7 +240,7 @@ function relightUnlit(object: Group) {
   })
 }
 
-const { state: tableGltf } = useLoader(GLTFLoader, '/models/old-soviet-table/scene.gltf')
+const { state: tableGltf } = useLoader(GLTFLoader, publicPath('/models/old-soviet-table/scene.gltf'))
 const tableModel = shallowRef<Group | null>(null)
 
 watch(tableGltf, (gltf) => {
@@ -264,7 +264,7 @@ watch(tableGltf, (gltf) => {
   tableModel.value = root
 }, { immediate: true })
 
-const { state: lampGltf } = useLoader(GLTFLoader, '/models/rusty-kerosene-lamp/scene.gltf')
+const { state: lampGltf } = useLoader(GLTFLoader, publicPath('/models/rusty-kerosene-lamp/scene.gltf'))
 const lampModel = shallowRef<Group | null>(null)
 
 watch(lampGltf, (gltf) => {
@@ -281,7 +281,7 @@ watch(lampGltf, (gltf) => {
   lampModel.value = root
 }, { immediate: true })
 
-const { state: pcGltf } = useLoader(GLTFLoader, '/models/abandoned-computer-terminal/scene.gltf')
+const { state: pcGltf } = useLoader(GLTFLoader, publicPath('/models/abandoned-computer-terminal/scene.gltf'))
 const pcModel = shallowRef<Group | null>(null)
 const crtFace = shallowRef<{ min: [number, number, number], max: [number, number, number] } | null>(null)
 const crtFit = ref(1)
@@ -325,7 +325,7 @@ watch(pcGltf, (gltf) => {
   pcModel.value = root
 }, { immediate: true })
 
-const { state: papersGltf } = useLoader(GLTFLoader, '/models/papers-envelopes/scene.gltf')
+const { state: papersGltf } = useLoader(GLTFLoader, publicPath('/models/papers-envelopes/scene.gltf'))
 const papersModel = shallowRef<Group | null>(null)
 
 watch(papersGltf, (gltf) => {
@@ -343,7 +343,7 @@ watch(papersGltf, (gltf) => {
   papersModel.value = root
 }, { immediate: true })
 
-const { state: pistolGltf } = useLoader(GLTFLoader, '/models/ptm-02356-1967/scene.gltf')
+const { state: pistolGltf } = useLoader(GLTFLoader, publicPath('/models/ptm-02356-1967/scene.gltf'))
 const pistolModel = shallowRef<Group | null>(null)
 
 watch(pistolGltf, (gltf) => {
@@ -359,7 +359,7 @@ watch(pistolGltf, (gltf) => {
   pistolModel.value = root
 }, { immediate: true })
 
-const { state: silencerGltf } = useLoader(GLTFLoader, '/models/makarov-pistol-silencer/scene.gltf')
+const { state: silencerGltf } = useLoader(GLTFLoader, publicPath('/models/makarov-pistol-silencer/scene.gltf'))
 const silencerModel = shallowRef<Group | null>(null)
 
 watch(silencerGltf, (gltf) => {
@@ -375,7 +375,7 @@ watch(silencerGltf, (gltf) => {
   silencerModel.value = root
 }, { immediate: true })
 
-const { state: canGltf } = useLoader(GLTFLoader, '/models/non-stop-stalker-2/scene.gltf')
+const { state: canGltf } = useLoader(GLTFLoader, publicPath('/models/non-stop-stalker-2/scene.gltf'))
 const canModel = shallowRef<Group | null>(null)
 
 watch(canGltf, (gltf) => {
@@ -392,7 +392,7 @@ watch(canGltf, (gltf) => {
   canModel.value = root
 }, { immediate: true })
 
-const { state: chairGltf } = useLoader(GLTFLoader, '/models/chair-texture-render/scene.gltf')
+const { state: chairGltf } = useLoader(GLTFLoader, publicPath('/models/chair-texture-render/scene.gltf'))
 const chairModel = shallowRef<Group | null>(null)
 
 watch(chairGltf, (gltf) => {
@@ -411,7 +411,7 @@ watch(chairGltf, (gltf) => {
   chairModel.value = root
 }, { immediate: true })
 
-const { state: packGltf } = useLoader(GLTFLoader, '/models/backpack/scene.gltf')
+const { state: packGltf } = useLoader(GLTFLoader, publicPath('/models/backpack/scene.gltf'))
 const packModel = shallowRef<Group | null>(null)
 
 watch(packGltf, (gltf) => {

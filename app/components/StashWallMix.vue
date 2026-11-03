@@ -36,12 +36,12 @@ const props = withDefaults(defineProps<{
 const BRICK_TILE = 1.8
 const PLASTER_TILE = 1.0
 
-const { state: brickDiff } = useLoader(TextureLoader, '/textures/broken-brick/broken_brick_wall_diff.1k.avif')
-const { state: brickNor } = useLoader(TextureLoader, '/textures/broken-brick/broken_brick_wall_nor_gl.1k.avif')
-const { state: brickArm } = useLoader(TextureLoader, '/textures/broken-brick/broken_brick_wall_arm.1k.avif')
-const { state: plasterDiff } = useLoader(TextureLoader, '/textures/white-plaster/white_rough_plaster_diff.1k.avif')
-const { state: plasterNor } = useLoader(TextureLoader, '/textures/white-plaster/white_rough_plaster_nor_gl.1k.avif')
-const { state: plasterRough } = useLoader(TextureLoader, '/textures/white-plaster/white_rough_plaster_rough.1k.avif')
+const { state: brickDiff } = useLoader(TextureLoader, publicPath('/textures/broken-brick/broken_brick_wall_diff.1k.avif'))
+const { state: brickNor } = useLoader(TextureLoader, publicPath('/textures/broken-brick/broken_brick_wall_nor_gl.1k.avif'))
+const { state: brickArm } = useLoader(TextureLoader, publicPath('/textures/broken-brick/broken_brick_wall_arm.1k.avif'))
+const { state: plasterDiff } = useLoader(TextureLoader, publicPath('/textures/white-plaster/white_rough_plaster_diff.1k.avif'))
+const { state: plasterNor } = useLoader(TextureLoader, publicPath('/textures/white-plaster/white_rough_plaster_nor_gl.1k.avif'))
+const { state: plasterRough } = useLoader(TextureLoader, publicPath('/textures/white-plaster/white_rough_plaster_rough.1k.avif'))
 const { state: mask } = useLoader(TextureLoader, props.maskUrl)
 
 function prep(tex: Texture, srgb: boolean, wrap: typeof RepeatWrapping) {

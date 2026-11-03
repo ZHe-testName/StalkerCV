@@ -14,9 +14,9 @@ const props = defineProps<{
 
 const TILE = 0.5
 
-const { state: diff } = useLoader(TextureLoader, '/textures/rough-wood/rough_wood_diff.1k.avif')
-const { state: nor } = useLoader(TextureLoader, '/textures/rough-wood/rough_wood_nor_gl.1k.avif')
-const { state: rough } = useLoader(TextureLoader, '/textures/rough-wood/rough_wood_rough.1k.avif')
+const { state: diff } = useLoader(TextureLoader, publicPath('/textures/rough-wood/rough_wood_diff.1k.avif'))
+const { state: nor } = useLoader(TextureLoader, publicPath('/textures/rough-wood/rough_wood_nor_gl.1k.avif'))
+const { state: rough } = useLoader(TextureLoader, publicPath('/textures/rough-wood/rough_wood_rough.1k.avif'))
 
 function prep(tex: Texture, srgb: boolean, repeatX: number, repeatY: number) {
   tex.wrapS = RepeatWrapping

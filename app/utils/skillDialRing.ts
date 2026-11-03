@@ -31,7 +31,7 @@ export type SkillDialItem = {
 const TEX = 1024
 /** Центр надписи — доля радиуса диска. Меньше — дальше от края, длинные слова не режутся. */
 export const DIAL_LABEL_RADIUS_FRAC = 0.7
-const FONT_URL = '/fonts/PressStart2P-Regular.ttf'
+const FONT_URL = publicPath('/fonts/PressStart2P-Regular.ttf')
 const FONT_FAMILY = 'PressStart2P'
 
 /** Докрут после угла носика: носик ещё чуть левее 0 → отрицательный. */
